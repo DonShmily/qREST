@@ -1,4 +1,4 @@
-/**
+﻿/**
 **           qREST - Quick Response Evaluation for Safety Tagging
 **    Institute of Engineering Mechanics, China Earthquake Administration
 **
@@ -31,7 +31,6 @@ inline void Cumtrapz(const std::vector<double> &input,
                      std::vector<double> &output,
                      double dx)
 {
-    output.resize(input.size());
     output[0] = 0.0;
     for (size_t i = 1; i < input.size(); ++i)
     {
@@ -42,10 +41,10 @@ inline void Cumtrapz(const std::vector<double> &input,
 // @param input 输入数据矩阵
 // @param output 积分结果矩阵
 // @param dx 积分步长
-inline void
-Cumtrapz(const Eigen::MatrixXd &input, Eigen::MatrixXd &output, double dx)
+inline void Cumtrapz(const Eigen::Ref<const Eigen::MatrixXd> &input,
+                     Eigen::Ref<Eigen::MatrixXd> output,
+                     double dx)
 {
-    output.resize(input.rows(), input.cols());
     output.row(0).setZero();
     for (int i = 1; i < input.rows(); ++i)
     {

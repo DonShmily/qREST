@@ -42,7 +42,7 @@ void ModifiedFilteringIntegral::CalculateEdp()
     // 1.确定计算参数
     // 1.1确定滤波生成器
     auto filter_generator = numerical_algorithm::ButterworthFilterDesign(
-        filter_order_, low_frequency_, high_frequency_, method_.filter_type_);
+        filter_order_, 0, 0, method_.filter_type_);
 
     // 1.2确定滤波函数
     std::shared_ptr<numerical_algorithm::BasicFiltering> filter_function =
@@ -64,37 +64,9 @@ void ModifiedFilteringIntegral::CalculateEdp()
     }
 
     // 1.3确定插值方法
-    std::shared_ptr<numerical_algorithm::Interp> interp_function = nullptr;
-    switch (method_.interp_type_)
-    {
-        case numerical_algorithm::InterpType::Linear:
-            interp_function->set_interp_type(
-                numerical_algorithm::InterpType::Linear);
-            break;
-        case numerical_algorithm::InterpType::CubicSpline:
-            interp_function->set_interp_type(
-                numerical_algorithm::InterpType::CubicSpline);
-            break;
-        case numerical_algorithm::InterpType::Akima:
-            interp_function->set_interp_type(
-                numerical_algorithm::InterpType::Akima);
-            break;
-        case numerical_algorithm::InterpType::Steffen:
-            interp_function->set_interp_type(
-                numerical_algorithm::InterpType::Steffen);
-            break;
-        case numerical_algorithm::InterpType::Polynomial:
-            interp_function->set_interp_type(
-                numerical_algorithm::InterpType::Polynomial);
-            break;
-        default:
-            interp_function->set_interp_type(
-                numerical_algorithm::InterpType::Linear);
-            break;
-    }
+    numerical_algorithm::Interp interp_function(method_.interp_type_);
 
     // 2.滤波积分插值计算层间位移角
-
     // 2.2 逐列滤波积分
     Eigen::MatrixXd filtered_displacement(
         input_acceleration_ptr_->get_data().rows(),
@@ -108,10 +80,10 @@ void ModifiedFilteringIntegral::CalculateEdp()
     result_ptr_->displacement_ptr_ =
         std::make_shared<data_structure::Displacement>(
             Eigen::MatrixXd(), input_acceleration_ptr_->get_frequency());
-    interp_function->Interpolation(building_ptr_->get_measuren_height(),
-                                   filtered_displacement,
-                                   building_ptr_->get_floor_height(),
-                                   result_ptr_->displacement_ptr_->data());
+    interp_function.Interpolation(building_ptr_->get_measuren_height(),
+                                  filtered_displacement,
+                                  building_ptr_->get_floor_height(),
+                                  result_ptr_->displacement_ptr_->data());
     // 2.7 计算层间位移
     auto interstory_displacement =
         result_ptr_->displacement_ptr_->interstory_displacement();
@@ -137,43 +109,55 @@ ModifiedFilteringIntegral::CalculateSingle(const std::size_t &col)
     // 1.初步到速度和位移
     double dt = input_acceleration_ptr_->get_time_step();
 
-    auto velocity_0 = Eigen::MatrixXd();
+    auto velocity_0 =
+        Eigen::MatrixXd(input_acceleration_ptr_->get_data().rows(), 1);
     numerical_algorithm::Cumtrapz(
         input_acceleration_ptr_->get_data().col(col), velocity_0, dt);
-    auto displacement_0 = Eigen::MatrixXd();
+    auto displacement_0 =
+        Eigen::MatrixXd(input_acceleration_ptr_->get_data().rows(), 1);
     numerical_algorithm::Cumtrapz(velocity_0, displacement_0, dt);
 
     // 2.滤波积分，得到不同低频限值下的结果
     int max_k = 100;
-    // 储存每次滤波积分的临时结果
+    // 2.1储存每次滤波积分的临时结果
     Eigen::MatrixXd integral_velocity, integral_displacement,
         filtered_acceleration_0, filtered_velocity_0, filtered_displacement_0;
-    auto filter_generator = numerical_algorithm::ButterworthFilterDesign();
+    // 初始化储存矩阵
+    integral_velocity.resize(velocity_0.rows(), max_k);
+    integral_displacement.resize(displacement_0.rows(), max_k);
+    filtered_acceleration_0.resize(input_acceleration_ptr_->get_data().rows(),
+                                   max_k);
+    filtered_velocity_0.resize(velocity_0.rows(), max_k);
+    filtered_displacement_0.resize(displacement_0.rows(), max_k);
+    // 2.2设置滤波积分方法
+    auto filter_generator = numerical_algorithm::ButterworthFilterDesign(2);
     auto filter_function = numerical_algorithm::FiltFilt();
-    double low, high = high_frequency_;
+    double low, high = 20;
     for (int i = 0; i < max_k; ++i)
     {
-        // 2.1 设置滤波参数
+        // 2.3 设置滤波参数
         low = 1.0 * (i + 1) / max_k;
         filter_generator.set_frequency(low, high);
+        filter_generator.DesignFilter();
         filter_function.set_coefficients(filter_generator);
 
-        // 2.2 滤波积分
+        // 2.4 滤波积分
         filter_function.Filtering(input_acceleration_ptr_->get_data().col(col),
-                                  filtered_acceleration_0);
+                                  filtered_acceleration_0.col(i));
         numerical_algorithm::Cumtrapz(
-            filtered_acceleration_0, integral_velocity, dt);
-        filter_function.Filtering(integral_velocity, filtered_velocity_0);
+            filtered_acceleration_0.col(i), integral_velocity.col(i), dt);
+        filter_function.Filtering(integral_velocity.col(i),
+                                  filtered_velocity_0.col(i));
         numerical_algorithm::Cumtrapz(
-            filtered_velocity_0, integral_displacement, dt);
-        filter_function.Filtering(integral_displacement,
-                                  filtered_displacement_0);
+            filtered_velocity_0.col(i), integral_displacement.col(i), dt);
+        filter_function.Filtering(integral_displacement.col(i),
+                                  filtered_displacement_0.col(i));
     }
 
     // 3.根据功率比选择最佳结果
     // 3.1 计算功率比
     std::vector<double> power_ratio(max_k, 0.0);
-    power_ratio[0] = filtered_acceleration_0.col(1).array().pow(2).sum()
+    power_ratio[0] = filtered_acceleration_0.col(0).array().pow(2).sum()
                      / displacement_0.array().pow(2).sum();
     for (int i = 1; i < max_k; ++i)
     {

@@ -74,8 +74,8 @@ public:
     // 析构函数
     virtual ~BasicEdpCalculation() = default;
 
-    // 计算工程需求参量，返回计算结果
-    virtual const BasicEdpResult &CalculateEdp() const = 0;
+    // 计算工程需求参量函数入口
+    virtual void CalculateEdp() = 0;
 
 protected:
     // 单方向加速度数据指针

@@ -1,4 +1,4 @@
-/**
+﻿/**
 **           qREST - Quick Response Evaluation for Safety Tagging
 **    Institute of Engineering Mechanics, China Earthquake Administration
 **
@@ -86,8 +86,8 @@ public:
     // 滤波算法入口
     // @param input_signal 输入信号矩阵
     // @param output_signal 输出信号矩阵
-    void Filtering(const Eigen::MatrixXd &input_signal,
-                   Eigen::MatrixXd &output_signal) override;
+    void Filtering(const Eigen::Ref<const Eigen::MatrixXd> &input_signal,
+                   Eigen::Ref<Eigen::MatrixXd> output_signal) override;
 
 private:
     // filtfilt滤波方法参数

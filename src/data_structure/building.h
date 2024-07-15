@@ -1,4 +1,4 @@
-/**
+﻿/**
 **           qREST - Quick Response Evaluation for Safety Tagging
 **    Institute of Engineering Mechanics, China Earthquake Administration
 **
@@ -33,6 +33,13 @@ class Building
 public:
     // 构造函数
     Building() = default;
+    // 从std::vector<double>构造
+    Building(const std::vector<double> &measuren_height,
+             const std::vector<double> &floor_height)
+        : measuren_height_(measuren_height), floor_height_(floor_height)
+    {
+        calculate_inter_height();
+    }
     // 拷贝构造函数
     Building(const Building &building_message) = default;
     // 移动构造函数
@@ -57,6 +64,9 @@ private:
     std::vector<double> floor_height_{};
     // 建筑层间高度
     std::vector<double> inter_height_{};
+
+    // 计算层间高度
+    void calculate_inter_height();
 };
 
 } // namespace data_structure

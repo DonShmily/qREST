@@ -41,7 +41,7 @@ public:
               std::size_t col_number);
     // 从Eigen::MatrixXd构造
     // @param matrix 数据矩阵
-    BasicData(const Eigen::MatrixXd &matrix) : data_(matrix){};
+    BasicData(const Eigen::MatrixXd &matrix) : data_(matrix) {};
     // 拷贝构造函数
     BasicData(const BasicData &data) = default;
     // 移动构造函数

@@ -1,4 +1,4 @@
-/**
+﻿/**
 **           qREST - Quick Response Evaluation for Safety Tagging
 **    Institute of Engineering Mechanics, China Earthquake Administration
 **
@@ -26,10 +26,9 @@ namespace numerical_algorithm
 {
 
 // filtfilt滤波算法的入口函数
-void FiltFilt::Filtering(const Eigen::MatrixXd &input_signal,
-                         Eigen::MatrixXd &output_signal)
+void FiltFilt::Filtering(const Eigen::Ref<const Eigen::MatrixXd> &input_signal,
+                         Eigen::Ref<Eigen::MatrixXd> output_signal)
 {
-    output_signal.resize(input_signal.rows(), input_signal.cols());
     for (int i = 0; i != input_signal.cols(); ++i)
     {
         std::vector<double> input_vec(input_signal.rows());

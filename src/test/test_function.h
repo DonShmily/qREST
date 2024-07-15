@@ -12,4 +12,4 @@ int filter_test_main();
 // 测试滤波积分方法结果
 void test_filter_integrate();
 
-#endif // !SRC_TEST_TEST_FUNCTION_H_
+#endif // SRC_TEST_TEST_FUNCTION_H_

@@ -1,4 +1,4 @@
-/**
+﻿/**
 **           qREST - Quick Response Evaluation for Safety Tagging
 **    Institute of Engineering Mechanics, China Earthquake Administration
 **
@@ -24,8 +24,8 @@
 namespace numerical_algorithm
 {
 
-void Filter::Filtering(const Eigen::MatrixXd &input_signal,
-                       Eigen::MatrixXd &output_signal)
+void Filter::Filtering(const Eigen::Ref<const Eigen::MatrixXd> &input_signal,
+                       Eigen::Ref<Eigen::MatrixXd> output_signal)
 {
     if (coefficients_a_.empty() || coefficients_b_.empty())
     {
@@ -44,12 +44,15 @@ void Filter::Filtering(const Eigen::MatrixXd &input_signal,
     {
         fir_filter(input_signal, output_signal);
     }
-    else { iir_filter(input_signal, output_signal); }
+    else
+    {
+        iir_filter(input_signal, output_signal);
+    }
 }
 
 // FIR滤波算法
-void Filter::fir_filter(const Eigen::MatrixXd &input_signal,
-                        Eigen::MatrixXd &output_signal)
+void Filter::fir_filter(const Eigen::Ref<const Eigen::MatrixXd> &input_signal,
+                        Eigen::Ref<Eigen::MatrixXd> output_signal)
 {
     output_signal =
         Eigen::MatrixXd::Zero(input_signal.rows(), input_signal.cols());
@@ -70,8 +73,8 @@ void Filter::fir_filter(const Eigen::MatrixXd &input_signal,
 }
 
 // IIR滤波算法
-void Filter::iir_filter(const Eigen::MatrixXd &input_signal,
-                        Eigen::MatrixXd &output_signal)
+void Filter::iir_filter(const Eigen::Ref<const Eigen::MatrixXd> &input_signal,
+                        Eigen::Ref<Eigen::MatrixXd> output_signal)
 {
     output_signal =
         Eigen::MatrixXd::Zero(input_signal.rows(), input_signal.cols());

@@ -1,4 +1,4 @@
-/**
+﻿/**
 **           qREST - Quick Response Evaluation for Safety Tagging
 **    Institute of Engineering Mechanics, China Earthquake Administration
 **
@@ -29,6 +29,9 @@ class ButterworthFilterDesign : public BasicFilterDesign
 public:
     // 默认构造函数
     ButterworthFilterDesign() = default;
+    // 通过滤波器阶数和滤波器类型构造
+    ButterworthFilterDesign(int filter_order,
+                            FilterType filter_type = FilterType::bandpass);
     // 带通滤波器构造函数
     // @param filter_order 滤波器阶数
     // @param low_frequency 低频截止频率

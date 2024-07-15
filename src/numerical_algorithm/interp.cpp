@@ -99,6 +99,32 @@ Interp::Interp(const Eigen::VectorXd &x,
     }
 }
 
+// 由插值方法参数构造
+Interp::Interp(InterpType interp_type)
+{
+    switch (interp_type)
+    {
+        case InterpType::Linear:
+            interp_type_ = gsl_interp_linear;
+            break;
+        case InterpType::CubicSpline:
+            interp_type_ = gsl_interp_cspline;
+            break;
+        case InterpType::Akima:
+            interp_type_ = gsl_interp_akima;
+            break;
+        case InterpType::Steffen:
+            interp_type_ = gsl_interp_steffen;
+            break;
+        case InterpType::Polynomial:
+            interp_type_ = gsl_interp_polynomial;
+            break;
+        default:
+            interp_type_ = gsl_interp_linear;
+            break;
+    }
+}
+
 // 设置插值算法的x输入
 void Interp::set_x(const std::vector<double> &x) { x_ = x; }
 
@@ -168,9 +194,9 @@ void Interp::Interpolation(const std::vector<double> &x_interp,
 
 // 计算矩阵的插值结果
 void Interp::Interpolation(const std::vector<double> &x,
-                           const Eigen::MatrixXd &y,
+                           const Eigen::Ref<const Eigen::MatrixXd> &y,
                            const std::vector<double> &x_interp,
-                           Eigen::MatrixXd &y_interp)
+                           Eigen::Ref<Eigen::MatrixXd> y_interp)
 {
     if (x.size() != y.cols())
     {
@@ -178,7 +204,6 @@ void Interp::Interpolation(const std::vector<double> &x,
     }
     x_ = x;
     y_.resize(x_.size());
-    y_interp.resize(y.rows(), x_interp.size());
     gsl_interp_accel *accel = gsl_interp_accel_alloc();
     gsl_spline *spline = gsl_spline_alloc(interp_type_, x_.size());
     for (int i = 0; i < y.rows(); ++i)

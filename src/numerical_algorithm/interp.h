@@ -27,6 +27,7 @@
 namespace numerical_algorithm
 {
 
+// 插值算法类型
 enum class InterpType
 {
     Linear,
@@ -55,6 +56,9 @@ public:
     Interp(const Eigen::VectorXd &x,
            const Eigen::VectorXd &y,
            InterpType interp_type);
+    // 由插值方法参数构造
+    // @param interp_type 插值算法类型
+    explicit Interp(InterpType interp_type);
     // 拷贝构造函数
     Interp(const Interp &interp) = default;
     // 移动构造函数
@@ -87,9 +91,9 @@ public:
     // @param x_interp 待插值点的x坐标向量
     // @param y_interp 待插值点的插值结果y坐标矩阵
     void Interpolation(const std::vector<double> &x,
-                       const Eigen::MatrixXd &y,
+                       const Eigen::Ref<const Eigen::MatrixXd> &y,
                        const std::vector<double> &x_interp,
-                       Eigen::MatrixXd &y_interp);
+                       Eigen::Ref<Eigen::MatrixXd> y_interp);
 
 private:
     // 插值算法的输入点

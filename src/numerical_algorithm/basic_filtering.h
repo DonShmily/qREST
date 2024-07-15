@@ -52,8 +52,9 @@ public:
     // 滤波算法入口
     // @param input_signal 输入信号矩阵
     // @param output_signal 输出信号矩阵
-    virtual void Filtering(const Eigen::MatrixXd &input_signal,
-                           Eigen::MatrixXd &output_signal) = 0;
+    virtual void
+    Filtering(const Eigen::Ref<const Eigen::MatrixXd> &input_signal,
+              Eigen::Ref<Eigen::MatrixXd> output_signal) = 0;
 
 protected:
 };

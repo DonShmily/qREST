@@ -1,4 +1,4 @@
-/**
+﻿/**
 **           qREST - Quick Response Evaluation for Safety Tagging
 **    Institute of Engineering Mechanics, China Earthquake Administration
 **
@@ -83,10 +83,21 @@ public:
     // 析构函数
     ~FilteringIntegralResult() = default;
 
+    // 获取位移
+    // @return 位移的引用
+    const data_structure::Displacement &get_displacement() const
+    {
+        return *displacement_ptr_;
+    }
+    // 获取层间位移角
+    // @return 层间位移角的引用
+    const data_structure::StoryDrift &get_story_drift() const
+    {
+        return *story_drift_ptr_;
+    }
+
 private:
     // 计算结果，共享数据指针，具体内容由方法决定
-    std::shared_ptr<data_structure::Acceleration> acceleration_ptr_{};
-    std::shared_ptr<data_structure::Velocity> velocity_ptr_{};
     std::shared_ptr<data_structure::Displacement> displacement_ptr_{};
     std::shared_ptr<data_structure::StoryDrift> story_drift_ptr_{};
 };
@@ -152,7 +163,7 @@ public:
     FilteringIntegralMethod &get_filtering_interp_method() { return method_; }
 
     // 滤波积分插值法计算的入口
-    void CalculateEdp();
+    void CalculateEdp() override;
 
     // 获取滤波积分插值法计算结果
     // @return 滤波积分插值法计算结果的引用

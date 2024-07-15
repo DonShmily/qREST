@@ -30,6 +30,14 @@
 namespace numerical_algorithm
 {
 
+// 通过滤波器阶数和滤波器类型构造
+ButterworthFilterDesign::ButterworthFilterDesign(int filter_order,
+                                                 FilterType filter_type)
+    : BasicFilterDesign(filter_order, 0, 0, filter_type)
+{
+    DesignFilter();
+}
+
 // 带通滤波器构造函数
 ButterworthFilterDesign::ButterworthFilterDesign(int filter_order,
                                                  double low_frequency,
