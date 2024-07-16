@@ -82,18 +82,18 @@ public:
     double Interpolation(double x_interp) const;
     // 计算多个点的插值结果
     // @param x_interp 待插值点的x坐标
-    // @param y_interp 待插值点的插值结果y坐标
-    void Interpolation(const std::vector<double> &x_interp,
-                       std::vector<double> &y_interp) const;
-    // 计算矩阵的插值结果
+    // @return 待插值点的插值结果y坐标
+    std::vector<double>
+    Interpolation(const std::vector<double> &x_interp) const;
+    // 计算矩阵的插值结果，按行插值
     // @param x 已知点的x坐标向量
     // @param y 已知点的y坐标矩阵
     // @param x_interp 待插值点的x坐标向量
-    // @param y_interp 待插值点的插值结果y坐标矩阵
-    void Interpolation(const std::vector<double> &x,
-                       const Eigen::Ref<const Eigen::MatrixXd> &y,
-                       const std::vector<double> &x_interp,
-                       Eigen::Ref<Eigen::MatrixXd> y_interp);
+    // @return 待插值点的插值结果y坐标矩阵
+    std::vector<std::vector<double>>
+    Interpolation(const std::vector<double> &x,
+                  const std::vector<std::vector<double>> &y,
+                  const std::vector<double> &x_interp);
 
 private:
     // 插值算法的输入点

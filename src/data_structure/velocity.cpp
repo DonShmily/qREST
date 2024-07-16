@@ -18,25 +18,32 @@
 namespace data_structure
 {
 
-// 求解楼层相对底层的加速度
-Velocity Velocity::relative_acceleration() const
+// 求解楼层相对底层的速度
+Velocity Velocity::relative_velocity() const
 {
-    Velocity result(data_.cols(), data_.rows() - 1, frequency_);
-    for (std::size_t i = 0; i < result.data_.cols(); ++i)
+    Velocity result(data_.front().size(), data_.size() - 1, frequency_);
+    for (std::size_t i = 0; i < result.data_.size(); ++i)
     {
-        result.data_.col(i) = data_.col(i + 1) - data_.col(0);
+        for (std::size_t j = 0; j < result.data_[i].size(); ++j)
+        {
+            result.data_[i][j] = data_[i + 1][j] - data_[0][j];
+        }
     }
     return result;
 }
 
 // 求解层间相对速度
-Velocity Velocity::interstory_acceleration() const
+Velocity Velocity::interstory_velocity() const
 {
-    Velocity result(data_.cols(), data_.rows() - 1, frequency_);
-    for (std::size_t i = 0; i < result.data_.cols(); ++i)
+    Velocity result(data_.front().size(), data_.size() - 1, frequency_);
+    for (std::size_t i = 0; i < result.data_.size(); ++i)
     {
-        result.data_.col(i) = data_.col(i + 1) - data_.col(i);
+        for (std::size_t j = 0; j < result.data_[i].size(); ++j)
+        {
+            result.data_[i][j] = data_[i + 1][j] - data_[i][j];
+        }
     }
     return result;
 }
+
 } // namespace data_structure

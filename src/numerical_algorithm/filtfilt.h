@@ -17,6 +17,7 @@
 
 
 // stdc++ headers
+#include <algorithm>
 #include <fstream>
 #include <vector>
 
@@ -83,11 +84,17 @@ public:
         filter_design.get_filter_coefficients(coefficients_a_, coefficients_b_);
     }
 
-    // 滤波算法入口
+    // 矩阵滤波算法入口
     // @param input_signal 输入信号矩阵
-    // @param output_signal 输出信号矩阵
-    void Filtering(const Eigen::Ref<const Eigen::MatrixXd> &input_signal,
-                   Eigen::Ref<Eigen::MatrixXd> output_signal) override;
+    // @return 滤波后的信号矩阵
+    std::vector<std::vector<double>>
+    Filtering(const std::vector<std::vector<double>> &input_signal) override;
+
+    // 单列数据滤波算法入口
+    // @param input_signal 输入信号
+    // @return 滤波后的信号
+    std::vector<double>
+    Filtering(const std::vector<double> &input_signal) override;
 
 private:
     // filtfilt滤波方法参数
@@ -97,9 +104,6 @@ private:
     void filter(const std::vector<double> &input_signal,
                 std::vector<double> &output_signal,
                 std::vector<double> zi);
-    // 单列信号filtfilt滤波算法函数
-    void filtfilt_single(const std::vector<double> &input_signal,
-                         std::vector<double> &output_signal);
     // filtfilt算法的功能函数
     inline void
     AddIndexRange(std::vector<int> &indices, int beg, int end, int inc = 1)

@@ -27,16 +27,8 @@ namespace data_structure
 
 // 从二维std::vector<std::vector<double>>构造
 BasicData::BasicData(const std::vector<std::vector<double>> &matrix)
-{
-    data_.resize(matrix.size(), matrix[0].size());
-    for (std::size_t i = 0; i < matrix.size(); ++i)
-    {
-        for (std::size_t j = 0; j < matrix[0].size(); ++j)
-        {
-            data_(i, j) = matrix[i][j];
-        }
-    }
-}
+    : data_(matrix)
+{}
 
 // 从输入流构造
 BasicData::BasicData(std::istream &stream,
@@ -69,12 +61,12 @@ BasicData::BasicData(std::istream &stream,
     {
         std::cerr << e.what() << std::endl;
     }
-    data_.resize(row_number, col_number);
+    resize(row_number, col_number);
     for (std::size_t i = 0; i < row_number; ++i)
     {
         for (std::size_t j = 0; j < col_number; ++j)
         {
-            stream >> data_(i, j);
+            stream >> data_[j][i];
         }
     }
 }
@@ -98,8 +90,19 @@ BasicData::BasicData(const std::size_t &row_number,
     {
         std::cerr << e.what() << std::endl;
     }
-    data_.resize(row_number, col_number);
-    data_.fill(init_value);
+    resize(row_number, col_number, init_value);
+}
+
+// 改变数据矩阵的大小
+void BasicData::resize(const std::size_t &row_number,
+                       const std::size_t &col_number,
+                       const double &init_value)
+{
+    data_.resize(col_number);
+    for (std::size_t i = 0; i < col_number; ++i)
+    {
+        data_[i].resize(row_number, init_value);
+    }
 }
 
 } // namespace data_structure

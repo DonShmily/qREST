@@ -18,24 +18,18 @@
 
 // stdc++ headers
 
-// third-party library headers
-#include <eigen3/Eigen/Dense>
-
-
 // project headers
+#include "basic_data_structure.h"
 
 
 namespace data_structure
 {
 // 层间位移角信息类
-class StoryDrift
+class StoryDrift : public BasicData
 {
 public:
     // 构造函数
     StoryDrift() = default;
-    // 从Eigen::MatrixXd构造
-    StoryDrift(const Eigen::MatrixXd &story_drift) : story_drift_(story_drift)
-    {}
     // 拷贝构造函数
     StoryDrift(const StoryDrift &story_drift) = default;
     // 移动构造函数
@@ -43,15 +37,7 @@ public:
     // 析构函数
     ~StoryDrift() = default;
 
-    // 获取层间位移角
-    const Eigen::MatrixXd &get_story_drift() const { return story_drift_; }
-
-    // 获取层间位移角的引用
-    Eigen::MatrixXd &data() { return story_drift_; }
-
 private:
-    // 层间位移角
-    Eigen::MatrixXd story_drift_{};
 };
 
 } // namespace data_structure

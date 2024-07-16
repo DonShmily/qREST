@@ -30,6 +30,7 @@
 #include "numerical_algorithm/filtfilt.h"
 #include "numerical_algorithm/integral.h"
 #include "numerical_algorithm/interp.h"
+#include "numerical_algorithm/vector_calculation.h"
 
 
 namespace edp_calculation
@@ -61,77 +62,41 @@ void FilteringIntegral::CalculateEdp()
     }
 
     // 1.3确定插值方法
-    std::shared_ptr<numerical_algorithm::Interp> interp_function = nullptr;
-    switch (method_.interp_type_)
-    {
-        case numerical_algorithm::InterpType::Linear:
-            interp_function->set_interp_type(
-                numerical_algorithm::InterpType::Linear);
-            break;
-        case numerical_algorithm::InterpType::CubicSpline:
-            interp_function->set_interp_type(
-                numerical_algorithm::InterpType::CubicSpline);
-            break;
-        case numerical_algorithm::InterpType::Akima:
-            interp_function->set_interp_type(
-                numerical_algorithm::InterpType::Akima);
-            break;
-        case numerical_algorithm::InterpType::Steffen:
-            interp_function->set_interp_type(
-                numerical_algorithm::InterpType::Steffen);
-            break;
-        case numerical_algorithm::InterpType::Polynomial:
-            interp_function->set_interp_type(
-                numerical_algorithm::InterpType::Polynomial);
-            break;
-        default:
-            interp_function->set_interp_type(
-                numerical_algorithm::InterpType::Linear);
-            break;
-    }
+    numerical_algorithm::Interp interp_function(method_.interp_type_);
 
     // 2.滤波积分插值计算层间位移角
-    // 2.1 加速度滤波
     double dt = input_acceleration_ptr_->get_time_step();
-    auto filtered_acceleration = Eigen::MatrixXd();
-    filter_function->Filtering(input_acceleration_ptr_->get_data(),
-                               filtered_acceleration);
+    // 2.1 加速度滤波
+    auto filtered_acceleration =
+        filter_function->Filtering(input_acceleration_ptr_->get_data());
     //  2.2 加速度积分到速度
-    auto velocity = Eigen::MatrixXd();
-    numerical_algorithm::Cumtrapz(filtered_acceleration, velocity, dt);
+    auto velocity = numerical_algorithm::Cumtrapz(filtered_acceleration, dt);
     // 2.3 速度滤波
-    auto interp_velocity = Eigen::MatrixXd();
-    filter_function->Filtering(velocity, interp_velocity);
+    auto interp_velocity = filter_function->Filtering(velocity);
     // 2.4 速度积分到位移
-    auto displacement = Eigen::MatrixXd();
-    numerical_algorithm::Cumtrapz(interp_velocity, displacement, dt);
+    auto displacement = numerical_algorithm::Cumtrapz(interp_velocity, dt);
     // 2.5 位移滤波
-    auto filtered_displacement = data_structure::Displacement(
-        Eigen::MatrixXd(), input_acceleration_ptr_->get_frequency());
-    filter_function->Filtering(displacement, filtered_displacement.data());
+    auto filtered_displacement = filter_function->Filtering(displacement);
     // 2.6 位移插值
     result_ptr_->displacement_ptr_ =
         std::make_shared<data_structure::Displacement>(
-            Eigen::MatrixXd(), input_acceleration_ptr_->get_frequency());
-    interp_function->Interpolation(building_ptr_->get_measuren_height(),
-                                   filtered_displacement.data(),
-                                   building_ptr_->get_floor_height(),
-                                   result_ptr_->displacement_ptr_->data());
+            std::vector<std::vector<double>>(),
+            input_acceleration_ptr_->get_frequency());
+    result_ptr_->displacement_ptr_->data() =
+        interp_function.Interpolation(building_ptr_->get_measuren_height(),
+                                      filtered_displacement,
+                                      building_ptr_->get_floor_height());
     // 2.7 计算层间位移
     auto interstory_displacement =
         result_ptr_->displacement_ptr_->interstory_displacement();
     result_ptr_->story_drift_ptr_ =
-        std::make_shared<data_structure::StoryDrift>(
-            Eigen::MatrixXd::Zero(interstory_displacement.data().rows(),
-                                  interstory_displacement.data().cols()));
-    auto interstory_height = Eigen::Map<Eigen::RowVectorXd>(
-        building_ptr_->get_inter_height().data(),
-        building_ptr_->get_inter_height().size());
-    for (std::size_t i = 0; i < interstory_displacement.data().rows(); ++i)
+        std::make_shared<data_structure::StoryDrift>();
+    auto interstory_height = building_ptr_->get_inter_height();
+    for (std::size_t i = 0; i < interstory_displacement.data().size(); ++i)
     {
-        result_ptr_->story_drift_ptr_->data().row(i) =
-            interstory_displacement.data().row(i).array()
-            / interstory_height.array();
+        result_ptr_->story_drift_ptr_->data().push_back(
+            numerical_algorithm::VectorOperation(
+                interstory_displacement.data()[i], interstory_height[i], '/'));
     }
 }
 } // namespace edp_calculation

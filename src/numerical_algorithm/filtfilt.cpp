@@ -25,25 +25,22 @@
 namespace numerical_algorithm
 {
 
-// filtfilt滤波算法的入口函数
-void FiltFilt::Filtering(const Eigen::Ref<const Eigen::MatrixXd> &input_signal,
-                         Eigen::Ref<Eigen::MatrixXd> output_signal)
+// 矩阵滤波算法入口
+std::vector<std::vector<double>>
+FiltFilt::Filtering(const std::vector<std::vector<double>> &input_signal)
 {
-    for (int i = 0; i != input_signal.cols(); ++i)
+    auto output_signal = std::vector<std::vector<double>>(
+        input_signal.size(),
+        std::vector<double>(input_signal.front().size(), 0.0));
+    for (size_t i = 0; i < input_signal.size(); ++i)
     {
-        std::vector<double> input_vec(input_signal.rows());
-        input_vec.assign(input_signal.col(i).data(),
-                         input_signal.col(i).data() + input_signal.rows());
-        std::vector<double> output_vec;
-        filtfilt_single(input_vec, output_vec);
-        output_signal.col(i) =
-            Eigen::Map<Eigen::VectorXd>(output_vec.data(), output_vec.size());
+        output_signal[i] = Filtering(input_signal[i]);
     }
+    return output_signal;
 }
 
-// filtfilt滤波算法的单个信号处理函数
-void FiltFilt::filtfilt_single(const std::vector<double> &input_signal,
-                               std::vector<double> &output_signal)
+// 单列滤波算法入口
+std::vector<double> FiltFilt::Filtering(const std::vector<double> &input_signal)
 {
     int len = static_cast<int>(input_signal.size()); // length of input
     int nfilt =
@@ -56,8 +53,8 @@ void FiltFilt::filtfilt_single(const std::vector<double> &input_signal,
         throw std::domain_error("Input data too short! Data must have length "
                                 "more than 3 times filter order.");
 
-    // set up filter's initial conditions to remove DC offset problems at the
-    // beginning and end of the sequence
+    // set up filter's initial conditions to remove DC offset problems at
+    // the beginning and end of the sequence
     coefficients_b_.resize(nfilt, 0);
     coefficients_a_.resize(nfilt, 0);
 
@@ -152,8 +149,7 @@ void FiltFilt::filtfilt_single(const std::vector<double> &input_signal,
                    zi.begin(),
                    [y0](double val) { return val * y0; });
     filter(signal2, signal1, zi);
-    output_signal =
-        SubvectorReverse(signal1, signal1.size() - nfact - 1, nfact);
+    return SubvectorReverse(signal1, signal1.size() - nfact - 1, nfact);
 }
 
 // filtfilt滤波算法的filter函数

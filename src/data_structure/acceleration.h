@@ -23,10 +23,6 @@
 #include <iosfwd>
 #include <vector>
 
-
-// third-party library headers
-#include "eigen3/Eigen/Core"
-
 // project headers
 #include "basic_data_structure.h"
 
@@ -60,14 +56,6 @@ public:
     {
         adjust_mean();
     }
-    // 从Eigen::MatrixXd构造，矩阵每列代表一个测点的加速度数据
-    // @param matrix 加速度数据矩阵
-    // @param frequency 采样频率
-    Acceleration(const Eigen::MatrixXd &matrix, const double &frequency)
-        : BasicData(matrix), frequency_(frequency)
-    {
-        adjust_mean();
-    }
     // 从指定列构造，从整体的加速度类型变量的部分列构造，col_index为指定列的索引
     // @param acceleration 加速度信息
     // @param frequency 采样频率
@@ -77,11 +65,11 @@ public:
                  const std::initializer_list<std::size_t> &col_index)
         : frequency_(frequency)
     {
-        data_.resize(acceleration.data_.rows(), col_index.size());
+        resize(acceleration.get_row_number(), col_index.size());
         std::size_t i = 0;
         for (const auto &index : col_index)
         {
-            data_.col(i) = acceleration.data_.col(index);
+            data_[i] = acceleration.data_[index];
             ++i;
         }
     }

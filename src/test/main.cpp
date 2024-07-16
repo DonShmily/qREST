@@ -8,10 +8,10 @@ int main()
     // butter_test_main();
 
     // 测试滤波器
-    // filter_test_main();
+    filter_test_main();
 
     // 测试改进的滤波积分算法
-    test_filter_integrate();
+    // test_filter_integrate();
 
     return 0;
 }

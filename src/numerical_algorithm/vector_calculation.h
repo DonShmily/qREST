@@ -23,6 +23,10 @@
 
 namespace numerical_algorithm
 {
+
+// 寻找向量中的极值点
+// @param vec 向量
+// @return 极值点的索引
 inline std::vector<std::size_t> FindPeaks(const std::vector<double> &vec)
 {
     std::vector<std::size_t> peaks;
@@ -34,6 +38,84 @@ inline std::vector<std::size_t> FindPeaks(const std::vector<double> &vec)
         }
     }
     return peaks;
+}
+
+inline std::vector<double> VectorOperation(const std::vector<double> &vector1,
+                                           const std::vector<double> &vector2,
+                                           const char operation)
+{
+    auto vec_size = vector1.size();
+    std::vector<double> result(vec_size);
+    switch (operation)
+    {
+        case '+':
+            for (std::size_t i = 0; i < vec_size; ++i)
+            {
+                result[i] = vector1[i] + vector2[i];
+            }
+            break;
+        case '-':
+            for (std::size_t i = 0; i < vec_size; ++i)
+            {
+                result[i] = vector1[i] - vector2[i];
+            }
+            break;
+        case '*':
+            for (std::size_t i = 0; i < vec_size; ++i)
+            {
+                result[i] = vector1[i] * vector2[i];
+            }
+            break;
+        case '/':
+            for (std::size_t i = 0; i < vec_size; ++i)
+            {
+                result[i] = vector1[i] / vector2[i];
+            }
+            break;
+        default:
+            throw std::invalid_argument("Invalid operation");
+            break;
+    }
+    return result;
+}
+
+inline std::vector<double> VectorOperation(const std::vector<double> &vector1,
+                                           const double scalar,
+                                           const char operation)
+{
+    auto vec_size = vector1.size();
+    std::vector<double> result(vec_size);
+    switch (operation)
+    {
+        case '+':
+            for (std::size_t i = 0; i < vec_size; ++i)
+            {
+                result[i] = vector1[i] + scalar;
+            }
+            break;
+        case '-':
+            for (std::size_t i = 0; i < vec_size; ++i)
+            {
+                result[i] = vector1[i] - scalar;
+            }
+            break;
+        case '*':
+            for (std::size_t i = 0; i < vec_size; ++i)
+            {
+                result[i] = vector1[i] * scalar;
+            }
+            break;
+        case '/':
+            for (std::size_t i = 0; i < vec_size; ++i)
+            {
+                result[i] = vector1[i] / scalar;
+            }
+            break;
+        default:
+            throw std::invalid_argument("Invalid operation");
+            break;
+    }
+    return result;
 }
 } // namespace numerical_algorithm
 

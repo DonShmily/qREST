@@ -150,9 +150,6 @@
     <ProjectReference Include="..\data_structure\data_structure.vcxproj">
       <Project>{f1172cb4-30fc-47e4-9bb3-72219936f2a2}</Project>
     </ProjectReference>
-    <ProjectReference Include="..\edp_calculation\edp_calculation.vcxproj">
-      <Project>{e687ea63-034c-49c0-aefe-25c6e14984e8}</Project>
-    </ProjectReference>
     <ProjectReference Include="..\numerical_algorithm\numerical_algorithm.vcxproj">
       <Project>{ab65f082-17af-4015-a3b4-baae8ba00c71}</Project>
     </ProjectReference>

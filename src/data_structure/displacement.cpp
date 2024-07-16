@@ -15,16 +15,22 @@
 // associated header
 #include "displacement.h"
 
+// stdc++ headers
+#include <cstddef>
+
 namespace data_structure
 {
 
 // 求解楼层相对底层的位移
 Displacement Displacement::relative_displacement() const
 {
-    Displacement result(data_.cols(), data_.rows() - 1, frequency_);
-    for (std::size_t i = 0; i < result.data_.cols(); ++i)
+    Displacement result(data_.front().size(), data_.size() - 1, frequency_);
+    for (std::size_t i = 0; i < result.data_.size(); ++i)
     {
-        result.data_.col(i) = data_.col(i + 1) - data_.col(0);
+        for (std::size_t j = 0; j < result.data_[i].size(); ++j)
+        {
+            result.data_[i][j] = data_[i + 1][j] - data_[0][j];
+        }
     }
     return result;
 }
@@ -32,10 +38,13 @@ Displacement Displacement::relative_displacement() const
 // 求解层间相对位移
 Displacement Displacement::interstory_displacement() const
 {
-    Displacement result(data_.cols(), data_.rows() - 1, frequency_);
-    for (std::size_t i = 0; i < result.data_.cols(); ++i)
+    Displacement result(data_.front().size(), data_.size() - 1, frequency_);
+    for (std::size_t i = 0; i < result.data_.size(); ++i)
     {
-        result.data_.col(i) = data_.col(i + 1) - data_.col(i);
+        for (std::size_t j = 0; j < result.data_[i].size(); ++j)
+        {
+            result.data_[i][j] = data_[i + 1][j] - data_[i][j];
+        }
     }
     return result;
 }

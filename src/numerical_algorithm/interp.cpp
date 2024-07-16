@@ -160,6 +160,10 @@ void Interp::set_interp_type(InterpType interp_type)
 // 计算单个点的插值结果
 double Interp::Interpolation(double x_interp) const
 {
+    if (x_.empty() || y_.empty())
+    {
+        throw std::domain_error("Input point is not set.");
+    }
     if (x_interp < x_.front())
     {
         return (y_.front() - y_[1]) / (x_.front() - x_[1])
@@ -182,23 +186,55 @@ double Interp::Interpolation(double x_interp) const
 }
 
 // 计算多个点的插值结果
-void Interp::Interpolation(const std::vector<double> &x_interp,
-                           std::vector<double> &y_interp) const
+std::vector<double>
+Interp::Interpolation(const std::vector<double> &x_interp) const
 {
-    y_interp.resize(x_interp.size());
+    std::vector<double> y_interp(x_interp.size());
+    if (x_.empty() || y_.empty())
+    {
+        throw std::domain_error("Input point is not set.");
+    }
+    gsl_interp_accel *accel = gsl_interp_accel_alloc();
+    gsl_spline *spline = gsl_spline_alloc(interp_type_, x_.size());
+    gsl_spline_init(spline, x_.data(), y_.data(), x_.size());
     for (int i = 0; i < x_interp.size(); ++i)
     {
-        y_interp[i] = Interpolation(x_interp[i]);
+        if (x_interp[i] < x_.front())
+        {
+            y_interp[i] = (y_.front() - y_[1]) / (x_.front() - x_[1])
+                              * (x_interp[i] - x_.front())
+                          + y_.front();
+        }
+        else if (x_interp[i] > x_.back())
+        {
+            y_interp[i] = (y_.back() - y_[y_.size() - 2])
+                              / (x_.back() - x_[x_.size() - 2])
+                              * (x_interp[i] - x_.back())
+                          + y_.back();
+        }
+        else
+        {
+            y_interp[i] = gsl_spline_eval(spline, x_interp[i], accel);
+        }
     }
+    gsl_spline_free(spline);
+    gsl_interp_accel_free(accel);
+    return y_interp;
 }
 
 // 计算矩阵的插值结果
-void Interp::Interpolation(const std::vector<double> &x,
-                           const Eigen::Ref<const Eigen::MatrixXd> &y,
-                           const std::vector<double> &x_interp,
-                           Eigen::Ref<Eigen::MatrixXd> y_interp)
+std::vector<std::vector<double>>
+Interp::Interpolation(const std::vector<double> &x,
+                      const std::vector<std::vector<double>> &y,
+                      const std::vector<double> &x_interp)
 {
-    if (x.size() != y.cols())
+    if (x.empty() || y.empty())
+    {
+        throw std::domain_error("Input point is empty.");
+    }
+    std::vector<std::vector<double>> y_interp(
+        y.front().size(), std::vector<double>(x_interp.size()));
+    if (x.size() != y.size())
     {
         throw std::invalid_argument("The size of x and y must be equal.");
     }
@@ -206,33 +242,35 @@ void Interp::Interpolation(const std::vector<double> &x,
     y_.resize(x_.size());
     gsl_interp_accel *accel = gsl_interp_accel_alloc();
     gsl_spline *spline = gsl_spline_alloc(interp_type_, x_.size());
-    for (int i = 0; i < y.rows(); ++i)
+    for (int i = 0; i < y.front().size(); ++i)
     {
-        y_.assign(y.row(i).data(), y.row(i).data() + y.cols());
+        for (int j = 0; j < x_.size(); ++j)
+        {
+            y_[j] = y[j][i];
+        }
         gsl_spline_init(spline, x_.data(), y_.data(), x_.size());
         for (int j = 0; j < x_interp.size(); ++j)
         {
             if (x_interp[j] < x_.front())
             {
-                y_interp(i, j) = (y_.front() - y_[1]) / (x_.front() - x_[1])
+                y_interp[j][i] = (y_.front() - y_[1]) / (x_.front() - x_[1])
                                      * (x_interp[j] - x_.front())
                                  + y_.front();
             }
             else if (x_interp[j] > x_.back())
             {
-                y_interp(i, j) = (y_.back() - y_[y_.size() - 2])
+                y_interp[j][i] = (y_.back() - y_[y_.size() - 2])
                                      / (x_.back() - x_[x_.size() - 2])
                                      * (x_interp[j] - x_.back())
                                  + y_.back();
             }
             else
-            {
-                y_interp(i, j) = gsl_spline_eval(spline, x_interp[j], accel);
-            }
+                y_interp[j][i] = gsl_spline_eval(spline, x_interp[j], accel);
         }
     }
     gsl_spline_free(spline);
     gsl_interp_accel_free(accel);
+    return y_interp;
 }
 
 } // namespace numerical_algorithm

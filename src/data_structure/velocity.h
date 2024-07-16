@@ -19,9 +19,6 @@
 #include <iostream>
 #include <vector>
 
-// third-party library headers
-#include "eigen3/Eigen/Core"
-
 // project headers
 #include "basic_data_structure.h"
 
@@ -51,12 +48,6 @@ public:
              const double &frequency)
         : BasicData(stream, row_number, col_number), frequency_(frequency)
     {}
-    // 从Eigen::MatrixXd构造，矩阵每列代表一个测点的速度数据
-    // @param matrix 速度数据矩阵
-    // @param frequency 采样频率
-    Velocity(const Eigen::MatrixXd &matrix, const double &frequency)
-        : BasicData(matrix), frequency_(frequency)
-    {}
     // 拷贝构造函数
     Velocity(const Velocity &data) = default;
     // 移动构造函数
@@ -70,9 +61,9 @@ public:
     double get_time_step() const { return 1.0 / frequency_; }
 
     // 求解相对速度（相对于底层），返回2-top测点的相对速度信息
-    Velocity relative_acceleration() const;
+    Velocity relative_velocity() const;
     // 求解层间相对速度，返回2-top相邻层间的相对速度信息
-    Velocity interstory_acceleration() const;
+    Velocity interstory_velocity() const;
 
 private:
     // 速度采样频率

@@ -105,7 +105,7 @@ private:
     std::shared_ptr<FilteringIntegralResult> result_ptr_{};
 
     // 滤波积分插值法计算单列加速度
-    Eigen::MatrixXd CalculateSingle(const std::size_t &col);
+    std::vector<double> CalculateSingle(const std::size_t &col);
 };
 } // namespace edp_calculation
 

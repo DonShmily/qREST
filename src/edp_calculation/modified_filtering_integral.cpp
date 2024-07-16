@@ -19,10 +19,8 @@
 
 // stdc++ headers
 #include <memory>
+#include <numeric>
 #include <vector>
-
-// third-party library headers
-#include <eigen3/Eigen/Dense>
 
 // project headers
 #include "numerical_algorithm/basic_filtering.h"
@@ -67,68 +65,55 @@ void ModifiedFilteringIntegral::CalculateEdp()
     numerical_algorithm::Interp interp_function(method_.interp_type_);
 
     // 2.滤波积分插值计算层间位移角
-    // 2.2 逐列滤波积分
-    Eigen::MatrixXd filtered_displacement(
-        input_acceleration_ptr_->get_data().rows(),
-        input_acceleration_ptr_->get_data().cols());
-    for (std::size_t i = 0; i < input_acceleration_ptr_->get_data().cols(); ++i)
+    // 2.1 逐列滤波积分得到测点位移
+    std::vector<std::vector<double>> filtered_displacement(
+        input_acceleration_ptr_->get_data().size(),
+        std::vector<double>(input_acceleration_ptr_->get_data().size(), 0.0));
+    for (std::size_t i = 0; i < input_acceleration_ptr_->get_data().size(); ++i)
     {
-        filtered_displacement.col(i) = CalculateSingle(i);
+        filtered_displacement[i] = CalculateSingle(i);
     }
 
-    // 2.6 位移插值
+    // 2.2 位移插值
     result_ptr_->displacement_ptr_ =
         std::make_shared<data_structure::Displacement>(
-            Eigen::MatrixXd(), input_acceleration_ptr_->get_frequency());
-    interp_function.Interpolation(building_ptr_->get_measuren_height(),
-                                  filtered_displacement,
-                                  building_ptr_->get_floor_height(),
-                                  result_ptr_->displacement_ptr_->data());
-    // 2.7 计算层间位移
+            std::vector<std::vector<double>>(),
+            input_acceleration_ptr_->get_frequency());
+    result_ptr_->displacement_ptr_->data() =
+        interp_function.Interpolation(building_ptr_->get_measuren_height(),
+                                      filtered_displacement,
+                                      building_ptr_->get_floor_height());
+    // 2.3 计算层间位移
     auto interstory_displacement =
         result_ptr_->displacement_ptr_->interstory_displacement();
     result_ptr_->story_drift_ptr_ =
-        std::make_shared<data_structure::StoryDrift>(
-            Eigen::MatrixXd::Zero(interstory_displacement.data().rows(),
-                                  interstory_displacement.data().cols()));
-    auto interstory_height = Eigen::Map<Eigen::RowVectorXd>(
-        building_ptr_->get_inter_height().data(),
-        building_ptr_->get_inter_height().size());
-    for (std::size_t i = 0; i < interstory_displacement.data().rows(); ++i)
+        std::make_shared<data_structure::StoryDrift>();
+    auto interstory_height = building_ptr_->get_inter_height();
+    for (std::size_t i = 0; i < interstory_displacement.data().size(); ++i)
     {
-        result_ptr_->story_drift_ptr_->data().row(i) =
-            interstory_displacement.data().row(i).array()
-            / interstory_height.array();
+        result_ptr_->story_drift_ptr_->data().push_back(
+            numerical_algorithm::VectorOperation(
+                interstory_displacement.data()[i], interstory_height[i], '/'));
     }
 }
 
 // 滤波积分插值法计算单列加速度
-Eigen::MatrixXd
+std::vector<double>
 ModifiedFilteringIntegral::CalculateSingle(const std::size_t &col)
 {
     // 1.初步到速度和位移
     double dt = input_acceleration_ptr_->get_time_step();
 
-    auto velocity_0 =
-        Eigen::MatrixXd(input_acceleration_ptr_->get_data().rows(), 1);
-    numerical_algorithm::Cumtrapz(
-        input_acceleration_ptr_->get_data().col(col), velocity_0, dt);
-    auto displacement_0 =
-        Eigen::MatrixXd(input_acceleration_ptr_->get_data().rows(), 1);
-    numerical_algorithm::Cumtrapz(velocity_0, displacement_0, dt);
+    auto velocity_0 = numerical_algorithm::Cumtrapz(
+        input_acceleration_ptr_->get_data()[col], dt);
+    auto displacement_0 = numerical_algorithm::Cumtrapz(velocity_0, dt);
 
     // 2.滤波积分，得到不同低频限值下的结果
     int max_k = 100;
     // 2.1储存每次滤波积分的临时结果
-    Eigen::MatrixXd integral_velocity, integral_displacement,
-        filtered_acceleration_0, filtered_velocity_0, filtered_displacement_0;
-    // 初始化储存矩阵
-    integral_velocity.resize(velocity_0.rows(), max_k);
-    integral_displacement.resize(displacement_0.rows(), max_k);
-    filtered_acceleration_0.resize(input_acceleration_ptr_->get_data().rows(),
-                                   max_k);
-    filtered_velocity_0.resize(velocity_0.rows(), max_k);
-    filtered_displacement_0.resize(displacement_0.rows(), max_k);
+    std::vector<std::vector<double>> integral_velocity(max_k),
+        integral_displacement(max_k), filtered_acceleration_0(max_k),
+        filtered_velocity_0(max_k), filtered_displacement_0(max_k);
     // 2.2设置滤波积分方法
     auto filter_generator = numerical_algorithm::ButterworthFilterDesign(2);
     auto filter_function = numerical_algorithm::FiltFilt();
@@ -142,28 +127,41 @@ ModifiedFilteringIntegral::CalculateSingle(const std::size_t &col)
         filter_function.set_coefficients(filter_generator);
 
         // 2.4 滤波积分
-        filter_function.Filtering(input_acceleration_ptr_->get_data().col(col),
-                                  filtered_acceleration_0.col(i));
-        numerical_algorithm::Cumtrapz(
-            filtered_acceleration_0.col(i), integral_velocity.col(i), dt);
-        filter_function.Filtering(integral_velocity.col(i),
-                                  filtered_velocity_0.col(i));
-        numerical_algorithm::Cumtrapz(
-            filtered_velocity_0.col(i), integral_displacement.col(i), dt);
-        filter_function.Filtering(integral_displacement.col(i),
-                                  filtered_displacement_0.col(i));
+        filtered_acceleration_0[i] =
+            filter_function.Filtering(input_acceleration_ptr_->get_data()[col]);
+        integral_velocity[i] =
+            numerical_algorithm::Cumtrapz(filtered_acceleration_0[i], dt);
+        filtered_velocity_0[i] =
+            filter_function.Filtering(integral_velocity[i]);
+        integral_displacement[i] =
+            numerical_algorithm::Cumtrapz(filtered_velocity_0[i], dt);
+        filtered_displacement_0[i] =
+            filter_function.Filtering(integral_displacement[i]);
     }
 
     // 3.根据功率比选择最佳结果
     // 3.1 计算功率比
     std::vector<double> power_ratio(max_k, 0.0);
-    power_ratio[0] = filtered_acceleration_0.col(0).array().pow(2).sum()
-                     / displacement_0.array().pow(2).sum();
+    power_ratio[0] =
+        std::accumulate(filtered_acceleration_0[0].begin(),
+                        filtered_acceleration_0[0].end(),
+                        0.0,
+                        [](double x, double y) { return x + y * y; })
+        / std::accumulate(displacement_0.begin(),
+                          displacement_0.end(),
+                          0.0,
+                          [](double x, double y) { return x + y * y; });
     for (int i = 1; i < max_k; ++i)
     {
         power_ratio[i] =
-            filtered_acceleration_0.col(i).array().pow(2).sum()
-            / filtered_displacement_0.col(i - 1).array().pow(2).sum();
+            std::accumulate(filtered_acceleration_0[i].begin(),
+                            filtered_acceleration_0[i].end(),
+                            0.0,
+                            [](double x, double y) { return x + y * y; })
+            / std::accumulate(filtered_acceleration_0[i - 1].begin(),
+                              filtered_acceleration_0[i - 1].end(),
+                              0.0,
+                              [](double x, double y) { return x + y * y; });
     }
 
     // 3.2 选择功率比最大的结果
@@ -188,6 +186,6 @@ ModifiedFilteringIntegral::CalculateSingle(const std::size_t &col)
     {
         nth_fre = nth_fre_defalt;
     }
-    return filtered_displacement_0.col(nth_fre);
+    return filtered_displacement_0[nth_fre];
 }
 } // namespace edp_calculation

@@ -19,10 +19,6 @@
 #include <iosfwd>
 #include <vector>
 
-// third-party library headers
-#include "eigen3/Eigen/Core"
-
-
 namespace data_structure
 {
 
@@ -39,9 +35,6 @@ public:
     BasicData(std::istream &stream,
               std::size_t row_number,
               std::size_t col_number);
-    // 从Eigen::MatrixXd构造
-    // @param matrix 数据矩阵
-    BasicData(const Eigen::MatrixXd &matrix) : data_(matrix) {};
     // 拷贝构造函数
     BasicData(const BasicData &data) = default;
     // 移动构造函数
@@ -50,10 +43,49 @@ public:
     virtual ~BasicData() = default;
 
     // 获取数据矩阵的拷贝
-    const Eigen::MatrixXd &get_data() const { return data_; }
+    const std::vector<std::vector<double>> &get_data() const { return data_; }
 
     // 获取数据矩阵的引用
-    Eigen::MatrixXd &data() { return data_; }
+    std::vector<std::vector<double>> &data() { return data_; }
+
+    // 重新设置大小
+    // @param row_number 行数
+    // @param col_number 列数
+    // @param init_value 初始化值
+    void resize(const std::size_t &row_number,
+                const std::size_t &col_number,
+                const double &init_value = 0.0);
+
+    // 获取行数
+    std::size_t get_row_number() const { return data_.front().size(); }
+    // 获取列数
+    std::size_t get_col_number() const { return data_.size(); }
+
+    // 获取指定行的数据
+    // @param row_index 行索引
+    const std::vector<double> &get_row(const std::size_t &row_index) const
+    {
+        return data_.at(row_index);
+    }
+
+    // 获取指定列的数据
+    // @param col_index 列索引
+    std::vector<double> get_col(const std::size_t &col_index) const
+    {
+        std::vector<double> col_data;
+        for (const auto &row : data_)
+        {
+            col_data.push_back(row.at(col_index));
+        }
+        return col_data;
+    }
+
+    // 获取指定行列的引用
+    // @param col_index 列索引
+    std::vector<double> &col(const std::size_t &col_index)
+    {
+        return data_.at(col_index);
+    }
 
     // 写入数据流，输出数据矩阵。列主序，行为时程，列为节点
     // @param output_stream 输出流
@@ -61,7 +93,7 @@ public:
 
 protected:
     // 数据矩阵：列主序，行为时程，列为节点
-    Eigen::MatrixXd data_;
+    std::vector<std::vector<double>> data_;
 
     // 从指定大小构造
     // @param row_number 行数

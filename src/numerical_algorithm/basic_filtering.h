@@ -19,9 +19,6 @@
 #include <memory>
 #include <vector>
 
-// third-party headers
-#include "eigen3/Eigen/Core"
-
 // project headers
 #include "basic_filter_design.h"
 
@@ -49,12 +46,17 @@ public:
     // 析构函数
     virtual ~BasicFiltering() = default;
 
-    // 滤波算法入口
+    // 矩阵滤波算法入口
     // @param input_signal 输入信号矩阵
-    // @param output_signal 输出信号矩阵
-    virtual void
-    Filtering(const Eigen::Ref<const Eigen::MatrixXd> &input_signal,
-              Eigen::Ref<Eigen::MatrixXd> output_signal) = 0;
+    // @return 滤波后的信号矩阵
+    virtual std::vector<std::vector<double>>
+    Filtering(const std::vector<std::vector<double>> &input_signa) = 0;
+
+    // 单列数据滤波算法入口
+    // @param input_signal 输入信号
+    // @return 滤波后的信号
+    virtual std::vector<double>
+    Filtering(const std::vector<double> &input_signal) = 0;
 
 protected:
 };

@@ -20,9 +20,6 @@
 #include <istream>
 #include <vector>
 
-// third-party library headers
-#include "eigen3/Eigen/Core"
-
 // project headers
 #include "basic_data_structure.h"
 
@@ -51,12 +48,6 @@ public:
                  std::size_t col_number,
                  const double &frequency)
         : BasicData(stream, row_number, col_number), frequency_(frequency)
-    {}
-    // 从Eigen::MatrixXd构造，矩阵每列代表一个测点的位移数据
-    // @param matrix 位移数据矩阵
-    // @param frequency 采样频率
-    Displacement(const Eigen::MatrixXd &matrix, const double &frequency)
-        : BasicData(matrix), frequency_(frequency)
     {}
     // 拷贝构造函数
     Displacement(const Displacement &data) = default;
