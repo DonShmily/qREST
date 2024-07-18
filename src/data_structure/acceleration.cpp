@@ -1,4 +1,4 @@
-/**
+﻿/**
 **           qREST - Quick Response Evaluation for Safety Tagging
 **    Institute of Engineering Mechanics, China Earthquake Administration
 **
@@ -14,7 +14,6 @@
 
 // associated header
 #include <algorithm>
-#include <cstddef>
 #include <numeric>
 
 #include "acceleration.h"
@@ -23,20 +22,21 @@
 namespace data_structure
 {
 
-// 调整输入加速度使其各列均值为0
-void Acceleration::adjust_mean()
+// 从指定列构造，从整体的加速度类型变量的部分列构造，col_index为指定列的索引
+Acceleration::Acceleration(const Acceleration &acceleration,
+                           const std::initializer_list<std::size_t> &col_index,
+                           const double &frequency,
+                           const double &scale)
+    : frequency_(frequency)
 {
-    for (std::size_t i = 0; i < data_.size(); ++i)
+    resize(acceleration.get_row_number(), col_index.size());
+    std::size_t i = 0;
+    for (const auto &index : col_index)
     {
-        const double col_mean =
-            std::accumulate(data_[i].begin(), data_[i].end(), 0.0)
-            / data_[i].size();
-        std::transform(
-            data_[i].begin(),
-            data_[i].end(),
-            data_[i].begin(),
-            [col_mean](const double &val) { return val - col_mean; });
+        data_[i] = acceleration.data_[index];
+        ++i;
     }
+    adjust_acceleration(scale);
 }
 
 // 求解楼层相对底层的加速度

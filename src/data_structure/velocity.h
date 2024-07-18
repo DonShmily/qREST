@@ -16,7 +16,7 @@
 #define SRC_DATA_STRUCTURE_VELOCITY_H_
 
 // stdc++ headers
-#include <iostream>
+#include <iosfwd>
 #include <vector>
 
 // project headers
@@ -59,6 +59,10 @@ public:
     double get_frequency() const { return frequency_; }
     // 获取速度时间步长
     double get_time_step() const { return 1.0 / frequency_; }
+
+    // 设置采样频率
+    // @param frequency 新的采样频率
+    void set_frequency(const double &frequency) { frequency_ = frequency; }
 
     // 求解相对速度（相对于底层），返回2-top测点的相对速度信息
     Velocity relative_velocity() const;

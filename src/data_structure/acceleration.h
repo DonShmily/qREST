@@ -19,8 +19,10 @@
 
 
 // stdc++ headers
+#include <algorithm>
 #include <initializer_list>
 #include <iosfwd>
+#include <numeric>
 #include <vector>
 
 // project headers
@@ -35,44 +37,45 @@ class Acceleration : public BasicData
 public:
     // 默认构造函数
     Acceleration() = default;
+
     // 从二维std::vector<std::vector<double>>构造，每个vector<double>代表一个测点的加速度数据
     // @param matrix 加速度数据矩阵
     // @param frequency 采样频率
+    // @param scale 调幅因子
     Acceleration(const std::vector<std::vector<double>> &matrix,
-                 const double &frequency)
+                 const double &frequency,
+                 const double &scale = 1.0)
         : BasicData(matrix), frequency_(frequency)
     {
-        adjust_mean();
+        adjust_acceleration(scale);
     }
+
     // 从输入流构造，col_number为测点数量，row_number为每个测点的数据长度
     // @param stream 输入流
     // @param row_number 每个测点的数据长度
     // @param col_number 测点数量
+    // @param frequency 采样频率
+    // @param scale 调幅因子
     Acceleration(std::istream &stream,
                  std::size_t row_number,
                  std::size_t col_number,
-                 const double &frequency)
+                 const double &frequency,
+                 const double &scale = 1.0)
         : BasicData(stream, row_number, col_number), frequency_(frequency)
     {
-        adjust_mean();
+        adjust_acceleration(scale);
     }
+
     // 从指定列构造，从整体的加速度类型变量的部分列构造，col_index为指定列的索引
     // @param acceleration 加速度信息
     // @param frequency 采样频率
     // @param col_index 指定列的索引
+    // @param scale 调幅因子
     Acceleration(const Acceleration &acceleration,
+                 const std::initializer_list<std::size_t> &col_index,
                  const double &frequency,
-                 const std::initializer_list<std::size_t> &col_index)
-        : frequency_(frequency)
-    {
-        resize(acceleration.get_row_number(), col_index.size());
-        std::size_t i = 0;
-        for (const auto &index : col_index)
-        {
-            data_[i] = acceleration.data_[index];
-            ++i;
-        }
-    }
+                 const double &scale = 1.0);
+
     // 拷贝构造函数
     Acceleration(const Acceleration &acceleration) = default;
     // 移动构造函数
@@ -98,8 +101,25 @@ private:
     // 成员变量：采样频率
     double frequency_{};
 
-    // 调整输入加速度使其各列均值为0
-    void adjust_mean();
+    // 调整输入加速度使其各列均值为0，并作调幅处理
+    inline void adjust_acceleration(const double &scale)
+    {
+        for (std::size_t i = 0; i < data_.size(); ++i)
+        {
+            const double col_mean =
+                std::accumulate(data_[i].begin(), data_[i].end(), 0.0)
+                / data_[i].size();
+            std::transform(
+                data_[i].begin(),
+                data_[i].end(),
+                data_[i].begin(),
+                [col_mean](const double &val) { return val - col_mean; });
+            std::transform(data_[i].begin(),
+                           data_[i].end(),
+                           data_[i].begin(),
+                           [scale](const double &val) { return val * scale; });
+        }
+    }
 
     // 从指定大小构造
     Acceleration(const std::size_t &row_number,

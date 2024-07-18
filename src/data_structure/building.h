@@ -51,11 +51,11 @@ public:
     void set_building_message() {}
 
     // 获取建筑测点高度
-    std::vector<double> &get_measuren_height() { return measuren_height_; }
+    std::vector<double> get_measuren_height() { return measuren_height_; }
     // 获取建筑楼层高度
-    std::vector<double> &get_floor_height() { return floor_height_; }
+    std::vector<double> get_floor_height() { return floor_height_; }
     // 获取建筑层间高度
-    std::vector<double> &get_inter_height() { return inter_height_; }
+    std::vector<double> get_inter_height() { return inter_height_; }
 
 private:
     // 建筑测点高度坐标

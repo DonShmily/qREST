@@ -1,4 +1,4 @@
-/**
+﻿/**
 **           qREST - Quick Response Evaluation for Safety Tagging
 **    Institute of Engineering Mechanics, China Earthquake Administration
 **
@@ -16,8 +16,7 @@
 #define SRC_DATA_STRUCTURE_DISPLACEMENT_H_
 
 // stdc++ headers
-#include <cstddef>
-#include <istream>
+#include <iosfwd>
 #include <vector>
 
 // project headers
@@ -60,6 +59,10 @@ public:
     double get_frequency() const { return frequency_; }
     // 获取位移时间步长
     double get_time_step() const { return 1.0 / frequency_; }
+
+    // 设置采样频率
+    // @param frequency 新的采样频率
+    void set_frequency(const double &frequency) { frequency_ = frequency; }
 
     // 求解相对位移（相对于底层），返回2-top测点的相对位移信息
     Displacement relative_displacement() const;

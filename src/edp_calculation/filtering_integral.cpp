@@ -16,14 +16,15 @@
 #include "filtering_integral.h"
 
 // stdc++ headers
-#include <cmath>
-#include <cstddef>
 #include <memory>
+#include <vector>
 
 // third-party library headers
 
 // project headers
-#include <data_structure/story_drift.h>
+#include "data_structure/displacement.h"
+#include "data_structure/story_drift.h"
+
 #include "numerical_algorithm/basic_filtering.h"
 #include "numerical_algorithm/butterworth_filter_design.h"
 #include "numerical_algorithm/filter.h"
@@ -39,8 +40,10 @@ void FilteringIntegral::CalculateEdp()
 {
     // 1.确定计算参数
     // 1.1确定滤波生成器
+    double low = low_frequency_ / input_acceleration_ptr_->get_frequency() * 2,
+           high = high_frequency_ / low_frequency_ * low;
     auto filter_generator = numerical_algorithm::ButterworthFilterDesign(
-        filter_order_, low_frequency_, high_frequency_, method_.filter_type_);
+        filter_order_, low, high, method_.filter_type_);
 
     // 1.2确定滤波函数
     std::shared_ptr<numerical_algorithm::BasicFiltering> filter_function =
@@ -78,10 +81,8 @@ void FilteringIntegral::CalculateEdp()
     // 2.5 位移滤波
     auto filtered_displacement = filter_function->Filtering(displacement);
     // 2.6 位移插值
-    result_ptr_->displacement_ptr_ =
-        std::make_shared<data_structure::Displacement>(
-            std::vector<std::vector<double>>(),
-            input_acceleration_ptr_->get_frequency());
+    result_ptr_->displacement_ptr_->set_frequency(
+        input_acceleration_ptr_->get_frequency());
     result_ptr_->displacement_ptr_->data() =
         interp_function.Interpolation(building_ptr_->get_measuren_height(),
                                       filtered_displacement,
@@ -89,9 +90,8 @@ void FilteringIntegral::CalculateEdp()
     // 2.7 计算层间位移
     auto interstory_displacement =
         result_ptr_->displacement_ptr_->interstory_displacement();
-    result_ptr_->story_drift_ptr_ =
-        std::make_shared<data_structure::StoryDrift>();
     auto interstory_height = building_ptr_->get_inter_height();
+    // 2.8 计算层间位移角
     for (std::size_t i = 0; i < interstory_displacement.data().size(); ++i)
     {
         result_ptr_->story_drift_ptr_->data().push_back(

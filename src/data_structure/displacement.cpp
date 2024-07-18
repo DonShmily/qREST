@@ -1,4 +1,4 @@
-/**
+﻿/**
 **           qREST - Quick Response Evaluation for Safety Tagging
 **    Institute of Engineering Mechanics, China Earthquake Administration
 **
@@ -16,7 +16,6 @@
 #include "displacement.h"
 
 // stdc++ headers
-#include <cstddef>
 
 namespace data_structure
 {

@@ -1,4 +1,4 @@
-/**
+﻿/**
 **           qREST - Quick Response Evaluation for Safety Tagging
 **    Institute of Engineering Mechanics, China Earthquake Administration
 **
@@ -233,7 +233,7 @@ Interp::Interpolation(const std::vector<double> &x,
         throw std::domain_error("Input point is empty.");
     }
     std::vector<std::vector<double>> y_interp(
-        y.front().size(), std::vector<double>(x_interp.size()));
+        x_interp.size(), std::vector<double>(y.front().size()));
     if (x.size() != y.size())
     {
         throw std::invalid_argument("The size of x and y must be equal.");

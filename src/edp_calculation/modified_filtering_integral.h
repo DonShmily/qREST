@@ -17,24 +17,17 @@
 #define SRC_EDP_CALCULATION_MODIFIED_FILTERING_INTEGRAL_H_
 
 // stdc++ headers
-#include <cstddef>
 #include <memory>
+#include <vector>
 
 // third-party library headers
 
-// project-specific headers
-#include "basic_edp_calculation.h"
-#include "filtering_integral.h"
-
+// project headers
 #include "data_structure/acceleration.h"
 #include "data_structure/building.h"
-#include "data_structure/displacement.h"
-#include "data_structure/story_drift.h"
-#include "data_structure/velocity.h"
 
-#include "numerical_algorithm/basic_filter_design.h"
-#include "numerical_algorithm/basic_filtering.h"
-#include "numerical_algorithm/interp.h"
+#include "basic_edp_calculation.h"
+#include "filtering_integral.h"
 
 
 namespace edp_calculation
@@ -102,7 +95,8 @@ private:
     // 滤波积分插值法计算方法参数
     FilteringIntegralMethod method_{};
     // 计算结果的指针
-    std::shared_ptr<FilteringIntegralResult> result_ptr_{};
+    std::shared_ptr<FilteringIntegralResult> result_ptr_ =
+        std::make_shared<FilteringIntegralResult>();
 
     // 滤波积分插值法计算单列加速度
     std::vector<double> CalculateSingle(const std::size_t &col);

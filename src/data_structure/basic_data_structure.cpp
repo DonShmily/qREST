@@ -16,8 +16,8 @@
 #include "basic_data_structure.h"
 
 // stdc++ headers
+#include <iosfwd>
 #include <iostream>
-#include <istream>
 #include <stdexcept>
 #include <vector>
 

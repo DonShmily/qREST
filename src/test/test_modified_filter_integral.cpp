@@ -1,5 +1,4 @@
-﻿#include "edp_calculation/filtering_integral.h"
-#include "test_function.h"
+﻿#include "test_function.h"
 
 #include <fstream>
 #include <iostream>
@@ -7,8 +6,9 @@
 #include <vector>
 
 using namespace std;
+using namespace Eigen;
 
-std::vector<std::vector<double>> readMatrixFromFile1(const string &filename)
+std::vector<std::vector<double>> readMatrixFromFile(const string &filename)
 {
     ifstream file(filename);
     string line;
@@ -37,7 +37,7 @@ std::vector<std::vector<double>> readMatrixFromFile1(const string &filename)
     return data_transpose;
 }
 
-void test_filter_integrate()
+void test_modified_filter_integrate()
 {
     // 读取数据文件
     string file_name = "acceleration_data/test_acceleration.txt";
@@ -60,20 +60,17 @@ void test_filter_integrate()
     // 创建计算对象
     data_structure::Building building(measurement, floor);
     std::vector<std::vector<double>> test_acceleration =
-        readMatrixFromFile1(file_name);
-    data_structure::Acceleration acceleration(test_acceleration, 50);
-    edp_calculation::FilteringIntegral filtering_integral(
-        acceleration, building, 2, 0.1, 20);
-    filtering_integral.get_filtering_interp_method().filter_function_ =
-        numerical_algorithm::FilterFunction::filter;
-
-    filtering_integral.CalculateEdp();
-    auto result = filtering_integral.get_filtering_interp_result();
+        readMatrixFromFile(file_name);
+    data_structure::Acceleration acceleration(test_acceleration, 50, 0.01);
+    edp_calculation::ModifiedFilteringIntegral m_filt_integral(
+        acceleration, building, 2);
+    m_filt_integral.CalculateEdp();
+    auto result = m_filt_integral.get_filtering_interp_result();
     auto drift = result.get_story_drift();
     auto displacement = result.get_displacement();
 
-    ofstream ofs1("test_acceleration/test_story_drift.txt");
-    ofstream ofs2("test_acceleration/test_displacement.txt");
+    ofstream ofs1("acceleration_data/test_story_drift.txt");
+    ofstream ofs2("acceleration_data/test_displacement.txt");
     // 输出结果
     for (int i = 0; i < drift.data().front().size(); ++i)
     {

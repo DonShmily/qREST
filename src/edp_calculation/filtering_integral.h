@@ -27,7 +27,6 @@
 #include "data_structure/building.h"
 #include "data_structure/displacement.h"
 #include "data_structure/story_drift.h"
-#include "data_structure/velocity.h"
 
 #include "numerical_algorithm/basic_filter_design.h"
 #include "numerical_algorithm/basic_filtering.h"
@@ -98,8 +97,10 @@ public:
 
 private:
     // 计算结果，共享数据指针，具体内容由方法决定
-    std::shared_ptr<data_structure::Displacement> displacement_ptr_{};
-    std::shared_ptr<data_structure::StoryDrift> story_drift_ptr_{};
+    std::shared_ptr<data_structure::Displacement> displacement_ptr_ =
+        std::make_shared<data_structure::Displacement>();
+    std::shared_ptr<data_structure::StoryDrift> story_drift_ptr_ =
+        std::make_shared<data_structure::StoryDrift>();
 };
 
 // 滤波积分插值法计算工程需求参量的类
@@ -180,7 +181,8 @@ protected:
     // 滤波积分插值法计算方法参数
     FilteringIntegralMethod method_{};
     // 计算结果的指针
-    std::shared_ptr<FilteringIntegralResult> result_ptr_{};
+    std::shared_ptr<FilteringIntegralResult> result_ptr_ =
+        std::make_shared<FilteringIntegralResult>();
 };
 } // namespace edp_calculation
 
