@@ -1,5 +1,5 @@
-﻿#ifndef SRC_TEST_TEST_FUNCTION_H_
-#define SRC_TEST_TEST_FUNCTION_H_
+﻿#ifndef TEST_TEST_FUNCTION_H_
+#define TEST_TEST_FUNCTION_H_
 
 #include "header.inc"
 
@@ -15,4 +15,4 @@ void test_filter_integrate();
 // 测试改进的滤波积分算法
 void test_modified_filter_integrate();
 
-#endif // SRC_TEST_TEST_FUNCTION_H_
+#endif // TEST_TEST_FUNCTION_H_

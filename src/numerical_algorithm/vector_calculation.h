@@ -12,10 +12,11 @@
 // Description:
 // 数值算法：向量计算，拓展std::vector的操作
 
-#ifndef SRC_NUMERICAL_ALGORITHM_VECTOR_CALCULATION_H_
-#define SRC_NUMERICAL_ALGORITHM_VECTOR_CALCULATION_H_
+#ifndef NUMERICAL_ALGORITHM_VECTOR_CALCULATION_H_
+#define NUMERICAL_ALGORITHM_VECTOR_CALCULATION_H_
 
 // stdc++ headers
+#include <algorithm>
 #include <cstddef>
 #include <iterator>
 #include <vector>
@@ -117,6 +118,16 @@ inline std::vector<double> VectorOperation(const std::vector<double> &vector1,
     }
     return result;
 }
+
+// 寻找向量绝对值最大的元素
+// @param vec 向量
+// @return 绝对值最大的元素
+inline double FindMaxAbs(const std::vector<double> &input_vector)
+{
+    return std::max(
+        std::abs(*std::max_element(input_vector.begin(), input_vector.end())),
+        std::abs(*std::min_element(input_vector.begin(), input_vector.end())));
+}
 } // namespace numerical_algorithm
 
-#endif // SRC_NUMERICAL_ALGORITHM_VECTOR_CALCULATION_H_
+#endif // NUMERICAL_ALGORITHM_VECTOR_CALCULATION_H_

@@ -13,8 +13,8 @@
 // 工程需求参量计算方法：改进的滤波积分插值法，基于最大功率比的滤波方法
 // 算法提供者：2021级硕士陈鹏杰（Chen Pengjie）
 
-#ifndef SRC_EDP_CALCULATION_MODIFIED_FILTERING_INTEGRAL_H_
-#define SRC_EDP_CALCULATION_MODIFIED_FILTERING_INTEGRAL_H_
+#ifndef EDP_CALCULATION_MODIFIED_FILTERING_INTEGRAL_H_
+#define EDP_CALCULATION_MODIFIED_FILTERING_INTEGRAL_H_
 
 // stdc++ headers
 #include <memory>
@@ -103,4 +103,4 @@ private:
 };
 } // namespace edp_calculation
 
-#endif // SRC_EDP_CALCULATION_MODIFIED_FILTERING_INTEGRAL_H_
+#endif // EDP_CALCULATION_MODIFIED_FILTERING_INTEGRAL_H_

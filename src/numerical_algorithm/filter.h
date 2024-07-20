@@ -12,8 +12,8 @@
 // Description:
 // 数值算法：filter滤波方法类
 
-#ifndef SRC_NUMERICAL_ALGORITHM_FILTER_H_
-#define SRC_NUMERICAL_ALGORITHM_FILTER_H_
+#ifndef NUMERICAL_ALGORITHM_FILTER_H_
+#define NUMERICAL_ALGORITHM_FILTER_H_
 
 // stdc++ headers
 #include <vector>
@@ -90,4 +90,4 @@ private:
 
 } // namespace numerical_algorithm
 
-#endif // SRC_NUMERICAL_ALGORITHM_FILTER_H_
+#endif // NUMERICAL_ALGORITHM_FILTER_H_

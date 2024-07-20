@@ -109,15 +109,12 @@ private:
             const double col_mean =
                 std::accumulate(data_[i].begin(), data_[i].end(), 0.0)
                 / data_[i].size();
-            std::transform(
-                data_[i].begin(),
-                data_[i].end(),
-                data_[i].begin(),
-                [col_mean](const double &val) { return val - col_mean; });
             std::transform(data_[i].begin(),
                            data_[i].end(),
                            data_[i].begin(),
-                           [scale](const double &val) { return val * scale; });
+                           [col_mean, scale](const double &val) {
+                               return (val - col_mean) * scale;
+                           });
         }
     }
 

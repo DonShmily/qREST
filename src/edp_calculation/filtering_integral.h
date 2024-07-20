@@ -12,8 +12,8 @@
 // Description:
 // 工程需求参量计算方法：滤波积分插值法
 
-#ifndef SRC_EDP_CALCULATION_FILTERING_INTERP_H_
-#define SRC_EDP_CALCULATION_FILTERING_INTERP_H_
+#ifndef EDP_CALCULATION_FILTERING_INTERP_H_
+#define EDP_CALCULATION_FILTERING_INTERP_H_
 
 // stdc++ headers
 #include <memory>
@@ -187,4 +187,4 @@ protected:
 } // namespace edp_calculation
 
 
-#endif // SRC_EDP_CALCULATION_FILTERING_INTERP_H_
+#endif // EDP_CALCULATION_FILTERING_INTERP_H_

@@ -12,8 +12,8 @@
 // Description：
 // 数值算法：filtfilt滤波方法类
 
-#ifndef SRC_NUMERICAL_ALGORITHM_FILTFILT_H_
-#define SRC_NUMERICAL_ALGORITHM_FILTFILT_H_
+#ifndef NUMERICAL_ALGORITHM_FILTFILT_H_
+#define NUMERICAL_ALGORITHM_FILTFILT_H_
 
 
 // stdc++ headers

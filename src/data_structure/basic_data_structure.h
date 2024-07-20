@@ -27,18 +27,23 @@ class BasicData
 public:
     // 默认构造函数
     BasicData() = default;
+
     // 从二维std::vector<std::vector<double>>构造
     // @param matrix 数据矩阵
     BasicData(const std::vector<std::vector<double>> &matrix);
+
     // 从输入流构造
     // @param stream 输入流
     BasicData(std::istream &stream,
               std::size_t row_number,
               std::size_t col_number);
+
     // 拷贝构造函数
     BasicData(const BasicData &data) = default;
+
     // 移动构造函数
     BasicData(BasicData &&data) = default;
+
     // 析构函数
     virtual ~BasicData() = default;
 

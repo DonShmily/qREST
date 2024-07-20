@@ -12,8 +12,8 @@
 // Description:
 // 数值算法：滤波算法基类
 
-#ifndef SRC_NUMERICAL_ALGORITHM_BASIC_FILTERING_H_
-#define SRC_NUMERICAL_ALGORITHM_BASIC_FILTERING_H_
+#ifndef NUMERICAL_ALGORITHM_BASIC_FILTERING_H_
+#define NUMERICAL_ALGORITHM_BASIC_FILTERING_H_
 
 // stdc++ headers
 #include <memory>
@@ -63,4 +63,4 @@ protected:
 
 } // namespace numerical_algorithm
 
-#endif // SRC_NUMERICAL_ALGORITHM_BASIC_FILTERING_H_
+#endif // NUMERICAL_ALGORITHM_BASIC_FILTERING_H_

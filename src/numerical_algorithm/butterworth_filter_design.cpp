@@ -16,8 +16,8 @@
 // associated header
 #include "butterworth_filter_design.h"
 
-// stdc++ headers
 #define _USE_MATH_DEFINES
+// stdc++ headers
 #include <cmath>
 #include <complex>
 #include <vector>

@@ -13,8 +13,8 @@
 // 层间位移角信息类，数据基类的派生，存储层间位移角数据的基本信息。
 
 
-#ifndef SRC_DATA_STRUCTURE_STORY_DRIFT_H_
-#define SRC_DATA_STRUCTURE_STORY_DRIFT_H_
+#ifndef DATA_STRUCTURE_STORY_DRIFT_H_
+#define DATA_STRUCTURE_STORY_DRIFT_H_
 
 // stdc++ headers
 
@@ -30,10 +30,13 @@ class StoryDrift : public BasicData
 public:
     // 构造函数
     StoryDrift() = default;
+
     // 拷贝构造函数
     StoryDrift(const StoryDrift &story_drift) = default;
+
     // 移动构造函数
     StoryDrift(StoryDrift &&story_drift) = default;
+
     // 析构函数
     ~StoryDrift() = default;
 
@@ -42,4 +45,4 @@ private:
 
 } // namespace data_structure
 
-#endif // SRC_DATA_STRUCTURE_STORY_DRIFT_H_
+#endif // DATA_STRUCTURE_STORY_DRIFT_H_

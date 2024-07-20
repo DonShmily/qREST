@@ -14,8 +14,8 @@
 
 // TODO:建筑信息类Building的设置方式
 
-#ifndef SRC_DATA_STRUCTURE_BUILDING_H_
-#define SRC_DATA_STRUCTURE_BUILDING_H_
+#ifndef DATA_STRUCTURE_BUILDING_H_
+#define DATA_STRUCTURE_BUILDING_H_
 
 // stdc++ headers
 #include <vector>
@@ -33,6 +33,7 @@ class Building
 public:
     // 构造函数
     Building() = default;
+
     // 从std::vector<double>构造
     Building(const std::vector<double> &measuren_height,
              const std::vector<double> &floor_height)
@@ -40,10 +41,13 @@ public:
     {
         calculate_inter_height();
     }
+
     // 拷贝构造函数
     Building(const Building &building_message) = default;
+
     // 移动构造函数
     Building(Building &&building_message) = default;
+
     // 析构函数
     ~Building() = default;
 
@@ -52,8 +56,10 @@ public:
 
     // 获取建筑测点高度
     std::vector<double> get_measuren_height() { return measuren_height_; }
+
     // 获取建筑楼层高度
     std::vector<double> get_floor_height() { return floor_height_; }
+
     // 获取建筑层间高度
     std::vector<double> get_inter_height() { return inter_height_; }
 
@@ -71,4 +77,4 @@ private:
 
 } // namespace data_structure
 
-#endif // SRC_DATA_STRUCTURE_BUILDING_H_
+#endif // DATA_STRUCTURE_BUILDING_H_
