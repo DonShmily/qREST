@@ -7,7 +7,7 @@
 
 using namespace std;
 
-int butter_test_main()
+int test_butter()
 {
     auto butter = numerical_algorithm::ButterworthFilterDesign(2, 0.1, 0.2);
     vector<double> a, b;

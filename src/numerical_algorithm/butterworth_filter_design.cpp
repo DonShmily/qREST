@@ -16,15 +16,10 @@
 // associated header
 #include "butterworth_filter_design.h"
 
-#define _USE_MATH_DEFINES
 // stdc++ headers
 #include <cmath>
 #include <complex>
 #include <vector>
-
-#ifndef M_PI
-#define M_PI 3.14159265358979323846
-#endif
 
 
 namespace numerical_algorithm

@@ -4,7 +4,7 @@
 #include "numerical_algorithm/butterworth_filter_design.h"
 #include "numerical_algorithm/filter.h"
 
-int filter_test_main()
+int test_filter()
 {
     numerical_algorithm::ButterworthFilterDesign butter(2, 0.002, 0.2);
     numerical_algorithm::FiltFilt filter(butter);

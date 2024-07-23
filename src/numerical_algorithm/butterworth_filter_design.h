@@ -15,8 +15,15 @@
 #ifndef NUMERICAL_ALGORITHM_BUTTERWORTH_FILTER_DESIGN_H_
 #define NUMERICAL_ALGORITHM_BUTTERWORTH_FILTER_DESIGN_H_
 
+#define _USE_MATH_DEFINES
+
 // stdc++ headers
+#include <cmath>
 #include <vector>
+
+#ifndef M_PI
+#define M_PI 3.14159265358979323846
+#endif
 
 // project headers
 #include "basic_filter_design.h"
