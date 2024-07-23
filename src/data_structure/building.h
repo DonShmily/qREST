@@ -20,10 +20,6 @@
 // stdc++ headers
 #include <vector>
 
-// third-party library headers
-
-// project-specific headers
-
 namespace data_structure
 {
 

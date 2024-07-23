@@ -23,7 +23,6 @@
 
 // project headers
 #include "data_structure/displacement.h"
-#include "data_structure/story_drift.h"
 
 #include "numerical_algorithm/basic_filtering.h"
 #include "numerical_algorithm/butterworth_filter_design.h"

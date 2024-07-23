@@ -1,41 +1,12 @@
 ﻿#include "test_function.h"
 
 #include <fstream>
+#include <iosfwd>
 #include <iostream>
-#include <sstream>
+#include <string>
 #include <vector>
 
 using namespace std;
-using namespace Eigen;
-
-std::vector<std::vector<double>> readMatrixFromFile(const string &filename)
-{
-    ifstream file(filename);
-    string line;
-    vector<vector<double>> data;
-
-    // Read the file line by line
-    while (getline(file, line))
-    {
-        stringstream lineStream(line);
-        vector<double> row;
-        double value;
-
-        // Parse each line into a row of values
-        while (lineStream >> value)
-        {
-            row.push_back(value);
-        }
-        data.push_back(row);
-    }
-
-    std::vector<std::vector<double>> data_transpose(
-        data.front().size(), std::vector<double>(data.size()));
-    for (std::size_t i = 0; i != data.size(); ++i)
-        for (std::size_t j = 0; j != data.front().size(); ++j)
-            data_transpose[j][i] = data[i][j];
-    return data_transpose;
-}
 
 void test_modified_filter_integrate()
 {

@@ -1,4 +1,4 @@
-/**
+﻿/**
 **           qREST - Quick Response Evaluation for Safety Tagging
 **    Institute of Engineering Mechanics, China Earthquake Administration
 **
@@ -16,9 +16,6 @@
 
 #ifndef NUMERICAL_ALGORITHM_BASIC_FILTER_DESIGN_H_
 #define NUMERICAL_ALGORITHM_BASIC_FILTER_DESIGN_H_
-
-// stdc++ headers
-#include <vector>
 
 namespace numerical_algorithm
 {

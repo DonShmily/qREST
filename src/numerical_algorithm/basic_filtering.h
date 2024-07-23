@@ -16,11 +16,7 @@
 #define NUMERICAL_ALGORITHM_BASIC_FILTERING_H_
 
 // stdc++ headers
-#include <memory>
 #include <vector>
-
-// project headers
-#include "basic_filter_design.h"
 
 
 namespace numerical_algorithm

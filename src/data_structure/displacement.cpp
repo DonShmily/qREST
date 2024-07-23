@@ -15,8 +15,6 @@
 // associated header
 #include "displacement.h"
 
-// stdc++ headers
-
 namespace data_structure
 {
 

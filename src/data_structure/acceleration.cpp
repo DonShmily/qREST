@@ -13,10 +13,10 @@
 // 加速度信息类的实现。
 
 // associated header
-#include <algorithm>
-#include <numeric>
-
 #include "acceleration.h"
+
+// stdc++ headers
+#include <initializer_list>
 
 
 namespace data_structure

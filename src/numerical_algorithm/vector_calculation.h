@@ -1,4 +1,4 @@
-/**
+﻿/**
 **           qREST - Quick Response Evaluation for Safety Tagging
 **    Institute of Engineering Mechanics, China Earthquake Administration
 **
@@ -16,9 +16,8 @@
 #define NUMERICAL_ALGORITHM_VECTOR_CALCULATION_H_
 
 // stdc++ headers
-#include <algorithm>
-#include <cstddef>
-#include <iterator>
+#include <cstdlib>
+#include <stdexcept>
 #include <vector>
 
 
@@ -124,9 +123,10 @@ inline std::vector<double> VectorOperation(const std::vector<double> &vector1,
 // @return 绝对值最大的元素
 inline double FindMaxAbs(const std::vector<double> &input_vector)
 {
-    return std::max(
-        std::abs(*std::max_element(input_vector.begin(), input_vector.end())),
-        std::abs(*std::min_element(input_vector.begin(), input_vector.end())));
+    return std::abs(*std::max_element(
+        input_vector.begin(), input_vector.end(), [](double a, double b) {
+            return std::abs(a) < std::abs(b);
+        }));
 }
 } // namespace numerical_algorithm
 

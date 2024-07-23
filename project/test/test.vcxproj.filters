@@ -15,13 +15,13 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\src\test\butter_test_main.cpp">
+    <ClCompile Include="..\..\src\test\test_butter.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\test\comments.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\test\filter_test_main.cpp">
+    <ClCompile Include="..\..\src\test\test_filter.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\test\main.cpp">
@@ -31,6 +31,12 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\test\test_modified_filter_integral.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\test\test_gmp.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\test\test_function.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>

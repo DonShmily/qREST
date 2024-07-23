@@ -5,13 +5,16 @@ using namespace std;
 int main()
 {
     // 测试butter函数
-    // butter_test_main();
+    // test_butter();
 
     // 测试滤波器
-    // filter_test_main();
+    // test_filter();
 
     // 测试改进的滤波积分算法
-    test_modified_filter_integrate();
+    // test_modified_filter_integrate();
+
+    // 测试gmp
+    test_gmp();
 
     return 0;
 }

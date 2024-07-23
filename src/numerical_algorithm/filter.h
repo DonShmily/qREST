@@ -18,8 +18,6 @@
 // stdc++ headers
 #include <vector>
 
-// third-party headers
-
 // project headers
 #include "basic_filtering.h"
 #include "butterworth_filter_design.h"

@@ -1,4 +1,4 @@
-/**
+﻿/**
 **           qREST - Quick Response Evaluation for Safety Tagging
 **    Institute of Engineering Mechanics, China Earthquake Administration
 **
@@ -16,11 +16,10 @@
 #define NUMERICAL_ALGORITHM_INTERP_H_
 
 // stdc++ headers
-#include <cstddef>
 #include <vector>
 
 // third-party library headers
-#include "eigen3/Eigen/Dense"
+#include "eigen3/Eigen/Core"
 #include "gsl/gsl_interp.h"
 
 

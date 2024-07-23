@@ -1,14 +1,19 @@
-﻿#include "edp_calculation/filtering_integral.h"
-#include "test_function.h"
-
-#include <fstream>
+﻿#include <fstream>
+#include <iosfwd>
 #include <iostream>
-#include <sstream>
+#include <string>
 #include <vector>
+
+#include "data_structure/acceleration.h"
+#include "data_structure/building.h"
+#include "edp_calculation/filtering_integral.h"
+#include "numerical_algorithm/basic_filtering.h"
+
 
 using namespace std;
 
-std::vector<std::vector<double>> readMatrixFromFile1(const string &filename)
+static std::vector<std::vector<double>>
+readMatrixFromFile1(const string &filename)
 {
     ifstream file(filename);
     string line;

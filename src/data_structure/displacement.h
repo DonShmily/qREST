@@ -77,7 +77,7 @@ public:
 
 private:
     // 位移采样频率
-    double frequency_;
+    double frequency_{};
 
     // 从指定大小构造
     // @param row_number 行数

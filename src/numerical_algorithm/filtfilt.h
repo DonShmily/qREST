@@ -15,10 +15,7 @@
 #ifndef NUMERICAL_ALGORITHM_FILTFILT_H_
 #define NUMERICAL_ALGORITHM_FILTFILT_H_
 
-
 // stdc++ headers
-#include <algorithm>
-#include <fstream>
 #include <vector>
 
 // third-party headers
