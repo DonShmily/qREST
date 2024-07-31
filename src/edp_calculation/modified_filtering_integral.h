@@ -39,6 +39,7 @@ class ModifiedFilteringIntegral : public BasicEdpCalculation
 public:
     // 默认构造函数
     ModifiedFilteringIntegral() = default;
+
     // 从加速度数据中构造，默认使用巴特沃斯滤波器，零相位双向滤波，带通滤波
     // @param acceleration 加速度数据
     // @param filter_order 滤波器阶数
@@ -50,6 +51,7 @@ public:
         : BasicEdpCalculation(acceleration, building),
           filter_order_(filter_order)
     {}
+
     // 从加速度数据指针中构造，默认使用巴特沃斯滤波器，零相位双向滤波，带通滤波
     // @param acceleration_ptr 加速度数据指针
     // @param filter_order 滤波器阶数
@@ -62,12 +64,15 @@ public:
         : BasicEdpCalculation(acceleration_ptr, building_ptr),
           filter_order_(filter_order)
     {}
+
     // 拷贝构造函数
     ModifiedFilteringIntegral(
         const ModifiedFilteringIntegral &filtering_interp) = default;
+
     // 移动构造函数
     ModifiedFilteringIntegral(ModifiedFilteringIntegral &&filtering_interp) =
         default;
+
     // 析构函数
     ~ModifiedFilteringIntegral() = default;
 
@@ -86,7 +91,7 @@ public:
     // @return 滤波积分插值法计算结果的引用
     const FilteringIntegralResult &get_filtering_interp_result() const
     {
-        return *result_ptr_;
+        return result_;
     }
 
 private:
@@ -95,8 +100,7 @@ private:
     // 滤波积分插值法计算方法参数
     FilteringIntegralMethod method_{};
     // 计算结果的指针
-    std::shared_ptr<FilteringIntegralResult> result_ptr_ =
-        std::make_shared<FilteringIntegralResult>();
+    FilteringIntegralResult result_{};
 
     // 滤波积分插值法计算单列加速度
     std::vector<double> CalculateSingle(const std::size_t &col);

@@ -36,7 +36,7 @@ class Acceleration : public BasicData
 {
 public:
     // 默认构造函数
-    Acceleration() = default;
+    Acceleration() : BasicData() {}
 
     // 从二维std::vector<std::vector<double>>构造，每个vector<double>代表一个测点的加速度数据
     // @param matrix 加速度数据矩阵
@@ -46,6 +46,19 @@ public:
                  const double &frequency,
                  const double &scale = 1.0)
         : BasicData(matrix), frequency_(frequency)
+    {
+        adjust_acceleration(scale);
+    }
+
+    // 从std::shared_ptr<std::vector<std::vector<double>>>构造，每个vector<double>代表一个测点的加速度数据
+    // @param matrix_ptr 加速度数据矩阵指针
+    // @param frequency 采样频率
+    // @param scale 调幅因子
+    Acceleration(
+        const std::shared_ptr<std::vector<std::vector<double>>> &matrix_ptr,
+        const double &frequency,
+        const double &scale = 1.0)
+        : BasicData(matrix_ptr), frequency_(frequency)
     {
         adjust_acceleration(scale);
     }
@@ -78,13 +91,16 @@ public:
 
     // 拷贝构造函数
     Acceleration(const Acceleration &acceleration) = default;
+
     // 移动构造函数
     Acceleration(Acceleration &&acceleration) = default;
+
     // 析构函数
     ~Acceleration() = default;
 
     // 获取采样频率
     double get_frequency() const { return frequency_; }
+
     // 获取时间步长
     double get_time_step() const { return 1.0 / frequency_; }
 
@@ -94,6 +110,7 @@ public:
 
     // 求解相对加速度（相对于底层），返回2-top测点的相对加速度信息
     Acceleration relative_acceleration() const;
+
     // 求解层间相对加速度，返回2-top相邻层间的相对加速度信息
     Acceleration interstory_acceleration() const;
 
@@ -104,14 +121,16 @@ private:
     // 调整输入加速度使其各列均值为0，并作调幅处理
     inline void adjust_acceleration(const double &scale)
     {
-        for (std::size_t i = 0; i < data_.size(); ++i)
+        for (std::size_t i = 0; i < data_->size(); ++i)
         {
             const double col_mean =
-                std::accumulate(data_[i].begin(), data_[i].end(), 0.0)
-                / data_[i].size();
-            std::transform(data_[i].begin(),
-                           data_[i].end(),
-                           data_[i].begin(),
+                std::accumulate(data_->at(i).begin(), data_->at(i).end(), 0.0)
+                / data_->at(i).size();
+            // 如果事先介入了数据异常处理模块，则一般可以保证所有信号的均值为0
+            // const double col_mean = 0;
+            std::transform(data_->at(i).begin(),
+                           data_->at(i).end(),
+                           data_->at(i).begin(),
                            [col_mean, scale](const double &val) {
                                return (val - col_mean) * scale;
                            });

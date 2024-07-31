@@ -33,7 +33,7 @@ Acceleration::Acceleration(const Acceleration &acceleration,
     std::size_t i = 0;
     for (const auto &index : col_index)
     {
-        data_[i] = acceleration.data_[index];
+        data_->at(i) = acceleration.data_->at(index);
         ++i;
     }
     adjust_acceleration(scale);
@@ -42,12 +42,12 @@ Acceleration::Acceleration(const Acceleration &acceleration,
 // 求解楼层相对底层的加速度
 Acceleration Acceleration::relative_acceleration() const
 {
-    Acceleration result(data_.front().size(), data_.size() - 1, frequency_);
-    for (std::size_t i = 0; i < result.data_.size(); ++i)
+    Acceleration result(data_->front().size(), data_->size() - 1, frequency_);
+    for (std::size_t i = 0; i < result.data_->size(); ++i)
     {
-        for (std::size_t j = 0; j < result.data_[i].size(); ++j)
+        for (std::size_t j = 0; j < result.data_->at(i).size(); ++j)
         {
-            result.data_[i][j] = data_[i + 1][j] - data_[0][j];
+            result.data_->at(i)[j] = data_->at(i + 1)[j] - data_->at(0)[j];
         }
     }
     return result;
@@ -56,12 +56,12 @@ Acceleration Acceleration::relative_acceleration() const
 // 求解层间相对加速度
 Acceleration Acceleration::interstory_acceleration() const
 {
-    Acceleration result(data_.front().size(), data_.size() - 1, frequency_);
-    for (std::size_t i = 0; i < result.data_.size(); ++i)
+    Acceleration result(data_->front().size(), data_->size() - 1, frequency_);
+    for (std::size_t i = 0; i < result.data_->size(); ++i)
     {
-        for (std::size_t j = 0; j < result.data_[i].size(); ++j)
+        for (std::size_t j = 0; j < result.data_->at(i).size(); ++j)
         {
-            result.data_[i][j] = data_[i + 1][j] - data_[i][j];
+            result.data_->at(i)[j] = data_->at(i + 1)[j] - data_->at(i)[j];
         }
     }
     return result;

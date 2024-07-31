@@ -23,7 +23,7 @@
 #include <vector>
 
 // third-party headers
-#include "eigen3/Eigen/Core"
+#include "eigen3/Eigen/Dense"
 
 
 namespace numerical_algorithm

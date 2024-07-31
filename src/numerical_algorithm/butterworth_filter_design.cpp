@@ -21,7 +21,7 @@
 #include <complex>
 #include <vector>
 
-// pro
+// project headers
 #include "basic_filter_design.h"
 
 

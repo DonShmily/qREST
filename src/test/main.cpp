@@ -1,4 +1,9 @@
-﻿#include "test_function.h"
+﻿#include <iostream>
+#include "edp_calculation/basic_edp_calculation.h"
+#include "edp_calculation/filtering_integral.h"
+#include "gmp_calculation/gmp_calculation.h"
+#include "test_function.h"
+
 
 using namespace std;
 
@@ -14,7 +19,10 @@ int main()
     // test_modified_filter_integrate();
 
     // 测试gmp
-    test_gmp();
+    // test_gmp();
+
+    // 测试类型大小
+    test_size();
 
     return 0;
 }

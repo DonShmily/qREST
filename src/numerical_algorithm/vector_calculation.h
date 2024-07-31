@@ -16,6 +16,8 @@
 #define NUMERICAL_ALGORITHM_VECTOR_CALCULATION_H_
 
 // stdc++ headers
+#include <algorithm>
+#include <cmath>
 #include <cstdlib>
 #include <stdexcept>
 #include <vector>
@@ -40,6 +42,11 @@ inline std::vector<std::size_t> FindPeaks(const std::vector<double> &vec)
     return peaks;
 }
 
+// 向量计算
+// @param vector1 向量1
+// @param vector2 向量2
+// @param operation 操作符
+// @return 计算结果
 inline std::vector<double> VectorOperation(const std::vector<double> &vector1,
                                            const std::vector<double> &vector2,
                                            const char operation)
@@ -79,6 +86,11 @@ inline std::vector<double> VectorOperation(const std::vector<double> &vector1,
     return result;
 }
 
+// 向量计算
+// @param vector1 向量1
+// @param scalar 标量
+// @param operation 操作符
+// @return 计算结果
 inline std::vector<double> VectorOperation(const std::vector<double> &vector1,
                                            const double scalar,
                                            const char operation)
@@ -119,7 +131,7 @@ inline std::vector<double> VectorOperation(const std::vector<double> &vector1,
 }
 
 // 寻找向量绝对值最大的元素
-// @param vec 向量
+// @param input_vector 输入向量
 // @return 绝对值最大的元素
 inline double FindMaxAbs(const std::vector<double> &input_vector)
 {
@@ -128,6 +140,119 @@ inline double FindMaxAbs(const std::vector<double> &input_vector)
             return std::abs(a) < std::abs(b);
         }));
 }
+
+// 向量归一化
+// @param input_vector 输入向量
+// @return 归一化后的向量
+inline std::vector<double> Normalize(const std::vector<double> &input_vector)
+{
+    auto max_abs = FindMaxAbs(input_vector);
+    return VectorOperation(input_vector, max_abs, '/');
+}
+
+// 计算给定移位参数的互相关值
+// @param vector_x 向量x
+// @param vector_y 向量y
+// @param shift 移位参数
+inline double CrossCorrelationAtShift(const std::vector<double> &vector_x,
+                                      const std::vector<double> &vector_y,
+                                      int shift)
+{
+    int n_a = vector_x.size();
+    int n_b = vector_y.size();
+    double result = 0.0;
+    for (int i = 0; i < n_a; ++i)
+    {
+        int j = i - shift;
+        if (j >= 0 && j < n_b)
+        {
+            result += vector_x[i] * vector_y[j];
+        }
+    }
+    return result;
+}
+
+// 计算给定移位参数的互相关值，并作归一化处理
+// @param vector_x 向量x
+// @param vector_y 向量y
+// @param shift 移位参数
+inline double
+CrossCorrelationAtShiftNormalized(const std::vector<double> &vector_x,
+                                  const std::vector<double> &vector_y,
+                                  int shift)
+{
+    return CrossCorrelationAtShift(vector_x, vector_y, shift)
+           / std::sqrt(CrossCorrelationAtShift(vector_x, vector_x, 0)
+                       * CrossCorrelationAtShift(vector_y, vector_y, 0));
+}
+
+// 向量互相关序列
+// @param vector_x 向量x
+// @param vector_y 向量y
+// @return 互相关序列
+inline std::vector<double> CrossCorrelation(const std::vector<double> &vector_x,
+                                            const std::vector<double> &vector_y)
+{
+    int n_a = vector_x.size();
+    int n_b = vector_y.size();
+    int n = n_a + n_b - 1;
+    std::vector<double> result(n, 0.0);
+
+    for (int shift = -(n_b - 1); shift <= n_a - 1; ++shift)
+    {
+        result[shift + (n_b - 1)] =
+            CrossCorrelationAtShift(vector_x, vector_x, shift);
+    }
+    return result;
+}
+
+// 向量互相关序列，并作归一化处理
+// @param vector_x 向量x
+// @param vector_y 向量y
+// @return 归一化后的互相关序列
+inline std::vector<double>
+CrossCorrelationNormalized(const std::vector<double> &vector_x,
+                           const std::vector<double> &vector_y)
+{
+    auto result = CrossCorrelation(vector_x, vector_y);
+    double norm = std::sqrt(CrossCorrelationAtShift(vector_x, vector_x, 0)
+                            * CrossCorrelationAtShift(vector_y, vector_y, 0));
+    return VectorOperation(result, norm, '/');
+}
+
+// 向量自相关序列
+// @param vector_x 向量x
+// @return 自相关序列
+inline std::vector<double> AutoCorrelation(const std::vector<double> &vector_x)
+{
+    return CrossCorrelation(vector_x, vector_x);
+}
+
+// 向量卷积序列
+// @param vector_x 向量x
+// @param vector_y 向量y
+// @return 卷积序列
+inline std::vector<double> Convolution(const std::vector<double> &vector_x,
+                                       const std::vector<double> &vector_y)
+{
+    int n_a = vector_x.size();
+    int n_b = vector_y.size();
+    int n = n_a + n_b - 1;
+    std::vector<double> result(n, 0.0);
+
+    for (int i = 0; i < n; ++i)
+    {
+        for (int j = 0; j < n_b; ++j)
+        {
+            if ((i - j) >= 0 && (i - j) < n_a)
+            {
+                result[i] += vector_x[i - j] * vector_y[j];
+            }
+        }
+    }
+    return result;
+}
+
 } // namespace numerical_algorithm
 
 #endif // NUMERICAL_ALGORITHM_VECTOR_CALCULATION_H_

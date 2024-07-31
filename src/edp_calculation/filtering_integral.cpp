@@ -39,7 +39,7 @@ void FilteringIntegral::CalculateEdp()
 {
     // 1.确定计算参数
     // 1.1确定滤波生成器
-    double low = low_frequency_ / input_acceleration_ptr_->get_frequency() * 2,
+    double low = low_frequency_ / input_acceleration_.get_frequency() * 2,
            high = high_frequency_ / low_frequency_ * low;
     auto filter_generator = numerical_algorithm::ButterworthFilterDesign(
         filter_order_, low, high, method_.filter_type_);
@@ -67,10 +67,10 @@ void FilteringIntegral::CalculateEdp()
     numerical_algorithm::Interp interp_function(method_.interp_type_);
 
     // 2.滤波积分插值计算层间位移角
-    double dt = input_acceleration_ptr_->get_time_step();
+    double dt = input_acceleration_.get_time_step();
     // 2.1 加速度滤波
     auto filtered_acceleration =
-        filter_function->Filtering(input_acceleration_ptr_->get_data());
+        filter_function->Filtering(input_acceleration_.get_data());
     //  2.2 加速度积分到速度
     auto velocity = numerical_algorithm::Cumtrapz(filtered_acceleration, dt);
     // 2.3 速度滤波
@@ -80,20 +80,19 @@ void FilteringIntegral::CalculateEdp()
     // 2.5 位移滤波
     auto filtered_displacement = filter_function->Filtering(displacement);
     // 2.6 位移插值
-    result_ptr_->displacement_ptr_->set_frequency(
-        input_acceleration_ptr_->get_frequency());
-    result_ptr_->displacement_ptr_->data() =
-        interp_function.Interpolation(building_ptr_->get_measuren_height(),
+    result_.displacement_.set_frequency(input_acceleration_.get_frequency());
+    result_.displacement_.data() =
+        interp_function.Interpolation(building_.get_measuren_height(),
                                       filtered_displacement,
-                                      building_ptr_->get_floor_height());
+                                      building_.get_floor_height());
     // 2.7 计算层间位移
     auto interstory_displacement =
-        result_ptr_->displacement_ptr_->interstory_displacement();
-    auto interstory_height = building_ptr_->get_inter_height();
+        result_.displacement_.interstory_displacement();
+    auto interstory_height = building_.get_inter_height();
     // 2.8 计算层间位移角
     for (std::size_t i = 0; i < interstory_displacement.data().size(); ++i)
     {
-        result_ptr_->story_drift_ptr_->data().push_back(
+        result_.story_drift_.data().push_back(
             numerical_algorithm::VectorOperation(
                 interstory_displacement.data()[i], interstory_height[i], '/'));
     }

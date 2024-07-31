@@ -18,31 +18,11 @@
       <Platform>x64</Platform>
     </ProjectConfiguration>
   </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="..\..\src\data_structure\acceleration.h" />
-    <ClInclude Include="..\..\src\data_structure\basic_data_structure.h" />
-    <ClInclude Include="..\..\src\data_structure\building.h" />
-    <ClInclude Include="..\..\src\data_structure\displacement.h" />
-    <ClInclude Include="..\..\src\data_structure\story_drift.h" />
-    <ClInclude Include="..\..\src\data_structure\velocity.h" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClCompile Include="..\..\src\data_structure\acceleration.cpp" />
-    <ClCompile Include="..\..\src\data_structure\basic_data_structure.cpp" />
-    <ClCompile Include="..\..\src\data_structure\building.cpp" />
-    <ClCompile Include="..\..\src\data_structure\displacement.cpp" />
-    <ClCompile Include="..\..\src\data_structure\velocity.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\numerical_algorithm\numerical_algorithm.vcxproj">
-      <Project>{ab65f082-17af-4015-a3b4-baae8ba00c71}</Project>
-    </ProjectReference>
-  </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>17.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
-    <ProjectGuid>{f1172cb4-30fc-47e4-9bb3-72219936f2a2}</ProjectGuid>
-    <RootNamespace>datastructure</RootNamespace>
+    <ProjectGuid>{ca715db3-c65e-444c-88ab-5d37cf15ff2c}</ProjectGuid>
+    <RootNamespace>modalparametersidentification</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
@@ -60,13 +40,13 @@
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
-    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>v143</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
-    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <PlatformToolset>v143</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
@@ -90,9 +70,6 @@
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
-  <PropertyGroup Label="Vcpkg">
-    <VcpkgEnableManifest>true</VcpkgEnableManifest>
-  </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
@@ -127,8 +104,6 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <LanguageStandard>stdcpp17</LanguageStandard>
-      <AdditionalIncludeDirectories>..\..\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -143,8 +118,6 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <LanguageStandard>stdcpp17</LanguageStandard>
-      <AdditionalIncludeDirectories>..\..\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -153,6 +126,14 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
   </ItemDefinitionGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\data_structure\data_structure.vcxproj">
+      <Project>{f1172cb4-30fc-47e4-9bb3-72219936f2a2}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\numerical_algorithm\numerical_algorithm.vcxproj">
+      <Project>{ab65f082-17af-4015-a3b4-baae8ba00c71}</Project>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

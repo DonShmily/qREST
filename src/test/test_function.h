@@ -22,6 +22,9 @@ void test_modified_filter_integrate();
 // 测试地震动参数计算模块
 void test_gmp();
 
+// 测试类型大小
+void test_size();
+
 // 读取文件中的矩阵数据
 std::vector<std::vector<double>>
 readMatrixFromFile(const std::string &filename);

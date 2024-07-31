@@ -1,10 +1,13 @@
-﻿#include "test_function.h"
+﻿#include <data_structure/acceleration.h>
+#include "data_structure/building.h"
+#include "test_function.h"
 
 #include <fstream>
 #include <iosfwd>
 #include <iostream>
 #include <string>
 #include <vector>
+
 
 using namespace std;
 
@@ -29,10 +32,10 @@ void test_modified_filter_integrate()
     ifs.close();
 
     // 创建计算对象
-    data_structure::Building building(measurement, floor);
-    std::vector<std::vector<double>> test_acceleration =
-        readMatrixFromFile(file_name);
-    data_structure::Acceleration acceleration(test_acceleration, 50, 0.01);
+    auto building = data_structure::Building(measurement, floor);
+    auto acceleration = data_structure::Acceleration(
+        std::vector<std::vector<double>>(), 50, 0.01);
+    acceleration.data() = readMatrixFromFile(file_name);
     edp_calculation::ModifiedFilteringIntegral m_filt_integral(
         acceleration, building, 2);
     m_filt_integral.CalculateEdp();
@@ -47,8 +50,8 @@ void test_modified_filter_integrate()
     {
         for (int j = 0; j < drift.data().size(); ++j)
         {
-            ofs1 << drift.data()[j][i] << " ";
-            ofs2 << displacement.data()[j][i] << " ";
+            ofs1 << drift.data().at(j)[i] << " ";
+            ofs2 << displacement.data().at(j)[i] << " ";
         }
         ofs1 << endl;
         ofs2 << endl;

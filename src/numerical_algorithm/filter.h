@@ -32,6 +32,7 @@ class Filter : public BasicFiltering
 public:
     // 默认构造函数
     Filter() = default;
+
     // 由两个std::vector参数构造
     // @param coefficients_a 滤波器分母系数
     // @param coefficients_b 滤波器分子系数
@@ -39,11 +40,13 @@ public:
            std::vector<double> coefficients_b)
         : coefficients_a_(coefficients_a), coefficients_b_(coefficients_b)
     {}
+
     // 由一个std::vector作为参数b构造，a默认为1
     // @param coefficients_b 滤波器分子系数
     explicit Filter(std::vector<double> coefficients_b)
         : coefficients_a_(1, 1.0), coefficients_b_(coefficients_b)
     {}
+
     // 由butterworth滤波器设计构造
     // @param filter_design butterworth滤波器设计类
     explicit Filter(const ButterworthFilterDesign &filter_design)
@@ -53,8 +56,10 @@ public:
 
     // 拷贝构造函数
     Filter(const Filter &filter) = default;
+
     // 移动构造函数
     Filter(Filter &&filter) = default;
+
     // 析构函数
     ~Filter() = default;
 
@@ -74,14 +79,19 @@ private:
     // filter滤波方法参数
     std::vector<double> coefficients_a_, coefficients_b_;
 
-    // 有限脉冲响应滤波器
+    // 有限脉冲响应滤波器（矩阵）
     void fir_filter(const std::vector<std::vector<double>> &input_signal,
                     std::vector<std::vector<double>> &output_signal);
+
+    // 有限脉冲响应滤波器（单列）
     void fir_filter(const std::vector<double> &input_signal,
                     std::vector<double> &output_signal);
-    // 无限脉冲响应滤波器
+
+    // 无限脉冲响应滤波器（矩阵）
     void iir_filter(const std::vector<std::vector<double>> &input_signal,
                     std::vector<std::vector<double>> &output_signal);
+
+    // 无限脉冲响应滤波器（单列）
     void iir_filter(const std::vector<double> &input_signal,
                     std::vector<double> &output_signal);
 };

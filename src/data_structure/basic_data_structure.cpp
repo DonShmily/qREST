@@ -19,16 +19,10 @@
 #include <iosfwd>
 #include <iostream>
 #include <stdexcept>
-#include <vector>
 
 
 namespace data_structure
 {
-
-// 从二维std::vector<std::vector<double>>构造
-BasicData::BasicData(const std::vector<std::vector<double>> &matrix)
-    : data_(matrix)
-{}
 
 // 从输入流构造
 BasicData::BasicData(std::istream &stream,
@@ -66,7 +60,7 @@ BasicData::BasicData(std::istream &stream,
     {
         for (std::size_t j = 0; j < col_number; ++j)
         {
-            stream >> data_[j][i];
+            stream >> data_->at(j).at(i);
         }
     }
 }
@@ -98,10 +92,10 @@ void BasicData::resize(const std::size_t &row_number,
                        const std::size_t &col_number,
                        const double &init_value)
 {
-    data_.resize(col_number);
+    data_->resize(col_number);
     for (std::size_t i = 0; i < col_number; ++i)
     {
-        data_[i].resize(row_number, init_value);
+        data_->at(i).resize(row_number, init_value);
     }
 }
 

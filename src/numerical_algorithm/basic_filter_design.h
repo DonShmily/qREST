@@ -40,6 +40,7 @@ class BasicFilterDesign
 public:
     // 默认构造函数
     BasicFilterDesign() = default;
+
     // 带通滤波器构造函数
     // @param filter_order 滤波器阶数
     // @param low_frequency 低频截止频率
@@ -49,6 +50,7 @@ public:
                       double low_frequency,
                       double high_frequency,
                       FilterType filter_type = FilterType::bandpass);
+
     // 低通/高通滤波器构造函数（默认低通）
     // @param filter_order 滤波器阶数
     // @param frequency 截止频率
@@ -56,16 +58,20 @@ public:
     BasicFilterDesign(int filter_order,
                       double frequency,
                       FilterType filter_type = FilterType::lowpass);
+
     // 拷贝构造函数
     BasicFilterDesign(const BasicFilterDesign &filter_design) = default;
+
     // 移动构造函数
     BasicFilterDesign(BasicFilterDesign &&filter_design) = default;
+
     // 析构函数
     virtual ~BasicFilterDesign() = default;
 
     // 设置滤波器阶数
     // @param filter_order 滤波器阶数
     void set_filter_order(int filter_order) { filter_order_ = filter_order; }
+
     // 设置滤波器截止频率
     // @param low_frequency 低频截止频率
     // @param high_frequency 高频截止频率
@@ -74,6 +80,7 @@ public:
         low_frequency_ = low_frequency;
         high_frequency_ = high_frequency;
     }
+
     // 滤波器设计函数
     virtual void DesignFilter() = 0;
 

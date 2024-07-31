@@ -29,7 +29,7 @@ class Velocity : public BasicData
 {
 public:
     // 默认构造函数
-    Velocity() = default;
+    Velocity() : BasicData() {}
 
     // 从二维std::vector<std::vector<double>>构造，每个vector<double>代表一个测点的速度数据
     // @param matrix 速度数据矩阵
