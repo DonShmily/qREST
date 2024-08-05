@@ -89,7 +89,7 @@ public:
 
     // 获取滤波积分插值法计算结果
     // @return 滤波积分插值法计算结果的引用
-    const FilteringIntegralResult &get_filtering_interp_result() const
+    const InterStoryDriftResult &get_filtering_interp_result() const
     {
         return result_;
     }
@@ -100,7 +100,7 @@ private:
     // 滤波积分插值法计算方法参数
     FilteringIntegralMethod method_{};
     // 计算结果的指针
-    FilteringIntegralResult result_{};
+    InterStoryDriftResult result_{};
 
     // 滤波积分插值法计算单列加速度
     std::vector<double> CalculateSingle(const std::size_t &col);

@@ -1,4 +1,4 @@
-/**
+﻿/**
 **           qREST - Quick Response Evaluation for Safety Tagging
 **    Institute of Engineering Mechanics, China Earthquake Administration
 **
@@ -10,37 +10,44 @@
 // Date: 2024-7
 // Author: 董飞跃(Dong Fieyue)
 // Description:
-// 基于工程需求参量安全评价基类和计算结果基类，每种方法的类都应当对应唯一的计算结果类。
+// 基于工程需求参量安全评价基类。
 
 
 #ifndef SAFTY_TAGGING_BASIC_SAFTY_TAGGING_H
 #define SAFTY_TAGGING_BASIC_SAFTY_TAGGING_H
 
-// stdc++ headers
-
-// project headers
-
 namespace safty_tagging
 {
-class BasicSaftyTaggingResult
-{
-public:
-    // 默认构造函数
-    BasicSaftyTaggingResult() = default;
-    // 拷贝构造函数
-    BasicSaftyTaggingResult(const BasicSaftyTaggingResult &other) = default;
-    // 移动构造函数
-    BasicSaftyTaggingResult(BasicSaftyTaggingResult &&other) = default;
-    // 析构函数
-    virtual ~BasicSaftyTaggingResult() = default;
 
-private:
-    // 计算结果，具体内容由方法决定
+enum class SaftyTaggingResult
+{
+    Safty,
+    Warning,
+    Danger
 };
 
 class BasicSaftyTagging
 {
 public:
+    // 默认构造函数
+    BasicSaftyTagging() = default;
+
+    // 拷贝构造函数
+    BasicSaftyTagging(const BasicSaftyTagging &safty_tagging) = default;
+
+    // 移动构造函数
+    BasicSaftyTagging(BasicSaftyTagging &&safty_tagging) = default;
+
+    // 析构函数
+    virtual ~BasicSaftyTagging() = default;
+
+    // 计算安全评价
+    virtual void TagSafty() = 0;
+
+
+protected:
+    // 安全评价结果
+    SaftyTaggingResult safty_tagging_result_{};
 };
 
 

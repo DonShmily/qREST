@@ -66,6 +66,9 @@ public:
     // 移动构造函数
     Displacement(Displacement &&data) = default;
 
+    // 拷贝赋值函数
+    Displacement &operator=(const Displacement &data) = default;
+
     // 析构函数
     ~Displacement() = default;
 

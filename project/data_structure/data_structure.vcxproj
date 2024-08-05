@@ -23,7 +23,7 @@
     <ClInclude Include="..\..\src\data_structure\basic_data_structure.h" />
     <ClInclude Include="..\..\src\data_structure\building.h" />
     <ClInclude Include="..\..\src\data_structure\displacement.h" />
-    <ClInclude Include="..\..\src\data_structure\story_drift.h" />
+    <ClInclude Include="..\..\src\data_structure\inter_story_drift.h" />
     <ClInclude Include="..\..\src\data_structure\velocity.h" />
   </ItemGroup>
   <ItemGroup>

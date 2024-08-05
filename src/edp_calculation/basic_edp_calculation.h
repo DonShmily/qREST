@@ -1,4 +1,4 @@
-/**
+﻿/**
 **           qREST - Quick Response Evaluation for Safety Tagging
 **    Institute of Engineering Mechanics, China Earthquake Administration
 **
@@ -22,10 +22,61 @@
 // project headers
 #include "data_structure/acceleration.h"
 #include "data_structure/building.h"
+#include "data_structure/displacement.h"
+#include "data_structure/inter_story_drift.h"
 
 
 namespace edp_calculation
 {
+
+// 层间位移角计算结果，包含楼层位移和层间位移角两组数据
+class InterStoryDriftResult
+{
+    friend class FilteringIntegral;
+    friend class ModifiedFilteringIntegral;
+
+public:
+    // 默认构造函数
+    InterStoryDriftResult() = default;
+
+    // 拷贝构造函数
+    InterStoryDriftResult(
+        const InterStoryDriftResult &filtering_interp_result) = default;
+
+    // 移动构造函数
+    InterStoryDriftResult(InterStoryDriftResult &&filtering_interp_result) =
+        default;
+
+    // 拷贝赋值函数
+    InterStoryDriftResult &
+    operator=(const InterStoryDriftResult &filtering_interp_result)
+    {
+        if (this != &filtering_interp_result)
+        {
+            displacement_ = filtering_interp_result.displacement_;
+            inter_story_drift_ = filtering_interp_result.inter_story_drift_;
+        }
+        return *this;
+    }
+
+    // 析构函数
+    ~InterStoryDriftResult() = default;
+
+    // 获取位移
+    // @return 位移的引用
+    data_structure::Displacement &get_displacement() { return displacement_; }
+    // 获取层间位移角
+    // @return 层间位移角的引用
+    data_structure::InterStoryDrift &get_inter_story_drift()
+    {
+        return inter_story_drift_;
+    }
+
+private:
+    // 计算结果，具体内容由方法决定
+    data_structure::Displacement displacement_{};
+    data_structure::InterStoryDrift inter_story_drift_{};
+};
 
 // 工程需求参量计算基类，计算方法基类至少接收一个加速度数据
 class BasicEdpCalculation

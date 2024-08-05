@@ -14,7 +14,7 @@ using namespace std;
 void test_modified_filter_integrate()
 {
     // 读取数据文件
-    string file_name = "acceleration_data/test_acceleration.txt";
+    string file_name = "acceleration_data/accNS.txt";
 
     std::vector<double> floor, measurement;
     std::ifstream ifs("building/floor.txt");
@@ -36,11 +36,13 @@ void test_modified_filter_integrate()
     auto acceleration = data_structure::Acceleration(
         std::vector<std::vector<double>>(), 50, 0.01);
     acceleration.data() = readMatrixFromFile(file_name);
+
     edp_calculation::ModifiedFilteringIntegral m_filt_integral(
         acceleration, building, 2);
     m_filt_integral.CalculateEdp();
+
     auto result = m_filt_integral.get_filtering_interp_result();
-    auto drift = result.get_story_drift();
+    auto drift = result.get_inter_story_drift();
     auto displacement = result.get_displacement();
 
     ofstream ofs1("acceleration_data/test_story_drift.txt");

@@ -18,11 +18,20 @@ int main()
     // 测试改进的滤波积分算法
     // test_modified_filter_integrate();
 
+    // 测试安全评价
+    // test_safty_tagging();
+
+    // 测试EDP计算模块
+    test_edp_library();
+
     // 测试gmp
     // test_gmp();
 
     // 测试类型大小
-    test_size();
+    // test_size();
+
+    // 测试地震动参数库计算
+    // test_gmp_library();
 
     return 0;
 }

@@ -136,18 +136,23 @@
   <ItemGroup>
     <ClCompile Include="..\..\src\test\test_butter.cpp" />
     <ClCompile Include="..\..\src\test\comments.cpp" />
+    <ClCompile Include="..\..\src\test\test_edp_library.cpp" />
     <ClCompile Include="..\..\src\test\test_filter.cpp" />
     <ClCompile Include="..\..\src\test\main.cpp" />
     <ClCompile Include="..\..\src\test\test_filter_integral.cpp" />
     <ClCompile Include="..\..\src\test\test_function.cpp" />
     <ClCompile Include="..\..\src\test\test_gmp.cpp" />
+    <ClCompile Include="..\..\src\test\test_gmp_library.cpp" />
     <ClCompile Include="..\..\src\test\test_modified_filter_integral.cpp" />
+    <ClCompile Include="..\..\src\test\test_safty_tagging.cpp" />
     <ClCompile Include="..\..\src\test\test_size.cpp" />
+    <ClCompile Include="..\..\src\test\test_vector_operation.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\src\test\test_function.h" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="..\..\src\test\generate_headers.py" />
     <None Include="..\..\src\test\header.inc" />
   </ItemGroup>
   <ItemGroup>
@@ -157,11 +162,20 @@
     <ProjectReference Include="..\edp_calculation\edp_calculation.vcxproj">
       <Project>{e687ea63-034c-49c0-aefe-25c6e14984e8}</Project>
     </ProjectReference>
+    <ProjectReference Include="..\edp_library\edp_library.vcxproj">
+      <Project>{4621db68-b699-4dc6-a680-aaa44172a40a}</Project>
+    </ProjectReference>
     <ProjectReference Include="..\gmp_caculation\gmp_caculation.vcxproj">
       <Project>{389d84b1-2c45-4edb-b816-42b9cc180870}</Project>
     </ProjectReference>
+    <ProjectReference Include="..\gmp_library\gmp_library.vcxproj">
+      <Project>{e3be7fe1-1915-4053-95ba-739691331855}</Project>
+    </ProjectReference>
     <ProjectReference Include="..\numerical_algorithm\numerical_algorithm.vcxproj">
       <Project>{ab65f082-17af-4015-a3b4-baae8ba00c71}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\safty_tagging\safty_tagging.vcxproj">
+      <Project>{e257c22e-15f9-4325-b7e0-165f5bf8ac2f}</Project>
     </ProjectReference>
     <ProjectReference Include="..\settings\settings.vcxproj">
       <Project>{5acf29ba-9248-452c-bf45-d82109e9ebba}</Project>

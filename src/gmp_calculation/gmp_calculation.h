@@ -13,6 +13,7 @@
 // 计算地震参数的类。
 // 已经完成了各种反应谱、持时（95%）、峰值信息、Fourier变换等计算。
 // TODO: Arias强度、Housner强度、能量密度谱等计算有待加入。
+// TODO: 反应谱的横轴最大值、步长的设置有待加入。
 
 #ifndef GMP_CALCULATION_GMP_CACULATION_H
 #define GMP_CALCULATION_GMP_CACULATION_H
@@ -47,13 +48,20 @@ struct ResponseSpectrumResult
     ResponseSpectrumResult() = default;
     ResponseSpectrumResult(const std::vector<double> &Sa,
                            const std::vector<double> &Sv,
-                           const std::vector<double> &Sd)
-        : Sa(Sa), Sv(Sv), Sd(Sd){};
+                           const std::vector<double> &Sd,
+                           int period_per_second = 100,
+                           double max_period = 5)
+        : Sa(Sa),
+          Sv(Sv),
+          Sd(Sd),
+          period_per_second(period_per_second),
+          max_period(max_period) {};
 
     std::vector<double> Sa{};
     std::vector<double> Sv{};
     std::vector<double> Sd{};
-    double dT = 0.01;
+    int period_per_second = 100;
+    double max_period = 5;
 };
 
 // Ti周期下地震反应谱计算结果
@@ -63,7 +71,7 @@ struct ResponseSpectrumTiResult
     ResponseSpectrumTiResult(const double &SaTi,
                              const double &SvTi,
                              const double &SdTi)
-        : SaTi(SaTi), SvTi(SvTi), SdTi(SdTi){};
+        : SaTi(SaTi), SvTi(SvTi), SdTi(SdTi) {};
     double SaTi{};
     double SvTi{};
     double SdTi{};
@@ -135,6 +143,14 @@ public:
     // 获取位移
     // @return 位移
     inline std::vector<double> get_displacement();
+
+    // 获取反应谱计算结果
+    // @return 反应谱计算结果
+    inline ResponseSpectrumResult get_response_spectrum();
+
+    // 获取拟反应谱计算结果
+    // @return 拟反应谱计算结果
+    inline ResponseSpectrumResult get_pseudo_response_spectrum();
 
     /** 峰值信息 */
 
@@ -232,13 +248,13 @@ private:
     std::vector<double> velocity_{}, displacement_{};
 
     // 反应谱计算结果
-    struct ResponseSpectrumResult response_spectrum_;
+    ResponseSpectrumResult response_spectrum_{};
     // 反应谱在Ti的计算结果
-    struct ResponseSpectrumTiResult response_spectrum_ti_;
+    ResponseSpectrumTiResult response_spectrum_ti_{};
     // 拟反应谱计算结果
-    struct ResponseSpectrumResult pesudo_response_spectrum_;
+    ResponseSpectrumResult pesudo_response_spectrum_{};
     // 拟反应谱在Ti的计算结果
-    struct ResponseSpectrumTiResult pesudo_response_spectrum_ti_;
+    ResponseSpectrumTiResult pesudo_response_spectrum_ti_{};
     // 是否已经计算了反应谱
     bool response_spectrum_flag_{false};
     // 是否已经计算了拟反应谱
@@ -291,7 +307,6 @@ inline GmpCalculation::GmpCalculation(
 /** 读取和设置参数 **/
 
 // 设置加速度数据
-// @param acceleration 加速度数据
 inline void
 GmpCalculation::set_acceleration(const std::vector<double> &acceleration)
 {
@@ -300,7 +315,6 @@ GmpCalculation::set_acceleration(const std::vector<double> &acceleration)
 }
 
 // 设置频率
-// @param frequency 频率
 inline void GmpCalculation::set_frequency(double frequency)
 {
     frequency_ = frequency;
@@ -309,7 +323,6 @@ inline void GmpCalculation::set_frequency(double frequency)
 }
 
 // 设置阻尼比
-// @param damping_ratio 阻尼比
 inline void GmpCalculation::set_damping_ratio(double damping_ratio)
 {
     damping_ratio_ = damping_ratio;
@@ -317,25 +330,21 @@ inline void GmpCalculation::set_damping_ratio(double damping_ratio)
 }
 
 // 获取加速度数据
-// @return 加速度数据
 inline std::vector<double> &GmpCalculation::get_acceleration()
 {
     return *acceleration_ptr_;
 }
 
 // 获取频率
-// @return 频率
 inline double GmpCalculation::get_frequency() const { return frequency_; }
 
 // 获取阻尼比
-// @return 阻尼比
 inline double GmpCalculation::get_damping_ratio() const
 {
     return damping_ratio_;
 }
 
 // 获取速度
-// @return 速度
 inline std::vector<double> GmpCalculation::get_velocity()
 {
     if (velocity_.empty())
@@ -346,7 +355,6 @@ inline std::vector<double> GmpCalculation::get_velocity()
 }
 
 // 获取位移
-// @return 位移
 inline std::vector<double> GmpCalculation::get_displacement()
 {
     if (displacement_.empty())
@@ -356,17 +364,35 @@ inline std::vector<double> GmpCalculation::get_displacement()
     return displacement_;
 }
 
+// 获取反应谱计算结果
+inline ResponseSpectrumResult GmpCalculation::get_response_spectrum()
+{
+    if (!response_spectrum_flag_)
+    {
+        ResponseSpectrum();
+    }
+    return response_spectrum_;
+}
+
+// 获取拟反应谱计算结果
+inline ResponseSpectrumResult GmpCalculation::get_pseudo_response_spectrum()
+{
+    if (!pesudo_response_spectrum_flag_)
+    {
+        PseudoResponseSpectrum();
+    }
+    return pesudo_response_spectrum_;
+}
+
 /** 峰值信息 */
 
 // 获取峰值加速度
-// @return 峰值加速度
 inline double GmpCalculation::PeakAcceleration() const
 {
     return numerical_algorithm::FindMaxAbs(*acceleration_ptr_);
 }
 
 // 获取峰值速度
-// @return 峰值速度
 inline double GmpCalculation::PeakVelocity()
 {
     if (velocity_.empty())
@@ -377,7 +403,6 @@ inline double GmpCalculation::PeakVelocity()
 }
 
 // 获取峰值位移
-// @return 峰值位移
 inline double GmpCalculation::PeakDisplacement()
 {
     if (displacement_.empty())
@@ -388,7 +413,6 @@ inline double GmpCalculation::PeakDisplacement()
 }
 
 // 获取加速度均方根
-// @return 加速度均方根
 inline double GmpCalculation::RmsAcceleration()
 {
     double sum = std::accumulate(acceleration_ptr_->begin(),
@@ -399,7 +423,6 @@ inline double GmpCalculation::RmsAcceleration()
 }
 
 // 获取速度均方根
-// @return 速度均方根
 inline double GmpCalculation::RmsVelocity()
 {
     if (velocity_.empty())
@@ -414,7 +437,6 @@ inline double GmpCalculation::RmsVelocity()
 }
 
 // 获取位移均方根
-// @return 位移均方根
 inline double GmpCalculation::RmsDisplacement()
 {
     if (displacement_.empty())
@@ -431,7 +453,6 @@ inline double GmpCalculation::RmsDisplacement()
 /** 持时信息 **/
 
 // 获取持时
-// @return 持时
 inline double GmpCalculation::Duration()
 {
     double peak_acceleration = PeakAcceleration();
@@ -479,9 +500,11 @@ inline double GmpCalculation::DisplacementSpectrumTi(const double &Ti)
 inline ResponseSpectrumResult GmpCalculation::ResponseSpectrum()
 {
     clear_result();
-    for (int Ti = 1; Ti <= 500; ++Ti)
+    int period_length =
+        response_spectrum_.period_per_second * response_spectrum_.max_period;
+    for (int Ti = 1; Ti <= period_length; ++Ti)
     {
-        NewmarkBeta(Ti * 0.01);
+        NewmarkBeta(1.0 * Ti / response_spectrum_.period_per_second);
         response_spectrum_.Sa.push_back(response_spectrum_ti_.SaTi);
         response_spectrum_.Sv.push_back(response_spectrum_ti_.SvTi);
         response_spectrum_.Sd.push_back(response_spectrum_ti_.SdTi);
@@ -551,14 +574,16 @@ inline double GmpCalculation::PseudoVelocitySpectrumTi(const double &Ti)
 // 获取拟反应谱
 inline ResponseSpectrumResult GmpCalculation::PseudoResponseSpectrum()
 {
+    double period_length =
+        response_spectrum_.period_per_second * response_spectrum_.max_period;
     double omega;
     if (!response_spectrum_flag_)
     {
         ResponseSpectrum();
     }
-    for (int Ti = 1; Ti <= 500; ++Ti)
+    for (int Ti = 1; Ti <= period_length; ++Ti)
     {
-        omega = 2 * M_PI / Ti * 100;
+        omega = 2 * M_PI / Ti * response_spectrum_.period_per_second;
         pesudo_response_spectrum_.Sa.push_back(response_spectrum_.Sd[Ti - 1]
                                                * omega * omega);
         pesudo_response_spectrum_.Sv.push_back(response_spectrum_.Sd[Ti - 1]

@@ -20,6 +20,9 @@
 #include <iostream>
 #include <stdexcept>
 
+// project headers
+#include "numerical_algorithm/vector_calculation.h"
+
 
 namespace data_structure
 {
@@ -97,6 +100,57 @@ void BasicData::resize(const std::size_t &row_number,
     {
         data_->at(i).resize(row_number, init_value);
     }
+}
+
+// 计算每一列信号的能量
+std::vector<double> BasicData::Energy() const
+{
+    std::vector<double> energy(0);
+    for (const auto &col : *data_)
+    {
+        energy.push_back(
+            numerical_algorithm::CrossCorrelationAtShift(col, col, 0));
+    }
+    return energy;
+}
+
+// 计算每一列信号的正向最大值
+std::vector<std::pair<double, size_t>> BasicData::PositiveMax() const
+{
+    std::vector<std::pair<double, size_t>> max(0);
+    for (const auto &col : *data_)
+    {
+        auto max_index = std::max_element(col.begin(), col.end());
+        max.push_back(std::make_pair(*max_index, max_index - col.begin()));
+    }
+    return max;
+}
+
+// 计算每一列信号的负向最大值
+std::vector<std::pair<double, size_t>> BasicData::NegativeMax() const
+{
+    std::vector<std::pair<double, size_t>> max(0);
+    for (const auto &col : *data_)
+    {
+        auto max_index = std::min_element(col.begin(), col.end());
+        max.push_back(std::make_pair(*max_index, max_index - col.begin()));
+    }
+    return max;
+}
+
+// 计算每一列信号的绝对最大值
+std::vector<std::pair<double, size_t>> BasicData::AbsoluteMax() const
+{
+    std::vector<std::pair<double, size_t>> max(0);
+    for (const auto &col : *data_)
+    {
+        auto max_index = std::max_element(
+            col.begin(), col.end(), [](const double &a, const double &b) {
+                return std::abs(a) < std::abs(b);
+            });
+        max.push_back(std::make_pair(*max_index, max_index - col.begin()));
+    }
+    return max;
 }
 
 } // namespace data_structure

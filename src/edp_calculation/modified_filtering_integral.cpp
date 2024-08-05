@@ -87,7 +87,7 @@ void ModifiedFilteringIntegral::CalculateEdp()
     // 2.4 计算层间位移角
     for (std::size_t i = 0; i < interstory_displacement.data().size(); ++i)
     {
-        result_.story_drift_.data().push_back(
+        result_.inter_story_drift_.data().push_back(
             numerical_algorithm::VectorOperation(
                 interstory_displacement.data()[i], interstory_height[i], '/'));
     }

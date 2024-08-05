@@ -16,8 +16,10 @@
 #define DATA_STRUCTURE_BASIC_DATA_H
 
 // stdc++ headers
+#include <cstddef>
 #include <iosfwd>
 #include <memory>
+#include <utility>
 #include <vector>
 
 // project headers
@@ -58,6 +60,9 @@ public:
     // 移动构造函数
     BasicData(BasicData &&data) = default;
 
+    // 拷贝赋值函数
+    BasicData &operator=(const BasicData &data) = default;
+
     // 析构函数
     virtual ~BasicData() = default;
 
@@ -80,23 +85,23 @@ public:
     // 获取列数
     std::size_t get_col_number() const { return data_->size(); }
 
-    // 获取指定行的数据
-    // @param row_index 行索引
-    const std::vector<double> &get_row(const std::size_t &row_index) const
-    {
-        return data_->at(row_index);
-    }
-
     // 获取指定列的数据
     // @param col_index 列索引
     std::vector<double> get_col(const std::size_t &col_index) const
     {
-        std::vector<double> col_data;
-        for (const auto &row : *data_)
+        return data_->at(col_index);
+    }
+
+    // 获取指定行的数据
+    // @param row_index 行索引
+    std::vector<double> get_row(const std::size_t &row_index) const
+    {
+        std::vector<double> row_data;
+        for (const auto &col : *data_)
         {
-            col_data.push_back(row.at(col_index));
+            row_data.push_back(col.at(row_index));
         }
-        return col_data;
+        return row_data;
     }
 
     // 获取指定行列的引用
@@ -108,16 +113,19 @@ public:
 
     // 计算每一列信号的能量
     // @return 每一列信号的能量
-    std::vector<double> Energy() const
-    {
-        std::vector<double> energy(0);
-        for (const auto &col : *data_)
-        {
-            energy.push_back(
-                numerical_algorithm::CrossCorrelationAtShift(col, col, 0));
-        }
-        return energy;
-    }
+    std::vector<double> Energy() const;
+
+    // 计算每一列信号的正向最大值
+    // @return 每一列信号的正最大值及其索引
+    std::vector<std::pair<double, size_t>> PositiveMax() const;
+
+    // 计算每一列信号的负向最大值
+    // @return 每一列信号的负最大值及其索引
+    std::vector<std::pair<double, size_t>> NegativeMax() const;
+
+    // 计算每一列信号的绝对最大值
+    // @return 每一列信号的绝对最大值及其索引
+    std::vector<std::pair<double, size_t>> AbsoluteMax() const;
 
     // 写入数据流，输出数据矩阵。列主序，行为时程，列为节点
     // @param output_stream 输出流

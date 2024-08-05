@@ -25,8 +25,6 @@
 
 #include "data_structure/acceleration.h"
 #include "data_structure/building.h"
-#include "data_structure/displacement.h"
-#include "data_structure/story_drift.h"
 
 #include "numerical_algorithm/basic_filter_design.h"
 #include "numerical_algorithm/basic_filtering.h"
@@ -62,46 +60,6 @@ struct FilteringIntegralMethod
     // Polynomial：多项式插值
     numerical_algorithm::InterpType interp_type_ =
         numerical_algorithm::InterpType::Linear;
-};
-
-// 滤波积分插值法计算工程需求参量结果的类
-class FilteringIntegralResult
-{
-    friend class FilteringIntegral;
-    friend class ModifiedFilteringIntegral;
-
-public:
-    // 默认构造函数
-    FilteringIntegralResult() = default;
-
-    // 拷贝构造函数
-    FilteringIntegralResult(
-        const FilteringIntegralResult &filtering_interp_result) = default;
-
-    // 移动构造函数
-    FilteringIntegralResult(FilteringIntegralResult &&filtering_interp_result) =
-        default;
-
-    // 析构函数
-    ~FilteringIntegralResult() = default;
-
-    // 获取位移
-    // @return 位移的引用
-    const data_structure::Displacement &get_displacement() const
-    {
-        return displacement_;
-    }
-    // 获取层间位移角
-    // @return 层间位移角的引用
-    const data_structure::StoryDrift &get_story_drift() const
-    {
-        return story_drift_;
-    }
-
-private:
-    // 计算结果，具体内容由方法决定
-    data_structure::Displacement displacement_{};
-    data_structure::StoryDrift story_drift_{};
 };
 
 // 滤波积分插值法计算工程需求参量的类
@@ -175,7 +133,7 @@ public:
 
     // 获取滤波积分插值法计算结果
     // @return 滤波积分插值法计算结果的引用
-    const FilteringIntegralResult &get_filtering_interp_result() const
+    const InterStoryDriftResult &get_filtering_interp_result() const
     {
         return result_;
     }
@@ -188,7 +146,7 @@ private:
     // 滤波积分插值法计算方法参数
     FilteringIntegralMethod method_{};
     // 计算结果的指针
-    FilteringIntegralResult result_{};
+    InterStoryDriftResult result_{};
 };
 } // namespace edp_calculation
 
