@@ -3,6 +3,9 @@
 
 #include "header.inc"
 
+#include <string>
+#include <vector>
+
 
 // 测试butter函数
 int test_butter();
@@ -16,8 +19,18 @@ void test_filter_integrate();
 // 测试改进的滤波积分算法
 void test_modified_filter_integrate();
 
+// 测试EDP计算模块
+void test_edp_library();
+
+// 测试评估模块
+void test_safty_tagging();
+
 // 测试地震动参数计算模块
 void test_gmp();
+void test_gmp_library();
+
+// 测试类型大小
+void test_size();
 
 // 读取文件中的矩阵数据
 std::vector<std::vector<double>>

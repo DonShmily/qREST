@@ -29,7 +29,7 @@ class Displacement : public BasicData
 {
 public:
     // 默认构造函数
-    Displacement() = default;
+    Displacement() : BasicData() {}
 
     // 从二维std::vector<std::vector<double>>构造，每个vector<double>代表一个测点的位移数据
     // @param matrix 位移数据矩阵
@@ -37,6 +37,15 @@ public:
     Displacement(const std::vector<std::vector<double>> &matrix,
                  const double &frequency)
         : BasicData(matrix), frequency_(frequency)
+    {}
+
+    // 从std::shared_ptr<std::vector<std::vector<double>>>构造，每个vector<double>代表一个测点的位移数据
+    // @param matrix_ptr 位移数据矩阵指针
+    // @param frequency 采样频率
+    Displacement(
+        const std::shared_ptr<std::vector<std::vector<double>>> &matrix_ptr,
+        const double &frequency)
+        : BasicData(matrix_ptr), frequency_(frequency)
     {}
 
     // 从输入流构造，col_number为测点数量，row_number为每个测点的数据长度
@@ -57,11 +66,15 @@ public:
     // 移动构造函数
     Displacement(Displacement &&data) = default;
 
+    // 拷贝赋值函数
+    Displacement &operator=(const Displacement &data) = default;
+
     // 析构函数
     ~Displacement() = default;
 
     // 获取位移采样频率
     double get_frequency() const { return frequency_; }
+
     // 获取位移时间步长
     double get_time_step() const { return 1.0 / frequency_; }
 
@@ -77,7 +90,7 @@ public:
 
 private:
     // 位移采样频率
-    double frequency_;
+    double frequency_{};
 
     // 从指定大小构造
     // @param row_number 行数

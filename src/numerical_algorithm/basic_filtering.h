@@ -16,11 +16,7 @@
 #define NUMERICAL_ALGORITHM_BASIC_FILTERING_H_
 
 // stdc++ headers
-#include <memory>
 #include <vector>
-
-// project headers
-#include "basic_filter_design.h"
 
 
 namespace numerical_algorithm
@@ -39,10 +35,13 @@ class BasicFiltering
 public:
     // 默认构造函数
     BasicFiltering() = default;
+
     // 拷贝构造函数
     BasicFiltering(const BasicFiltering &filtering) = default;
+
     // 移动构造函数
     BasicFiltering(BasicFiltering &&filtering) = default;
+
     // 析构函数
     virtual ~BasicFiltering() = default;
 

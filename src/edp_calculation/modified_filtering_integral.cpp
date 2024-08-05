@@ -24,7 +24,6 @@
 
 // project headers
 #include <data_structure/displacement.h>
-#include <data_structure/story_drift.h>
 #include "numerical_algorithm/basic_filtering.h"
 #include "numerical_algorithm/butterworth_filter_design.h"
 #include "numerical_algorithm/filter.h"
@@ -69,27 +68,26 @@ void ModifiedFilteringIntegral::CalculateEdp()
     // 2.滤波积分插值计算层间位移角
     // 2.1 逐列滤波积分得到测点位移
     std::vector<std::vector<double>> filtered_displacement(
-        input_acceleration_ptr_->get_data().size());
-    for (std::size_t i = 0; i < input_acceleration_ptr_->get_data().size(); ++i)
+        input_acceleration_.get_data().size());
+    for (std::size_t i = 0; i < input_acceleration_.get_data().size(); ++i)
     {
         filtered_displacement[i] = CalculateSingle(i);
     }
 
     // 2.2 位移插值
-    result_ptr_->displacement_ptr_->set_frequency(
-        input_acceleration_ptr_->get_frequency());
-    result_ptr_->displacement_ptr_->data() =
-        interp_function.Interpolation(building_ptr_->get_measuren_height(),
+    result_.displacement_.set_frequency(input_acceleration_.get_frequency());
+    result_.displacement_.data() =
+        interp_function.Interpolation(building_.get_measuren_height(),
                                       filtered_displacement,
-                                      building_ptr_->get_floor_height());
+                                      building_.get_floor_height());
     // 2.3 计算层间位移
     auto interstory_displacement =
-        result_ptr_->displacement_ptr_->interstory_displacement();
-    auto interstory_height = building_ptr_->get_inter_height();
+        result_.displacement_.interstory_displacement();
+    auto interstory_height = building_.get_inter_height();
     // 2.4 计算层间位移角
     for (std::size_t i = 0; i < interstory_displacement.data().size(); ++i)
     {
-        result_ptr_->story_drift_ptr_->data().push_back(
+        result_.inter_story_drift_.data().push_back(
             numerical_algorithm::VectorOperation(
                 interstory_displacement.data()[i], interstory_height[i], '/'));
     }
@@ -100,10 +98,10 @@ std::vector<double>
 ModifiedFilteringIntegral::CalculateSingle(const std::size_t &col)
 {
     // 1.初步到速度和位移
-    double dt = input_acceleration_ptr_->get_time_step();
+    double dt = input_acceleration_.get_time_step();
 
-    auto velocity_0 = numerical_algorithm::Cumtrapz(
-        input_acceleration_ptr_->get_data()[col], dt);
+    auto velocity_0 =
+        numerical_algorithm::Cumtrapz(input_acceleration_.get_data()[col], dt);
     auto displacement_0 = numerical_algorithm::Cumtrapz(velocity_0, dt);
 
     // 2.滤波积分，得到不同低频限值下的结果
@@ -115,7 +113,7 @@ ModifiedFilteringIntegral::CalculateSingle(const std::size_t &col)
     // 2.2设置滤波积分方法
     auto filter_generator = numerical_algorithm::ButterworthFilterDesign(2);
     auto filter_function = numerical_algorithm::FiltFilt();
-    double low, high = 20.0 / input_acceleration_ptr_->get_frequency() * 2;
+    double low, high = 20.0 / input_acceleration_.get_frequency() * 2;
     double low_scale = high / 20;
     for (int i = 0; i < max_k; ++i)
     {
@@ -127,7 +125,7 @@ ModifiedFilteringIntegral::CalculateSingle(const std::size_t &col)
 
         // 2.4 滤波积分
         filtered_acceleration[i] =
-            filter_function.Filtering(input_acceleration_ptr_->get_data()[col]);
+            filter_function.Filtering(input_acceleration_.get_data()[col]);
         integral_velocity[i] =
             numerical_algorithm::Cumtrapz(filtered_acceleration[i], dt);
         filtered_velocity[i] = filter_function.Filtering(integral_velocity[i]);

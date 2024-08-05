@@ -15,10 +15,8 @@
 #ifndef NUMERICAL_ALGORITHM_FILTFILT_H_
 #define NUMERICAL_ALGORITHM_FILTFILT_H_
 
-
 // stdc++ headers
 #include <algorithm>
-#include <fstream>
 #include <vector>
 
 // third-party headers
@@ -36,6 +34,7 @@ class FiltFilt : public BasicFiltering
 public:
     // 默认构造函数
     FiltFilt() = default;
+
     // 由两个std::vector参数构造
     // @param coefficients_a 滤波器分母系数
     // @param coefficients_b 滤波器分子系数
@@ -43,21 +42,26 @@ public:
              std::vector<double> coefficients_b)
         : coefficients_a_(coefficients_a), coefficients_b_(coefficients_b)
     {}
+
     // 由一个std::vector作为参数b构造，a默认为1
     // @param coefficients_b 滤波器分子系数
     explicit FiltFilt(std::vector<double> coefficients_b)
         : coefficients_a_(1, 1.0), coefficients_b_(coefficients_b)
     {}
+
     // 由ButterworthFilterDesign参数构造
     // @param filter_design butterworth滤波器设计类
     FiltFilt(const ButterworthFilterDesign &filter_design)
     {
         filter_design.get_filter_coefficients(coefficients_a_, coefficients_b_);
     }
+
     // 拷贝构造函数
     FiltFilt(const FiltFilt &filtfilt) = default;
+
     // 移动构造函数
     FiltFilt(FiltFilt &&filtfilt) = default;
+
     // 析构函数
     ~FiltFilt() = default;
 
@@ -70,6 +74,7 @@ public:
         coefficients_a_ = coefficients_a;
         coefficients_b_ = coefficients_b;
     }
+
     // 设置滤波方法参数
     // @param coefficients_b 滤波器分子系数
     void set_coefficients(std::vector<double> coefficients_b)
@@ -77,6 +82,7 @@ public:
         coefficients_a_ = std::vector<double>(1, 1.0);
         coefficients_b_ = coefficients_b;
     }
+
     // 设置滤波方法参数
     // @param filter_design butterworth滤波器设计类
     void set_coefficients(const ButterworthFilterDesign &filter_design)
@@ -104,6 +110,7 @@ private:
     void filter(const std::vector<double> &input_signal,
                 std::vector<double> &output_signal,
                 std::vector<double> zi);
+
     // filtfilt算法的功能函数
     inline void
     AddIndexRange(std::vector<int> &indices, int beg, int end, int inc = 1)
@@ -113,16 +120,19 @@ private:
             indices.push_back(i);
         }
     }
+
     inline void
     AddIndexConst(std::vector<int> &indices, int value, size_t numel)
     {
         indices.resize(numel + indices.size(), value);
     }
+
     inline void AppendVector(std::vector<double> &vec,
                              const std::vector<double> &tail)
     {
         vec.insert(vec.end(), tail.begin(), tail.end());
     }
+
     inline std::vector<double>
     SubvectorReverse(const std::vector<double> &vec, int idx_end, int idx_start)
     {
@@ -130,6 +140,7 @@ private:
         std::reverse(result.begin(), result.end());
         return result;
     }
+
     inline int MaxVal(const std::vector<int> &vec)
     {
         return *std::max_element(vec.begin(), vec.end());
@@ -138,4 +149,4 @@ private:
 
 } // namespace numerical_algorithm
 
-#endif
+#endif // NUMERICAL_ALGORITHM_FILTFILT_H_

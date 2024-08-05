@@ -12,7 +12,13 @@
 // Description:
 // 计算地震参数类的实现。
 
+// associated header
 #include "gmp_calculation.h"
+
+// stdc++ headers
+#include <cmath>
+#include <vector>
+
 #include "numerical_algorithm/vector_calculation.h"
 
 namespace gmp_calculation

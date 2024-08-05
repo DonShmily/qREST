@@ -17,10 +17,14 @@
 #include "filtfilt.h"
 
 // stdc++ headers
+#include <algorithm>
+#include <stdexcept>
+#include <utility>
 #include <vector>
 
 // third-party headers
 #include "eigen3/Eigen/Dense"
+
 
 namespace numerical_algorithm
 {

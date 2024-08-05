@@ -21,12 +21,12 @@ namespace data_structure
 // 求解楼层相对底层的速度
 Velocity Velocity::relative_velocity() const
 {
-    Velocity result(data_.front().size(), data_.size() - 1, frequency_);
-    for (std::size_t i = 0; i < result.data_.size(); ++i)
+    Velocity result(data_->front().size(), data_->size() - 1, frequency_);
+    for (std::size_t i = 0; i < result.data_->size(); ++i)
     {
-        for (std::size_t j = 0; j < result.data_[i].size(); ++j)
+        for (std::size_t j = 0; j < result.data_->at(i).size(); ++j)
         {
-            result.data_[i][j] = data_[i + 1][j] - data_[0][j];
+            result.data_->at(i)[j] = data_->at(i + 1)[j] - data_->at(0)[j];
         }
     }
     return result;
@@ -35,12 +35,12 @@ Velocity Velocity::relative_velocity() const
 // 求解层间相对速度
 Velocity Velocity::interstory_velocity() const
 {
-    Velocity result(data_.front().size(), data_.size() - 1, frequency_);
-    for (std::size_t i = 0; i < result.data_.size(); ++i)
+    Velocity result(data_->front().size(), data_->size() - 1, frequency_);
+    for (std::size_t i = 0; i < result.data_->size(); ++i)
     {
-        for (std::size_t j = 0; j < result.data_[i].size(); ++j)
+        for (std::size_t j = 0; j < result.data_->at(i).size(); ++j)
         {
-            result.data_[i][j] = data_[i + 1][j] - data_[i][j];
+            result.data_->at(i)[j] = data_->at(i + 1)[j] - data_->at(i)[j];
         }
     }
     return result;

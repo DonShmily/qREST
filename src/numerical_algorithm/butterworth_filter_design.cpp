@@ -21,6 +21,9 @@
 #include <complex>
 #include <vector>
 
+// project headers
+#include "basic_filter_design.h"
+
 
 namespace numerical_algorithm
 {

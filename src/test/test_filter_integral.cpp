@@ -1,14 +1,19 @@
-﻿#include "edp_calculation/filtering_integral.h"
-#include "test_function.h"
-
-#include <fstream>
+﻿#include <fstream>
+#include <iosfwd>
 #include <iostream>
-#include <sstream>
+#include <string>
 #include <vector>
+
+#include "data_structure/acceleration.h"
+#include "data_structure/building.h"
+#include "edp_calculation/filtering_integral.h"
+#include "numerical_algorithm/basic_filtering.h"
+
 
 using namespace std;
 
-std::vector<std::vector<double>> readMatrixFromFile1(const string &filename)
+static std::vector<std::vector<double>>
+readMatrixFromFile1(const string &filename)
 {
     ifstream file(filename);
     string line;
@@ -40,7 +45,7 @@ std::vector<std::vector<double>> readMatrixFromFile1(const string &filename)
 void test_filter_integrate()
 {
     // 读取数据文件
-    string file_name = "acceleration_data/test_acceleration.txt";
+    string file_name = "acceleration_data/accNS.txt";
 
     std::vector<double> floor, measurement;
     std::ifstream ifs("building/floor.txt");
@@ -69,7 +74,7 @@ void test_filter_integrate()
 
     filtering_integral.CalculateEdp();
     auto result = filtering_integral.get_filtering_interp_result();
-    auto drift = result.get_story_drift();
+    auto drift = result.get_inter_story_drift();
     auto displacement = result.get_displacement();
 
     ofstream ofs1("test_acceleration/test_story_drift.txt");

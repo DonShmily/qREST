@@ -20,7 +20,7 @@
 
 namespace numerical_algorithm
 {
-// std::vector<double>积分算法
+// std::vector<double>梯形积分算法
 // @param input 输入数据
 // @param output 积分结果
 // @param dx 积分步长
@@ -33,7 +33,8 @@ inline std::vector<double> Cumtrapz(const std::vector<double> &input, double dx)
     }
     return output;
 }
-// std::vector<std::vector<double>> 积分算法（按列积分）
+
+// std::vector<std::vector<double>> 梯形积分算法（按列积分）
 // @param input 输入数据矩阵
 // @param output 积分结果矩阵
 // @param dx 积分步长
@@ -52,6 +53,7 @@ Cumtrapz(const std::vector<std::vector<double>> &input, double dx)
     }
     return output;
 }
+
 } // namespace numerical_algorithm
 
 #endif // NUMERERICAL_ALGORITHM_INTEGRAL_H_

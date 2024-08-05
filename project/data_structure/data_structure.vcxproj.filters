@@ -30,7 +30,7 @@
     <ClInclude Include="..\..\src\data_structure\building.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\data_structure\story_drift.h">
+    <ClInclude Include="..\..\src\data_structure\inter_story_drift.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>

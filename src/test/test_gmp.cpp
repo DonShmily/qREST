@@ -1,5 +1,9 @@
 ﻿#include <fstream>
+#include <iosfwd>
 #include <ostream>
+#include <string>
+#include <vector>
+
 #include "gmp_calculation/gmp_calculation.h"
 #include "test_function.h"
 
@@ -10,7 +14,7 @@ using namespace gmp_calculation;
 void test_gmp()
 {
     // 读取数据文件
-    string file_name = "acceleration_data/test_acceleration.txt";
+    string file_name = "acceleration_data/accNS.txt";
     // 创建计算对象
     std::vector<std::vector<double>> test_acceleration =
         readMatrixFromFile(file_name);

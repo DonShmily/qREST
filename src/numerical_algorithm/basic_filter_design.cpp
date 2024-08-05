@@ -15,9 +15,6 @@
 // associated header
 #include "basic_filter_design.h"
 
-// stdc++ headers
-#include <vector>
-
 namespace numerical_algorithm
 {
 

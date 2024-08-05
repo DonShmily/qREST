@@ -18,8 +18,6 @@
 // stdc++ headers
 #include <vector>
 
-// third-party library headers
-
 
 namespace data_structure
 {

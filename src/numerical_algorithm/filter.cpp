@@ -16,12 +16,9 @@
 #include "filter.h"
 
 // stdc++ headers
-#include <cstddef>
 #include <stdexcept>
+#include <vector>
 
-// third-party headers
-
-// project headers
 
 namespace numerical_algorithm
 {
