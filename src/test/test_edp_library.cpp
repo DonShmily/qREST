@@ -12,11 +12,9 @@
 
 using namespace std;
 
-void test_edp_library()
+void test_edp_library(const string &file_name)
 {
-    // 读取数据文件
-    string file_name = "acceleration_data/accEW.txt";
-
+    // 读取文件中的数据
     std::vector<double> floor, measurement;
     std::ifstream ifs("building/floor.txt");
     double temp;
@@ -33,38 +31,48 @@ void test_edp_library()
     ifs.close();
 
     // 创建计算对象
-    auto building = data_structure::Building(measurement, floor);
-    auto acceleration = data_structure::Acceleration(
-        std::vector<std::vector<double>>(), 50, 0.01);
-    acceleration.data() = readMatrixFromFile(file_name);
+    auto acceleration = ReadMatrixFromFile(file_name);
 
     // 计算对象赋值
-    auto floor_height = building.get_floor_height();
-    auto measure_height = building.get_measuren_height();
-    ::building *building_c = new ::building;
-    *building_c = {floor_height.data(),
-                   floor_height.size(),
-                   measure_height.data(),
-                   measure_height.size()};
-    size_t col_number = acceleration.get_col_number();
+    Building *building_c = new Building;
+    *building_c = {
+        floor.data(), floor.size(), measurement.data(), measurement.size()};
+    size_t col_number = acceleration.size(),
+           row_number = acceleration.front().size();
     double **acc_c = new double *[col_number];
     for (std::size_t i = 0; i < col_number; ++i)
     {
-        acc_c[i] = new double[acceleration.get_row_number()];
+        acc_c[i] = new double[row_number];
         std::copy(
-            acceleration.col(i).begin(), acceleration.col(i).end(), acc_c[i]);
+            acceleration.at(i).begin(), acceleration.at(i).end(), acc_c[i]);
     }
 
-    auto idr_result = ModifiedFilteringIntegral(
-        acc_c, acceleration.get_row_number(), 50, building_c);
+    // 计算层间位移角
+    auto idr_result =
+        ModifiedFilteringIntegral(acc_c, row_number, 50, building_c);
 
-    std::ofstream ofs1("acceleration_data/C2_test_story_drift.txt");
+    std::ofstream ofs1("acceleration_data/story_drift.txt");
     for (std::size_t i = 0; i < idr_result->time_step_count; ++i)
     {
         for (std::size_t j = 0; j < idr_result->story_count; ++j)
         {
-            ofs1 << idr_result->inter_story_drift[j][i] << " ";
+            ofs1 << idr_result->idr[j][i] << " ";
         }
         ofs1 << endl;
     }
+    ofs1.close();
+
+    // 计算最大层间位移角
+    auto max_idr = GetMaxIdr(idr_result, 50);
+
+    // 输出结果
+    std::ofstream ofs2("acceleration_data/max_story_drift.txt");
+    for (std::size_t j = 0; j < max_idr->story_count; ++j)
+    {
+        ofs2 << max_idr->max_idr[j] << "\n";
+    }
+    ofs2.close();
+
+    FreeMaxIdr(max_idr);
+    FreeIdr(idr_result);
 }

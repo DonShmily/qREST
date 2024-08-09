@@ -8,10 +8,11 @@
 // projects headers
 #include "gmp_calculation/gmp_calculation.h"
 
-response_spectrum *ResponseSpectrum(double frequency,
-                                    double damping_ratio,
-                                    const double *acceleration,
-                                    int size)
+// 计算反应谱
+ResponseSpectrum *GetResponseSpectrum(const double *acceleration,
+                                      int size,
+                                      double frequency,
+                                      double damping_ratio)
 {
     // 创建计算对象
     std::vector<double> acc(acceleration, acceleration + size);
@@ -19,7 +20,7 @@ response_spectrum *ResponseSpectrum(double frequency,
     auto response = gmp.get_response_spectrum();
 
     // 创建输出对象
-    response_spectrum *result = new response_spectrum;
+    ResponseSpectrum *result = new ResponseSpectrum;
 
     result->Sa = new double[500];
     result->Sv = new double[500];
@@ -34,10 +35,11 @@ response_spectrum *ResponseSpectrum(double frequency,
     return result;
 }
 
-response_spectrum *PseudoResponseSpectrum(double frequency,
-                                          double damping_ratio,
-                                          const double *acceleration,
-                                          int size)
+// 计算拟反应谱
+ResponseSpectrum *GetPseudoResponseSpectrum(const double *acceleration,
+                                            int size,
+                                            double frequency,
+                                            double damping_ratio)
 {
     // 创建计算对象
     std::vector<double> acc(acceleration, acceleration + size);
@@ -45,7 +47,7 @@ response_spectrum *PseudoResponseSpectrum(double frequency,
     auto response = gmp.get_pseudo_response_spectrum();
 
     // 创建输出对象
-    response_spectrum *result = new response_spectrum;
+    ResponseSpectrum *result = new ResponseSpectrum;
 
     result->Sa = new double[500];
     result->Sv = new double[500];
@@ -60,14 +62,19 @@ response_spectrum *PseudoResponseSpectrum(double frequency,
     return result;
 }
 
-void FreeMemory(response_spectrum *memory)
+// 释放反应谱结果内存
+void FreeResponseSpectrum(ResponseSpectrum *memory)
 {
-    delete[] memory->Sa;
-    delete[] memory->Sv;
-    delete[] memory->Sd;
-    delete memory;
+    if (memory != NULL)
+    {
+        delete[] memory->Sa;
+        delete[] memory->Sv;
+        delete[] memory->Sd;
+        delete memory;
+    }
 }
 
+// 计算Fourier幅值谱
 double *FourierSpectrum(const double *acceleration, int size)
 {
     // 创建计算对象
@@ -80,4 +87,13 @@ double *FourierSpectrum(const double *acceleration, int size)
     std::copy(fourier_result.begin(), fourier_result.end(), result);
 
     return result;
+}
+
+// 释放double数组内存
+void FreeArray(double *memory)
+{
+    if (memory != NULL)
+    {
+        delete[] memory;
+    }
 }

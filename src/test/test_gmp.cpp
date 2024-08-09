@@ -17,7 +17,7 @@ void test_gmp()
     string file_name = "acceleration_data/accNS.txt";
     // 创建计算对象
     std::vector<std::vector<double>> test_acceleration =
-        readMatrixFromFile(file_name);
+        ReadMatrixFromFile(file_name);
     auto &acc = test_acceleration[0];
     GmpCalculation gmp(acc, 50, 0.2);
 

@@ -35,7 +35,7 @@ void test_modified_filter_integrate()
     auto building = data_structure::Building(measurement, floor);
     auto acceleration = data_structure::Acceleration(
         std::vector<std::vector<double>>(), 50, 0.01);
-    acceleration.data() = readMatrixFromFile(file_name);
+    acceleration.data() = ReadMatrixFromFile(file_name);
 
     edp_calculation::ModifiedFilteringIntegral m_filt_integral(
         acceleration, building, 2);

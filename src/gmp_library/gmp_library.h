@@ -21,30 +21,45 @@ extern "C"
         int result_size;
         // 反应谱横轴间隔
         double dt;
-    } response_spectrum;
+    } ResponseSpectrum;
 
     // 计算反应谱
-    __declspec(dllexport) response_spectrum *
-    ResponseSpectrum(double frequency,
-                     double damping_ratio,
-                     const double *acceleration,
-                     int size);
+    // @param acceleration: 加速度数据
+    // @param size: 加速度数据长度
+    // @param frequency: 采样频率
+    // @param damping_ratio: 阻尼比
+    // @return ResponseSpectrum: 反应谱计算结果
+    __declspec(dllexport) ResponseSpectrum *
+    GetResponseSpectrum(const double *acceleration,
+                        int size,
+                        double frequency,
+                        double damping_ratio);
 
     // 计算拟反应谱
-    __declspec(dllexport) response_spectrum *
-    PseudoResponseSpectrum(double frequency,
-                           double damping_ratio,
-                           const double *acceleration,
-                           int size);
+    // @param acceleration: 加速度数据
+    // @param size: 加速度数据长度
+    // @param frequency: 采样频率
+    // @param damping_ratio: 阻尼比
+    // @return ResponseSpectrum: 反应谱计算结果
+    __declspec(dllexport) ResponseSpectrum *
+    GetPseudoResponseSpectrum(const double *acceleration,
+                              int size,
+                              double frequency,
+                              double damping_ratio);
 
     // 释放反应谱结果内存
-    __declspec(dllexport) void FreeMemory(response_spectrum *memory);
+    // @param memory: 反应谱结果
+    __declspec(dllexport) void FreeResponseSpectrum(ResponseSpectrum *memory);
 
     // 计算Fourier幅值谱
+    // @param acceleration: 加速度数据
+    // @param size: 加速度数据长度
+    // @return double*: Fourier幅值谱
     __declspec(dllexport) double *FourierSpectrum(const double *acceleration,
                                                   int size);
 
     // 释放double数组内存
+    // @param memory: double数组
     __declspec(dllexport) void FreeArray(double *memory);
 
 #ifdef __cplusplus

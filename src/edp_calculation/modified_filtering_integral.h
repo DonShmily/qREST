@@ -89,10 +89,7 @@ public:
 
     // 获取滤波积分插值法计算结果
     // @return 滤波积分插值法计算结果的引用
-    const InterStoryDriftResult &get_filtering_interp_result() const
-    {
-        return result_;
-    }
+    InterStoryDriftResult &get_filtering_interp_result() { return result_; }
 
 private:
     // 滤波器阶数

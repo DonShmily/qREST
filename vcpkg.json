@@ -1,10 +1,10 @@
-{
+﻿{
   "dependencies": [
     "eigen3",
     "fftw3",
     "gsl",
     "mathgl",
     "nlohmann-json",
-    "ryml"
+    "zlib"
   ]
 }

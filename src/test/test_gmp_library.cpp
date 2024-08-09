@@ -1,4 +1,5 @@
-﻿#include <string>
+﻿#include <fstream>
+#include <string>
 #include <vector>
 
 #include "gmp_library/gmp_library.h"
@@ -6,13 +7,26 @@
 
 using namespace std;
 
-void test_gmp_library()
+void test_gmp_library(const string &file_name)
 {
-    // 读取数据文件
-    string file_name = "acceleration_data/accNS.txt";
     // 创建计算对象
     std::vector<std::vector<double>> test_acceleration =
-        readMatrixFromFile(file_name);
+        ReadMatrixFromFile(file_name);
     auto &acc = test_acceleration[0];
-    auto sa_result = ResponseSpectrum(50, 0.05, acc.data(), acc.size());
+    auto sa_result = GetResponseSpectrum(acc.data(), acc.size(), 50, 0.05);
+    auto psa_result = GetResponseSpectrum(acc.data(), acc.size(), 50, 0.05);
+
+    // 输出结果
+    std::ofstream ofs("acceleration_data/Sa.txt");
+    for (std::size_t i = 0; i < sa_result->result_size; ++i)
+    {
+        ofs << sa_result->Sa[i] << " " << sa_result->Sv[i] << " "
+            << sa_result->Sd[i] << " " << psa_result->Sa[i] << " "
+            << psa_result->Sv[i] << " " << psa_result->Sd[i] << "\n";
+    }
+    ofs.close();
+
+    // 释放内存
+    FreeResponseSpectrum(sa_result);
+    FreeResponseSpectrum(psa_result);
 }

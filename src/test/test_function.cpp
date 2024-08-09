@@ -7,7 +7,7 @@
 #include <vector>
 
 
-std::vector<std::vector<double>> readMatrixFromFile(const std::string &filename)
+std::vector<std::vector<double>> ReadMatrixFromFile(const std::string &filename)
 {
     std::ifstream file(filename);
     std::string line;

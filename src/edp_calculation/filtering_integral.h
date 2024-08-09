@@ -53,13 +53,13 @@ struct FilteringIntegralMethod
     numerical_algorithm::FilterGenerator filter_generator_ =
         numerical_algorithm::FilterGenerator::butter;
     // 插值方法：
-    // *Linear：线性插值；
-    // CubicSpline：三次样条插值；
+    // Linear：线性插值；
+    // *CubicSpline：三次样条插值；
     // Akima：Akima插值；
     // Steffen：Steffen插值；
     // Polynomial：多项式插值
     numerical_algorithm::InterpType interp_type_ =
-        numerical_algorithm::InterpType::Linear;
+        numerical_algorithm::InterpType::CubicSpline;
 };
 
 // 滤波积分插值法计算工程需求参量的类
@@ -133,10 +133,7 @@ public:
 
     // 获取滤波积分插值法计算结果
     // @return 滤波积分插值法计算结果的引用
-    const InterStoryDriftResult &get_filtering_interp_result() const
-    {
-        return result_;
-    }
+    InterStoryDriftResult &get_filtering_interp_result() { return result_; }
 
 private:
     // 滤波器阶数

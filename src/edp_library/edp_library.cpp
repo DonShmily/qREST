@@ -2,6 +2,8 @@
 #include "edp_library.h"
 
 // stdc++ headers
+#include <algorithm>
+#include <cstddef>
 #include <new>
 #include <vector>
 
@@ -13,11 +15,10 @@
 #include "edp_calculation/modified_filtering_integral.h"
 
 // 滤波积分方法计算层间位移角
-inter_story_drift_result *
-FilteringIntegral(const double *const *input_acceleration,
-                  size_t time_step_count,
-                  double frequency,
-                  building *building)
+Idr *FilteringIntegral(const double *const *input_acceleration,
+                       size_t time_step_count,
+                       double frequency,
+                       Building *building)
 {
     /// 创建加速度计算对象
     auto acceleration = data_structure::Acceleration(
@@ -43,30 +44,29 @@ FilteringIntegral(const double *const *input_acceleration,
     edp_calculation::FilteringIntegral filt_integral(
         acceleration, building_obj, 2, 0.1, 20);
     filt_integral.CalculateEdp();
-    auto calculate_result = filt_integral.get_filtering_interp_result();
+    auto &calculate_result = filt_integral.get_filtering_interp_result();
 
     // 创建输出对象
-    inter_story_drift_result *idr_result = new inter_story_drift_result;
-    idr_result->inter_story_drift = new double *[building->floor_count - 1];
-    idr_result->story_count = building->floor_count - 1;
-    idr_result->time_step_count = time_step_count;
-    for (size_t i = 0; i != idr_result->story_count; ++i)
+    Idr *idr_res = new Idr;
+    idr_res->idr = new double *[building->floor_count - 1];
+    idr_res->story_count = building->floor_count - 1;
+    idr_res->time_step_count = time_step_count;
+    for (size_t i = 0; i != idr_res->story_count; ++i)
     {
-        idr_result->inter_story_drift[i] = new double[time_step_count];
+        idr_res->idr[i] = new double[time_step_count];
         std::copy(calculate_result.get_inter_story_drift().col(i).begin(),
                   calculate_result.get_inter_story_drift().col(i).end(),
-                  idr_result->inter_story_drift[i]);
+                  idr_res->idr[i]);
     }
 
-    return idr_result;
+    return idr_res;
 }
 
 // 改进的滤波积分方法计算层间位移角
-inter_story_drift_result *
-ModifiedFilteringIntegral(const double *const *input_acceleration,
-                          size_t time_step_count,
-                          double frequency,
-                          building *building)
+Idr *ModifiedFilteringIntegral(const double *const *input_acceleration,
+                               size_t time_step_count,
+                               double frequency,
+                               Building *building)
 {
     // 创建加速度计算对象
     auto acceleration = data_structure::Acceleration(
@@ -92,34 +92,73 @@ ModifiedFilteringIntegral(const double *const *input_acceleration,
     auto m_filter_integral = edp_calculation::ModifiedFilteringIntegral(
         acceleration, building_obj, 2);
     m_filter_integral.CalculateEdp();
-    auto calculate_result = m_filter_integral.get_filtering_interp_result();
+    auto &calculate_result = m_filter_integral.get_filtering_interp_result();
 
     // 创建输出对象
-    inter_story_drift_result *idr_result = new inter_story_drift_result;
-    idr_result->inter_story_drift = new double *[building->floor_count - 1];
+    Idr *idr_result = new Idr;
+    idr_result->idr = new double *[building->floor_count - 1];
     idr_result->story_count = building->floor_count - 1;
     idr_result->time_step_count = time_step_count;
     for (size_t i = 0; i != idr_result->story_count; ++i)
     {
-        idr_result->inter_story_drift[i] = new double[time_step_count];
+        idr_result->idr[i] = new double[time_step_count];
         std::copy(calculate_result.get_inter_story_drift().col(i).begin(),
                   calculate_result.get_inter_story_drift().col(i).end(),
-                  idr_result->inter_story_drift[i]);
+                  idr_result->idr[i]);
     }
 
     return idr_result;
 }
 
 // 释放层间位移角结果内存
-void FreeInterStoryDriftResult(inter_story_drift_result *result)
+void FreeIdr(Idr *memory)
 {
-    if (result)
+    if (memory != NULL)
     {
-        for (size_t i = 0; i != result->story_count; ++i)
+        for (size_t i = 0; i != memory->story_count; ++i)
         {
-            delete[] result->inter_story_drift[i];
+            delete[] memory->idr[i];
         }
-        delete[] result->inter_story_drift;
-        delete result;
+        delete[] memory->idr;
+        delete memory;
+    }
+}
+
+// 计算最大层间位移角
+MaxIdr *GetMaxIdr(const Idr *idr_result, double frequency)
+{
+    // 创建输出对象
+    MaxIdr *max_idr = new MaxIdr;
+    max_idr->max_idr = new double[idr_result->story_count];
+    max_idr->max_idr_time = new double[idr_result->story_count];
+    max_idr->story_count = idr_result->story_count;
+
+    // 计算最大层间位移角
+    for (std::size_t i = 0; i < idr_result->story_count; ++i)
+    {
+        auto max_idx = std::max_element(
+            idr_result->idr[i],
+            idr_result->idr[i] + idr_result->time_step_count,
+            [](double a, double b) { return std::abs(a) < std::abs(b); });
+        max_idr->max_idr[i] = std::abs(*max_idx);
+        auto l = std::distance(idr_result->idr[i], max_idx);
+        max_idr->max_idr_time[i] = l * 1.0 / frequency;
+    }
+    max_idr->max_idr_story = std::distance(
+        max_idr->max_idr,
+        std::max_element(max_idr->max_idr,
+                         max_idr->max_idr + max_idr->story_count));
+
+    return max_idr;
+}
+
+// 释放最大层间位移角结果内存
+void FreeMaxIdr(MaxIdr *memory)
+{
+    if (memory != NULL)
+    {
+        delete[] memory->max_idr;
+        delete[] memory->max_idr_time;
+        delete memory;
     }
 }
