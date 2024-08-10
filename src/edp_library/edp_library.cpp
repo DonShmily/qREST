@@ -1,4 +1,24 @@
-﻿// associated headers
+﻿/**
+**            qREST - Quick Response Evaluation for Safety Tagging
+**     Institute of Engineering Mechanics, China Earthquake Administration
+**
+**                 Copyright 2024 - 2024 QLab, Dong Feiyue
+**                          All Rights Reserved.
+**
+** Project: qREST
+** File: \src\edp_library\edp_library.cpp
+** -----
+** File Created: Monday, 5th August 2024 17:40:31
+** Author: Dong Feiyue (donfeiyue@outlook.com)
+** -----
+** Last Modified: Saturday, 10th August 2024 22:27:04
+** Modified By: Dong Feiyue (donfeiyue@outlook.com>)
+*/
+
+// Description:
+// 工程需求参量计算到出库(Extern "C")的实现
+
+// associated headers
 #include "edp_library.h"
 
 // stdc++ headers

@@ -1,14 +1,20 @@
 ﻿/**
-**           qREST - Quick Response Evaluation for Safety Tagging
-**    Institute of Engineering Mechanics, China Earthquake Administration
+**            qREST - Quick Response Evaluation for Safety Tagging
+**     Institute of Engineering Mechanics, China Earthquake Administration
 **
-**                           Copyright 2024, QLab
-**                           All Rights Reserved.
+**                 Copyright 2024 - 2024 QLab, Dong Feiyue
+**                          All Rights Reserved.
+**
+** Project: qREST
+** File: \src\gmp_calculation\gmp_calculation.cpp
+** -----
+** File Created: Tuesday, 23rd July 2024 22:50:47
+** Author: Dong Feiyue (donfeiyue@outlook.com)
+** -----
+** Last Modified: Saturday, 10th August 2024 22:27:14
+** Modified By: Dong Feiyue (donfeiyue@outlook.com>)
 */
 
-// File: src/gmp_calculation/gmp_caculation.cpp
-// Date: 2024-7
-// Author: 董飞跃(Dong Fieyue)
 // Description:
 // 计算地震参数类的实现。
 

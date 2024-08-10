@@ -1,14 +1,20 @@
 ﻿/**
-**           qREST - Quick Response Evaluation for Safety Tagging
-**    Institute of Engineering Mechanics, China Earthquake Administration
+**            qREST - Quick Response Evaluation for Safety Tagging
+**     Institute of Engineering Mechanics, China Earthquake Administration
 **
-**                           Copyright 2024, QLab
-**                           All Rights Reserved.
+**                 Copyright 2024 - 2024 QLab, Dong Feiyue
+**                          All Rights Reserved.
+**
+** Project: qREST
+** File: \src\safty_tagging\basic_safty_tagging.h
+** -----
+** File Created: Monday, 5th August 2024 17:40:31
+** Author: Dong Feiyue (donfeiyue@outlook.com)
+** -----
+** Last Modified: Saturday, 10th August 2024 22:29:38
+** Modified By: Dong Feiyue (donfeiyue@outlook.com>)
 */
 
-// File: src/safty_tagging/basic_safty_tagging.h
-// Date: 2024-7
-// Author: 董飞跃(Dong Fieyue)
 // Description:
 // 基于工程需求参量安全评价基类。
 

@@ -1,20 +1,25 @@
 /**
-**           qREST - Quick Response Evaluation for Safety Tagging
-**    Institute of Engineering Mechanics, China Earthquake Administration
+**            qREST - Quick Response Evaluation for Safety Tagging
+**     Institute of Engineering Mechanics, China Earthquake Administration
 **
-**                           Copyright 2024, QLab
-**                           All Rights Reserved.
+**                 Copyright 2024 - 2024 QLab, Dong Feiyue
+**                          All Rights Reserved.
+**
+** Project: qREST
+** File: \src\data_visualization\basic_data_visualization.h
+** -----
+** File Created: Friday, 9th August 2024 13:23:13
+** Author: Dong Feiyue (donfeiyue@outlook.com)
+** -----
+** Last Modified: Saturday, 10th August 2024 22:26:08
+** Modified By: Dong Feiyue (donfeiyue@outlook.com>)
 */
 
-// File: src/data_visualization/basic_data_visualization.h
-// Date: 2024-8
-// Author: 董飞跃(Dong Fieyue)
 // Description:
 // 数据可视化基类，提供基础数据可视化功能的统一接口。
 
 #ifndef DATA_VISUALIZATION_BASIC_DATA_VISUALIZATION_H
 #define DATA_VISUALIZATION_BASIC_DATA_VISUALIZATION_H
-
 
 // stdc++ headers
 #include <initializer_list>
@@ -22,7 +27,6 @@
 #include <vector>
 
 // third-party library headers
-#include "mgl2/glut.h"
 #include "mgl2/mgl.h"
 
 
@@ -62,7 +66,7 @@ struct DataVisualizationOptions
 };
 
 // 数据可视化基类
-class BasicDataVisualization : public mglDraw
+class BasicDataVisualization
 {
 public:
     // 默认构造函数
@@ -72,7 +76,7 @@ public:
     virtual ~BasicDataVisualization() = default;
 
     // 绘制函数
-    virtual int Draw(mglGraph *gr) = 0;
+    virtual void Draw(mglGraph *gr) = 0;
 
     // 设置标题
     // @param title 标题
@@ -89,9 +93,6 @@ public:
     // 设置xy轴范围
     // @param ranges xy轴范围 {xmin, xmax, ymin, ymax, margin = 0}
     void set_ranges(std::initializer_list<double> ranges);
-
-    // 绘制在GLUT窗口
-    void DrawGLUT(std::string title = "");
 
     // 绘制到文件
     void DrawFile(std::string filename = "", const std::string &type = "png");

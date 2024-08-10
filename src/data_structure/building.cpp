@@ -1,14 +1,20 @@
 ﻿/**
-**           qREST - Quick Response Evaluation for Safety Tagging
-**    Institute of Engineering Mechanics, China Earthquake Administration
+**            qREST - Quick Response Evaluation for Safety Tagging
+**     Institute of Engineering Mechanics, China Earthquake Administration
 **
-**                           Copyright 2024, QLab
-**                           All Rights Reserved.
+**                 Copyright 2024 - 2024 QLab, Dong Feiyue
+**                          All Rights Reserved.
+**
+** Project: qREST
+** File: \src\data_structure\building.cpp
+** -----
+** File Created: Monday, 15th July 2024 00:51:18
+** Author: Dong Feiyue (donfeiyue@outlook.com)
+** -----
+** Last Modified: Saturday, 10th August 2024 22:25:04
+** Modified By: Dong Feiyue (donfeiyue@outlook.com>)
 */
 
-// File: src/data_structure/building.cpp
-// Date: 2024-7
-// Author: 董飞跃(Dong Fieyue)
 // Description:
 // 建筑信息类的实现
 

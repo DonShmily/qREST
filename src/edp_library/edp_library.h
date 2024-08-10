@@ -1,4 +1,24 @@
-﻿#ifndef EDP_LIBRARY_H_
+﻿/**
+**            qREST - Quick Response Evaluation for Safety Tagging
+**     Institute of Engineering Mechanics, China Earthquake Administration
+**
+**                 Copyright 2024 - 2024 QLab, Dong Feiyue
+**                          All Rights Reserved.
+**
+** Project: qREST
+** File: \src\edp_library\edp_library.h
+** -----
+** File Created: Monday, 5th August 2024 17:40:31
+** Author: Dong Feiyue (donfeiyue@outlook.com)
+** -----
+** Last Modified: Saturday, 10th August 2024 22:27:09
+** Modified By: Dong Feiyue (donfeiyue@outlook.com>)
+*/
+
+// Description:
+// 工程需求参量计算到出库(Extern "C")
+
+#ifndef EDP_LIBRARY_H_
 #define EDP_LIBRARY_H_
 
 #include <stddef.h>

@@ -1,14 +1,20 @@
 ﻿/**
-**           qREST - Quick Response Evaluation for Safety Tagging
-**    Institute of Engineering Mechanics, China Earthquake Administration
+**            qREST - Quick Response Evaluation for Safety Tagging
+**     Institute of Engineering Mechanics, China Earthquake Administration
 **
-**                           Copyright 2024, QLab
-**                           All Rights Reserved.
+**                 Copyright 2024 - 2024 QLab, Dong Feiyue
+**                          All Rights Reserved.
+**
+** Project: qREST
+** File: \src\numerical_algorithm\filtfilt.h
+** -----
+** File Created: Saturday, 13th July 2024 23:37:23
+** Author: Dong Feiyue (donfeiyue@outlook.com)
+** -----
+** Last Modified: Saturday, 10th August 2024 22:28:46
+** Modified By: Dong Feiyue (donfeiyue@outlook.com>)
 */
 
-// File: src/numerical_algorithm/filtfilt.h
-// Date: 2024-7
-// Author: 董飞跃(Dong Fieyue)
 // Description：
 // 数值算法：filtfilt滤波方法类
 

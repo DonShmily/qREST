@@ -1,14 +1,20 @@
 ﻿/**
-**           qREST - Quick Response Evaluation for Safety Tagging
-**    Institute of Engineering Mechanics, China Earthquake Administration
+**            qREST - Quick Response Evaluation for Safety Tagging
+**     Institute of Engineering Mechanics, China Earthquake Administration
 **
-**                           Copyright 2024, QLab
-**                           All Rights Reserved.
+**                 Copyright 2024 - 2024 QLab, Dong Feiyue
+**                          All Rights Reserved.
+**
+** Project: qREST
+** File: \src\data_structure\inter_story_drift.h
+** -----
+** File Created: Monday, 5th August 2024 17:40:31
+** Author: Dong Feiyue (donfeiyue@outlook.com)
+** -----
+** Last Modified: Saturday, 10th August 2024 22:25:47
+** Modified By: Dong Feiyue (donfeiyue@outlook.com>)
 */
 
-// File: src/data_structure/inter_story_drift.h
-// Date: 2024-7
-// Author: 董飞跃(Dong Fieyue)
 // Description:
 // 层间位移角信息类，数据基类的派生，存储层间位移角数据的基本信息。
 

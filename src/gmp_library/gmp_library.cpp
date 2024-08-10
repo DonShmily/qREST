@@ -1,4 +1,24 @@
-﻿// associated header
+﻿/**
+**            qREST - Quick Response Evaluation for Safety Tagging
+**     Institute of Engineering Mechanics, China Earthquake Administration
+**
+**                 Copyright 2024 - 2024 QLab, Dong Feiyue
+**                          All Rights Reserved.
+**
+** Project: qREST
+** File: \src\gmp_library\gmp_library.cpp
+** -----
+** File Created: Monday, 5th August 2024 17:40:31
+** Author: Dong Feiyue (donfeiyue@outlook.com)
+** -----
+** Last Modified: Saturday, 10th August 2024 22:27:22
+** Modified By: Dong Feiyue (donfeiyue@outlook.com>)
+*/
+
+// Description:
+// 地震动参数计算库(Extern "C")的实现
+
+// associated header
 #include "gmp_library.h"
 
 // stdc++ headers

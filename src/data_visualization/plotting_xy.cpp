@@ -1,14 +1,20 @@
-/**
-**           qREST - Quick Response Evaluation for Safety Tagging
-**    Institute of Engineering Mechanics, China Earthquake Administration
-**
-**                           Copyright 2024, QLab
-**                           All Rights Reserved.
+﻿/**
+**            qREST - Quick Response Evaluation for Safety Tagging
+**     Institute of Engineering Mechanics, China Earthquake Administration
+** 
+**                 Copyright 2024 - 2024 QLab, Dong Feiyue
+**                          All Rights Reserved.
+** 
+** Project: qREST
+** File: \src\data_visualization\plotting_xy.cpp
+** -----
+** File Created: Friday, 9th August 2024 13:23:13
+** Author: Dong Feiyue (donfeiyue@outlook.com)
+** -----
+** Last Modified: Saturday, 10th August 2024 22:26:21
+** Modified By: Dong Feiyue (donfeiyue@outlook.com>)
 */
 
-// File: src/data_visualization/plotting_xy.h
-// Date: 2024-8
-// Author: 董飞跃(Dong Fieyue)
 // Description:
 // 绘图类的实现，提供二维图形绘制的功能。
 
@@ -18,12 +24,17 @@
 
 // stdc++ headers
 #include <algorithm>
+#include <string>
 #include <vector>
+
+#include "basic_data_visualization.h"
+
+#include <mgl2/mgl.h>
 
 namespace data_visualization
 {
 // 绘制函数
-int PlotXY::Draw(mglGraph *gr)
+void PlotXY::Draw(mglGraph *gr)
 {
     // 设置坐标轴范围，可增加一些边距
     if (options_.ranges.empty())
@@ -79,8 +90,6 @@ int PlotXY::Draw(mglGraph *gr)
     // 绘制坐标轴和网格
     gr->Axis();
     // gr->Grid();
-
-    return 0;
 }
 
 } // namespace data_visualization

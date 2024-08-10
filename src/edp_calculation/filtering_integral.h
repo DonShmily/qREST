@@ -1,14 +1,20 @@
 ﻿/**
-**           qREST - Quick Response Evaluation for Safety Tagging
-**    Institute of Engineering Mechanics, China Earthquake Administration
+**            qREST - Quick Response Evaluation for Safety Tagging
+**     Institute of Engineering Mechanics, China Earthquake Administration
 **
-**                           Copyright 2024, QLab
-**                           All Rights Reserved.
+**                 Copyright 2024 - 2024 QLab, Dong Feiyue
+**                          All Rights Reserved.
+**
+** Project: qREST
+** File: \src\edp_calculation\filtering_integral.h
+** -----
+** File Created: Friday, 12th July 2024 00:13:26
+** Author: Dong Feiyue (donfeiyue@outlook.com)
+** -----
+** Last Modified: Saturday, 10th August 2024 22:26:40
+** Modified By: Dong Feiyue (donfeiyue@outlook.com>)
 */
 
-// File: src/edp_calculation/filtering_interp.h
-// Date: 2024-7
-// Author: 董飞跃(Dong Fieyue)
 // Description:
 // 工程需求参量计算方法：滤波积分插值法
 

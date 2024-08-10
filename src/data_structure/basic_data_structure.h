@@ -1,14 +1,20 @@
 ﻿/**
-**           qREST - Quick Response Evaluation for Safety Tagging
-**    Institute of Engineering Mechanics, China Earthquake Administration
+**            qREST - Quick Response Evaluation for Safety Tagging
+**     Institute of Engineering Mechanics, China Earthquake Administration
 **
-**                           Copyright 2024, QLab
-**                           All Rights Reserved.
+**                 Copyright 2024 - 2024 QLab, Dong Feiyue
+**                          All Rights Reserved.
+**
+** Project: qREST
+** File: \src\data_structure\basic_data_structure.h
+** -----
+** File Created: Thursday, 4th July 2024 22:56:08
+** Author: Dong Feiyue (donfeiyue@outlook.com)
+** -----
+** Last Modified: Saturday, 10th August 2024 22:24:59
+** Modified By: Dong Feiyue (donfeiyue@outlook.com>)
 */
 
-// File: src/data_structure/basic_data_structure.h
-// Date: 2024-7
-// Author: 董飞跃(Dong Fieyue)
 // Description:
 // 数据结构基本类，存储各类计算数据地类，如加速度、位移、速度等。基类提供基础功能，如文件读写、数据访问等。
 

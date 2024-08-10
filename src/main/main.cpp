@@ -2,7 +2,7 @@
 **           qREST - Quick Response Evaluation for Safety Tagging
 **    Institute of Engineering Mechanics, China Earthquake Administration
 **
-**                           Copyright 2024, QLab
+**                     Copyright 2024 - 2024 QLab, QLab
 **                           All Rights Reserved.
 **
 ** qREST is a long-term vibration monitoring system for single buildings,
@@ -21,11 +21,23 @@
 **   Dong Fieyue (donfeiyue@outlook.com)
 */
 
-// Version 1.1.0
-// File: src/main/main.cpp
-// Date: 2024-7-1
-// Author: Dong Fieyue
-// Purpose: main function of qREST, the entry of the program.
+/**
+**            qREST - Quick Response Evaluation for Safety Tagging
+**     Institute of Engineering Mechanics, China Earthquake Administration
+**
+**                 Copyright 2024 - 2024 QLab, Dong Feiyue
+**                          All Rights Reserved.
+**
+** Project: qREST
+** File: \src\main\main.cpp
+** -----
+** File Created: Monday, 1st July 2024 21:46:58
+** Author: Dong Feiyue (donfeiyue@outlook.com)
+** -----
+** Last Modified: Saturday, 10th August 2024 22:27:37
+** Modified By: Dong Feiyue (donfeiyue@outlook.com>)
+*/
+
 
 // TODO:
 

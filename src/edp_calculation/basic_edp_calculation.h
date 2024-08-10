@@ -1,14 +1,20 @@
 ﻿/**
-**           qREST - Quick Response Evaluation for Safety Tagging
-**    Institute of Engineering Mechanics, China Earthquake Administration
+**            qREST - Quick Response Evaluation for Safety Tagging
+**     Institute of Engineering Mechanics, China Earthquake Administration
 **
-**                           Copyright 2024, QLab
-**                           All Rights Reserved.
+**                 Copyright 2024 - 2024 QLab, Dong Feiyue
+**                          All Rights Reserved.
+**
+** Project: qREST
+** File: \src\edp_calculation\basic_edp_calculation.h
+** -----
+** File Created: Thursday, 11th July 2024 23:53:41
+** Author: Dong Feiyue (donfeiyue@outlook.com)
+** -----
+** Last Modified: Saturday, 10th August 2024 22:26:30
+** Modified By: Dong Feiyue (donfeiyue@outlook.com>)
 */
 
-// File: src/edp_calculation/basic_edp_calculation.h
-// Date: 2024-7
-// Author: 董飞跃(Dong Fieyue)
 // Description:
 // 工程需求参量计算基类。
 // 每种方法的类都应当对应唯一的计算结果类，结果类和计算方法类定义在同个头文件中。
