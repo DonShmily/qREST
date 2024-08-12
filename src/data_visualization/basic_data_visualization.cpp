@@ -41,13 +41,7 @@ void BasicDataVisualization::set_ranges(std::initializer_list<double> ranges)
         {
             throw std::invalid_argument("ranges size is at least 4!");
         }
-        options_.ranges =
-            std::vector<double>(ranges.begin(), ranges.begin() + 4);
-        options_.ranges.push_back(0);
-        if (ranges.size() >= 5)
-        {
-            options_.ranges.back() = *(ranges.begin() + 4);
-        }
+        options_.ranges = std::vector<double>(ranges.begin(), ranges.end());
     }
 }
 

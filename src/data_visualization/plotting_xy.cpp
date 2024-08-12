@@ -1,10 +1,10 @@
 ﻿/**
 **            qREST - Quick Response Evaluation for Safety Tagging
 **     Institute of Engineering Mechanics, China Earthquake Administration
-** 
+**
 **                 Copyright 2024 - 2024 QLab, Dong Feiyue
 **                          All Rights Reserved.
-** 
+**
 ** Project: qREST
 ** File: \src\data_visualization\plotting_xy.cpp
 ** -----
@@ -36,6 +36,14 @@ namespace data_visualization
 // 绘制函数
 void PlotXY::Draw(mglGraph *gr)
 {
+    // 设置图形大小
+    gr->SetSize(options_.size.first, options_.size.second);
+
+    // 添加标题和轴标签
+    gr->Title(options_.title.c_str());
+    gr->Label('x', options_.x_label.c_str(), 0);
+    gr->Label('y', options_.y_label.c_str(), 0);
+
     // 设置坐标轴范围，可增加一些边距
     if (options_.ranges.empty())
     {
@@ -48,11 +56,17 @@ void PlotXY::Draw(mglGraph *gr)
         options_.ranges.push_back(
             *std::max_element(y_data_.begin(), y_data_.end()));
     }
-    double margin = options_.ranges.size() == 5 ? options_.ranges.back() : 0;
-    gr->SetRanges(options_.ranges[0] - margin,
-                  options_.ranges[1] + margin,
-                  options_.ranges[2] - margin,
-                  options_.ranges[3] + margin);
+    double margin_x = options_.ranges.size() > 4 ? options_.ranges[4] : 0,
+           margin_y = options_.ranges.size() > 4 ? options_.ranges[5] : 0;
+    gr->SetRanges(options_.ranges[0] - margin_x,
+                  options_.ranges[1] + margin_x,
+                  options_.ranges[2] - margin_x,
+                  options_.ranges[3] + margin_x);
+
+    // 设置原点
+    if (options_.origin.first == -1 && options_.origin.second == -1)
+        options_.origin = {options_.ranges[0], options_.ranges[2]};
+    gr->SetOrigin(options_.origin.first, options_.origin.second);
 
     // 转换数据为 MathGL 数据格式
     mglData dataX(x_data_.size(), &x_data_[0]);
@@ -82,14 +96,14 @@ void PlotXY::Draw(mglGraph *gr)
             break;
     }
 
-    // 添加标题和轴标签
-    gr->Title(options_.title.c_str());
-    gr->Label('x', options_.x_label.c_str(), 0);
-    gr->Label('y', options_.y_label.c_str(), 0);
+    // 设置缩放比例
+    gr->Zoom(
+        options_.zoom[0], options_.zoom[1], options_.zoom[2], options_.zoom[3]);
 
     // 绘制坐标轴和网格
     gr->Axis();
-    // gr->Grid();
+    if (options_.box) gr->Box();
+    if (options_.grid) gr->Grid();
 }
 
 } // namespace data_visualization

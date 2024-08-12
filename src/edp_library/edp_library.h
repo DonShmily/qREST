@@ -11,7 +11,7 @@
 ** File Created: Monday, 5th August 2024 17:40:31
 ** Author: Dong Feiyue (donfeiyue@outlook.com)
 ** -----
-** Last Modified: Saturday, 10th August 2024 22:27:09
+** Last Modified: Monday, 12th August 2024 12:17:00
 ** Modified By: Dong Feiyue (donfeiyue@outlook.com>)
 */
 
@@ -32,7 +32,7 @@ extern "C"
     typedef struct
     {
         // 层间位移角：story_count*time_step_count
-        double **idr;
+        double *idr;
 
         // 楼层总数story_count = floor_count - 1
         size_t story_count;
@@ -57,26 +57,26 @@ extern "C"
 
     // 滤波积分法计算层间位移角
     // @param input_acceleration:
-    // 二维数组，每个数组代表一个测点的加速度数据，尺寸为measure_point_count*time_step_count
+    // 一维数组，每个数组代表一个测点的加速度数据，尺寸为measure_point_count*time_step_count
     // @param time_step_count: 时间步数
     // @param frequency: 采样频率
     // @param building: 建筑信息
     // @return Idr: 层间位移角
     __declspec(dllexport) Idr *
-    FilteringIntegral(const double *const *input_acceleration,
+    FilteringIntegral(const double *input_acceleration,
                       size_t time_step_count,
                       double frequency,
                       Building *building);
 
     // 改进的滤波积分方法计算层间位移角
     // @param input_acceleration:
-    // 二维数组，每个数组代表一个测点的加速度数据，尺寸为measure_point_count*time_step_count
+    // 一维数组，每个数组代表一个测点的加速度数据，尺寸为measure_point_count*time_step_count
     // @param time_step_count: 时间步数
     // @param frequency: 采样频率
     // @param building: 建筑信息
     // @return Idr: 层间位移角
     __declspec(dllexport) Idr *
-    ModifiedFilteringIntegral(const double *const *input_acceleration,
+    ModifiedFilteringIntegral(const double *input_acceleration,
                               size_t time_step_count,
                               double frequency,
                               Building *building);

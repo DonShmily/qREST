@@ -56,7 +56,5 @@ protected:
     SaftyTaggingResult safty_tagging_result_{};
 };
 
-
 } // namespace safty_tagging
-
 #endif // SAFTY_TAGGING_BASIC_SAFTY_TAGGING_H

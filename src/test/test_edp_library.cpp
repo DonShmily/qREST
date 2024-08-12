@@ -39,12 +39,12 @@ void test_edp_library(const string &file_name)
         floor.data(), floor.size(), measurement.data(), measurement.size()};
     size_t col_number = acceleration.size(),
            row_number = acceleration.front().size();
-    double **acc_c = new double *[col_number];
+    double *acc_c = new double[col_number * row_number];
     for (std::size_t i = 0; i < col_number; ++i)
     {
-        acc_c[i] = new double[row_number];
-        std::copy(
-            acceleration.at(i).begin(), acceleration.at(i).end(), acc_c[i]);
+        std::copy(acceleration.at(i).begin(),
+                  acceleration.at(i).end(),
+                  acc_c + i * row_number);
     }
 
     // 计算层间位移角
@@ -56,7 +56,7 @@ void test_edp_library(const string &file_name)
     {
         for (std::size_t j = 0; j < idr_result->story_count; ++j)
         {
-            ofs1 << idr_result->idr[j][i] << " ";
+            ofs1 << idr_result->idr[j * idr_result->time_step_count + i] << " ";
         }
         ofs1 << endl;
     }

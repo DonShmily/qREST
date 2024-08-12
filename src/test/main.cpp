@@ -22,7 +22,7 @@ int main()
     // test_safty_tagging();
 
     // 测试EDP计算模块
-    test_edp_library("acceleration_data/accNS.txt");
+    // test_edp_library("acceleration_data/accNS.txt");
 
     // 测试gmp
     // test_gmp();
@@ -31,7 +31,10 @@ int main()
     // test_size();
 
     // 测试地震动参数库计算
-    test_gmp_library("acceleration_data/accNS.txt");
+    // test_gmp_library("acceleration_data/accNS.txt");
+
+    // 测试可视化模块
+    test_data_visualization();
 
     return 0;
 }

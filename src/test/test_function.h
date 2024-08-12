@@ -32,6 +32,9 @@ void test_gmp_library(const std::string &file_name);
 // 测试类型大小
 void test_size();
 
+// 测试数据可视化
+void test_data_visualization();
+
 // 读取文件中的矩阵数据
 std::vector<std::vector<double>>
 ReadMatrixFromFile(const std::string &filename);

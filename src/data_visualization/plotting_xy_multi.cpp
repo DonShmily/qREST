@@ -35,6 +35,14 @@ namespace data_visualization
 // 绘制函数
 void PlotXYM::Draw(mglGraph *gr)
 {
+    // 设置图形大小
+    gr->SetSize(options_.size.first, options_.size.second);
+
+    // 添加标题和轴标签
+    gr->Title(options_.title.c_str());
+    gr->Label('x', options_.x_label.c_str(), 0);
+    gr->Label('y', options_.y_label.c_str(), 0);
+
     std::vector<double> y_data_min, y_data_max;
     for (const auto &y_data : y_data_)
     {
@@ -89,14 +97,19 @@ void PlotXYM::Draw(mglGraph *gr)
                   options_.ranges[2] - margin,
                   options_.ranges[3] + margin);
 
-    // 添加标题和轴标签
-    gr->Title(options_.title.c_str());
-    gr->Label('x', options_.x_label.c_str(), 0);
-    gr->Label('y', options_.y_label.c_str(), 0);
+    // 设置原点
+    if (options_.origin.first == -1 && options_.origin.second == -1)
+        gr->SetOrigin(options_.ranges[0], options_.ranges[2]);
+    gr->SetOrigin(options_.origin.first, options_.origin.second);
+
+    // 设置缩放比例
+    gr->Zoom(
+        options_.zoom[0], options_.zoom[1], options_.zoom[2], options_.zoom[3]);
 
     // 绘制坐标轴和网格
     gr->Axis();
-    // gr->Grid();
+    if (options_.box) gr->Box();
+    if (options_.grid) gr->Grid();
 }
 
 } // namespace data_visualization
