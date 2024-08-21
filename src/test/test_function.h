@@ -35,6 +35,12 @@ void test_size();
 // 测试数据可视化
 void test_data_visualization();
 
+// 测试GMP绘图
+void test_gmp_plot();
+
+// 测试EDP绘图
+void test_edp_plot();
+
 // 读取文件中的矩阵数据
 std::vector<std::vector<double>>
 ReadMatrixFromFile(const std::string &filename);

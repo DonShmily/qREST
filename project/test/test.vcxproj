@@ -258,13 +258,16 @@
   <ItemGroup>
     <ClCompile Include="..\..\src\test\test_butter.cpp" />
     <ClCompile Include="..\..\src\test\comments.cpp" />
+    <ClCompile Include="..\..\src\test\test_data_visualization.cpp" />
     <ClCompile Include="..\..\src\test\test_edp_library.cpp" />
+    <ClCompile Include="..\..\src\test\test_edp_plot.cpp" />
     <ClCompile Include="..\..\src\test\test_filter.cpp" />
     <ClCompile Include="..\..\src\test\main.cpp" />
     <ClCompile Include="..\..\src\test\test_filter_integral.cpp" />
     <ClCompile Include="..\..\src\test\test_function.cpp" />
     <ClCompile Include="..\..\src\test\test_gmp.cpp" />
     <ClCompile Include="..\..\src\test\test_gmp_library.cpp" />
+    <ClCompile Include="..\..\src\test\test_gmp_plot.cpp" />
     <ClCompile Include="..\..\src\test\test_modified_filter_integral.cpp" />
     <ClCompile Include="..\..\src\test\test_safty_tagging.cpp" />
     <ClCompile Include="..\..\src\test\test_size.cpp" />
@@ -281,17 +284,26 @@
     <ProjectReference Include="..\data_structure\data_structure.vcxproj">
       <Project>{f1172cb4-30fc-47e4-9bb3-72219936f2a2}</Project>
     </ProjectReference>
+    <ProjectReference Include="..\data_visualization\data_visualization.vcxproj">
+      <Project>{c01111c5-ba71-49c3-a53f-56a4e7840029}</Project>
+    </ProjectReference>
     <ProjectReference Include="..\edp_calculation\edp_calculation.vcxproj">
       <Project>{e687ea63-034c-49c0-aefe-25c6e14984e8}</Project>
     </ProjectReference>
     <ProjectReference Include="..\edp_library\edp_library.vcxproj">
       <Project>{4621db68-b699-4dc6-a680-aaa44172a40a}</Project>
     </ProjectReference>
+    <ProjectReference Include="..\edp_plot\edp_plot.vcxproj">
+      <Project>{a7ffca7c-d203-42b9-a29d-8b8269899379}</Project>
+    </ProjectReference>
     <ProjectReference Include="..\gmp_caculation\gmp_caculation.vcxproj">
       <Project>{389d84b1-2c45-4edb-b816-42b9cc180870}</Project>
     </ProjectReference>
     <ProjectReference Include="..\gmp_library\gmp_library.vcxproj">
       <Project>{e3be7fe1-1915-4053-95ba-739691331855}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\gmp_plot\gmp_plot.vcxproj">
+      <Project>{1d87edaa-25ad-491c-816a-56469b0c024b}</Project>
     </ProjectReference>
     <ProjectReference Include="..\numerical_algorithm\numerical_algorithm.vcxproj">
       <Project>{ab65f082-17af-4015-a3b4-baae8ba00c71}</Project>

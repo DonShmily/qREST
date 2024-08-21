@@ -52,6 +52,15 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\test\main.cpp" />
+    <ClCompile Include="..\..\src\test\test_data_visualization.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\test\test_edp_plot.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\test\test_gmp_plot.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\src\test\generate_headers.py">

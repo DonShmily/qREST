@@ -85,4 +85,4 @@ extern "C"
 #ifdef __cplusplus
 }
 #endif
-#endif // CPP_M_FUNC_H/
+#endif // GMP_LIBRARY_H_

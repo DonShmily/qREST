@@ -1,4 +1,4 @@
-/**
+﻿/**
 **            qREST - Quick Response Evaluation for Safety Tagging
 **     Institute of Engineering Mechanics, China Earthquake Administration
 **
@@ -65,7 +65,7 @@ struct DataVisualizationOptions
     // 缩放比例
     std::vector<double> zoom{0, 0, 1, 1};
     // 图形尺寸
-    std::pair<double, double> size = {800, 600};
+    std::pair<double, double> size = {1600, 1200};
     // 原点坐标(设为{-1, -1}表示自动设置，值为数据最小点)
     std::pair<double, double> origin = {-1, -1};
     // 样式，默认为蓝色实线，线宽2
@@ -101,6 +101,10 @@ public:
     // @param label y轴标签
     void set_y_label(const std::string &label) { options_.y_label = label; }
 
+    // 设置绘图类型
+    // @param type 绘图类型
+    void set_type(PlotType type) { options_.type = type; }
+
     // 设置样式
     // @param style 样式
     void set_style(const std::string &style) { options_.style = style; }
@@ -132,6 +136,14 @@ public:
     {
         options_.size = {width, height};
     }
+
+    // 设置是否显示网格
+    // @param enable 是否显示网格
+    void set_grid(bool enable) { options_.grid = enable; }
+
+    // 设置是否显示四周边框
+    // @param enable 是否显示四周边框
+    void set_box(bool enable) { options_.box = enable; }
 
     // 绘制到文件
     void DrawFile(std::string filename = "", const std::string &type = "png");

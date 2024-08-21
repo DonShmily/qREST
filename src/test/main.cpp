@@ -34,7 +34,10 @@ int main()
     // test_gmp_library("acceleration_data/accNS.txt");
 
     // 测试可视化模块
-    test_data_visualization();
+    // test_data_visualization();
+
+    test_edp_plot();
+    test_gmp_plot();
 
     return 0;
 }

@@ -57,7 +57,7 @@ extern "C"
 
     // 滤波积分法计算层间位移角
     // @param input_acceleration:
-    // 一维数组，每个数组代表一个测点的加速度数据，尺寸为measure_point_count*time_step_count
+    // 一维数组，尺寸为measure_point_count*time_step_count
     // @param time_step_count: 时间步数
     // @param frequency: 采样频率
     // @param building: 建筑信息
@@ -70,7 +70,7 @@ extern "C"
 
     // 改进的滤波积分方法计算层间位移角
     // @param input_acceleration:
-    // 一维数组，每个数组代表一个测点的加速度数据，尺寸为measure_point_count*time_step_count
+    // 一维数组，尺寸为measure_point_count*time_step_count
     // @param time_step_count: 时间步数
     // @param frequency: 采样频率
     // @param building: 建筑信息

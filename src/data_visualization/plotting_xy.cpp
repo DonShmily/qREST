@@ -40,9 +40,9 @@ void PlotXY::Draw(mglGraph *gr)
     gr->SetSize(options_.size.first, options_.size.second);
 
     // 添加标题和轴标签
-    gr->Title(options_.title.c_str());
-    gr->Label('x', options_.x_label.c_str(), 0);
-    gr->Label('y', options_.y_label.c_str(), 0);
+    if (!options_.title.empty()) gr->Title(options_.title.c_str());
+    if (!options_.x_label.empty()) gr->Label('x', options_.x_label.c_str(), 0);
+    if (!options_.y_label.empty()) gr->Label('y', options_.y_label.c_str(), 0);
 
     // 设置坐标轴范围，可增加一些边距
     if (options_.ranges.empty())
