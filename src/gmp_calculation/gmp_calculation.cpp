@@ -29,14 +29,37 @@
 
 namespace gmp_calculation
 {
+// 从std::vector构造
+inline GmpCalculation::GmpCalculation(const std::vector<double> &acceleration,
+                                      double frequency,
+                                      double damping_ratio)
+    : acceleration_ptr_(std::make_shared<std::vector<double>>(acceleration))
+{
+    parameter_.frequency_ = frequency;
+    parameter_.time_step_ = 1.0 / frequency;
+    parameter_.damping_ratio_ = damping_ratio;
+}
+
+
+// 从std::vector指针构造
+inline GmpCalculation::GmpCalculation(
+    const std::shared_ptr<std::vector<double>> &acceleration_ptr,
+    double frequency,
+    double damping_ratio)
+    : acceleration_ptr_(acceleration_ptr)
+{
+    parameter_.frequency_ = frequency;
+    parameter_.time_step_ = 1.0 / frequency;
+    parameter_.damping_ratio_ = damping_ratio;
+}
 
 // NewmakeBeta方法计算响应
 ResponseSpectrumTiResult GmpCalculation::NewmarkBeta(const double &Ti)
 {
-    double dt = 1.0 / frequency_;
+    double dt = parameter_.time_step_;
     double beta = 0.25, gamma = 0.5;
     double omega = 2 * M_PI / Ti;
-    double k = omega * omega, c = 2 * damping_ratio_ * omega;
+    double k = omega * omega, c = 2 * parameter_.damping_ratio_ * omega;
     double p1 = 1 / (beta * dt * dt);
     double p2 = gamma / (beta * dt);
     double p3 = 1 / (beta * dt);

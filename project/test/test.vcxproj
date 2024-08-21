@@ -284,9 +284,6 @@
     <ProjectReference Include="..\data_structure\data_structure.vcxproj">
       <Project>{f1172cb4-30fc-47e4-9bb3-72219936f2a2}</Project>
     </ProjectReference>
-    <ProjectReference Include="..\data_visualization\data_visualization.vcxproj">
-      <Project>{c01111c5-ba71-49c3-a53f-56a4e7840029}</Project>
-    </ProjectReference>
     <ProjectReference Include="..\edp_calculation\edp_calculation.vcxproj">
       <Project>{e687ea63-034c-49c0-aefe-25c6e14984e8}</Project>
     </ProjectReference>

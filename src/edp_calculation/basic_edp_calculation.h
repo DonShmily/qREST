@@ -24,6 +24,7 @@
 
 // stdc++ headers
 #include <memory>
+#include <string>
 
 // project headers
 #include "data_structure/acceleration.h"
@@ -93,6 +94,7 @@ public:
 
     // 从加速度数据中构造
     // @param acceleration 加速度数据
+    // @param building 建筑信息
     explicit BasicEdpCalculation(
         const data_structure::Acceleration &acceleration,
         const data_structure::Building &building)
@@ -101,6 +103,7 @@ public:
 
     // 从加速度数据指针中构造
     // @param acceleration_ptr 加速度数据指针
+    // @param building_ptr 建筑信息指针
     explicit BasicEdpCalculation(
         std::shared_ptr<const data_structure::Acceleration> acceleration_ptr,
         std::shared_ptr<data_structure::Building> building_ptr)
@@ -115,6 +118,9 @@ public:
 
     // 析构函数
     virtual ~BasicEdpCalculation() = default;
+
+    // 从配置文件中读取参数
+    virtual void LoadConfig(const std::string &config_file = "") = 0;
 
     // 计算工程需求参量函数入口
     virtual void CalculateEdp() = 0;

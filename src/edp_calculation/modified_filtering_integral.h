@@ -46,30 +46,40 @@ public:
     // 默认构造函数
     ModifiedFilteringIntegral() = default;
 
+    // 从配置文件中读取参数构造
+    // @param acceleration 加速度数据
+    // @param building 建筑结构信息
+    ModifiedFilteringIntegral(const data_structure::Acceleration &acceleration,
+                              data_structure::Building &building)
+        : BasicEdpCalculation(acceleration, building)
+    {
+        LoadConfig();
+    }
+
     // 从加速度数据中构造，默认使用巴特沃斯滤波器，零相位双向滤波，带通滤波
     // @param acceleration 加速度数据
+    // @param building 建筑结构信息
     // @param filter_order 滤波器阶数
-    // @param low_frequency 滤波器低频截止频率
-    // @param high_frequency 滤波器高频截止频率
     ModifiedFilteringIntegral(const data_structure::Acceleration &acceleration,
                               data_structure::Building &building,
                               int filter_order)
-        : BasicEdpCalculation(acceleration, building),
-          filter_order_(filter_order)
-    {}
+        : BasicEdpCalculation(acceleration, building)
+    {
+        method_.filter_order_ = filter_order;
+    }
 
     // 从加速度数据指针中构造，默认使用巴特沃斯滤波器，零相位双向滤波，带通滤波
     // @param acceleration_ptr 加速度数据指针
+    // @param building_ptr 建筑结构信息指针
     // @param filter_order 滤波器阶数
-    // @param low_frequency 滤波器低频截止频率
-    // @param high_frequency 滤波器高频截止频率
     ModifiedFilteringIntegral(
         std::shared_ptr<const data_structure::Acceleration> acceleration_ptr,
         std::shared_ptr<data_structure::Building> building_ptr,
         int filter_order)
-        : BasicEdpCalculation(acceleration_ptr, building_ptr),
-          filter_order_(filter_order)
-    {}
+        : BasicEdpCalculation(acceleration_ptr, building_ptr)
+    {
+        method_.filter_order_ = filter_order;
+    }
 
     // 拷贝构造函数
     ModifiedFilteringIntegral(
@@ -84,7 +94,13 @@ public:
 
     // 设置滤波器阶数
     // @param filter_order 滤波器阶数
-    void set_filter_order(int filter_order) { filter_order_ = filter_order; }
+    void set_filter_order(int filter_order)
+    {
+        method_.filter_order_ = filter_order;
+    }
+
+    // 从配置文件中读取参数
+    void LoadConfig(const std::string &config_file = "") override;
 
     // 获取滤波积分插值法计算方法参数
     // @return 滤波积分插值法计算方法参数的引用
@@ -98,8 +114,6 @@ public:
     InterStoryDriftResult &get_filtering_interp_result() { return result_; }
 
 private:
-    // 滤波器阶数
-    int filter_order_{};
     // 滤波积分插值法计算方法参数
     FilteringIntegralMethod method_{};
     // 计算结果的指针

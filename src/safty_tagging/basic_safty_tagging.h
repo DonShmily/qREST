@@ -24,14 +24,6 @@
 
 namespace safty_tagging
 {
-
-enum class SaftyTaggingResult
-{
-    Safty,
-    Warning,
-    Danger
-};
-
 class BasicSaftyTagging
 {
 public:
@@ -48,12 +40,15 @@ public:
     virtual ~BasicSaftyTagging() = default;
 
     // 计算安全评价
-    virtual void TagSafty() = 0;
+    // 返回值：安全评价结果，数字越低越安全，0为safe
+    virtual int TagSafty() = 0;
 
+    // 获取安全评价结果
+    virtual int get_tagging_result() = 0;
 
 protected:
-    // 安全评价结果
-    SaftyTaggingResult safty_tagging_result_{};
+    // 安全评价结果，数字越低越安全，0为safe
+    int safty_tagging_result_{};
 };
 
 } // namespace safty_tagging

@@ -1,0 +1,923 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>MainWindow</class>
+ <widget class="QMainWindow" name="MainWindow">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>1000</width>
+    <height>750</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>QtMainWindow</string>
+  </property>
+  <widget class="QWidget" name="centralWidget">
+   <layout class="QHBoxLayout" name="horizontalLayout" stretch="1,0,6,0,1">
+    <item>
+     <widget class="QListWidget" name="listWidget">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
+      <property name="minimumSize">
+       <size>
+        <width>200</width>
+        <height>0</height>
+       </size>
+      </property>
+      <property name="maximumSize">
+       <size>
+        <width>220</width>
+        <height>16777215</height>
+       </size>
+      </property>
+      <property name="baseSize">
+       <size>
+        <width>0</width>
+        <height>0</height>
+       </size>
+      </property>
+      <property name="font">
+       <font>
+        <pointsize>12</pointsize>
+       </font>
+      </property>
+      <property name="spacing">
+       <number>5</number>
+      </property>
+      <item>
+       <property name="text">
+        <string>主页</string>
+       </property>
+       <property name="toolTip">
+        <string>主页</string>
+       </property>
+       <property name="font">
+        <font>
+         <pointsize>12</pointsize>
+        </font>
+       </property>
+       <property name="icon">
+        <iconset resource="resource.qrc">
+         <normaloff>:/image/icon/iconfonthome_1.png</normaloff>:/image/icon/iconfonthome_1.png</iconset>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>测点加速度</string>
+       </property>
+       <property name="toolTip">
+        <string>加速度信号</string>
+       </property>
+       <property name="whatsThis">
+        <string/>
+       </property>
+       <property name="font">
+        <font>
+         <pointsize>12</pointsize>
+        </font>
+       </property>
+       <property name="background">
+        <brush brushstyle="NoBrush">
+         <color alpha="255">
+          <red>0</red>
+          <green>0</green>
+          <blue>0</blue>
+         </color>
+        </brush>
+       </property>
+       <property name="icon">
+        <iconset resource="resource.qrc">
+         <normaloff>:/image/icon/zhexiantu_1.png</normaloff>:/image/icon/zhexiantu_1.png</iconset>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>地震动参数</string>
+       </property>
+       <property name="toolTip">
+        <string>地震动参数</string>
+       </property>
+       <property name="font">
+        <font>
+         <pointsize>12</pointsize>
+        </font>
+       </property>
+       <property name="icon">
+        <iconset resource="resource.qrc">
+         <normaloff>:/image/icon/earth_1.png</normaloff>:/image/icon/earth_1.png</iconset>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>工程需求参量</string>
+       </property>
+       <property name="toolTip">
+        <string>工程需求参量</string>
+       </property>
+       <property name="font">
+        <font>
+         <pointsize>12</pointsize>
+        </font>
+       </property>
+       <property name="icon">
+        <iconset resource="resource.qrc">
+         <normaloff>:/image/icon/iconfonticonfonttencentweibo.png</normaloff>:/image/icon/iconfonticonfonttencentweibo.png</iconset>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>评估结果</string>
+       </property>
+       <property name="toolTip">
+        <string>评估结果</string>
+       </property>
+       <property name="font">
+        <font>
+         <pointsize>12</pointsize>
+        </font>
+       </property>
+       <property name="icon">
+        <iconset resource="resource.qrc">
+         <normaloff>:/image/icon/result_1.png</normaloff>:/image/icon/result_1.png</iconset>
+       </property>
+      </item>
+     </widget>
+    </item>
+    <item>
+     <widget class="Line" name="line">
+      <property name="orientation">
+       <enum>Qt::Vertical</enum>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QStackedWidget" name="stackedWidget">
+      <property name="font">
+       <font>
+        <pointsize>12</pointsize>
+       </font>
+      </property>
+      <property name="frameShape">
+       <enum>QFrame::StyledPanel</enum>
+      </property>
+      <property name="frameShadow">
+       <enum>QFrame::Raised</enum>
+      </property>
+      <property name="currentIndex">
+       <number>0</number>
+      </property>
+      <widget class="QWidget" name="stk0_home">
+       <layout class="QHBoxLayout" name="horizontalLayout_2" stretch="5,1">
+        <property name="leftMargin">
+         <number>0</number>
+        </property>
+        <property name="topMargin">
+         <number>5</number>
+        </property>
+        <property name="rightMargin">
+         <number>0</number>
+        </property>
+        <property name="bottomMargin">
+         <number>0</number>
+        </property>
+        <item>
+         <layout class="QVBoxLayout" name="verticalLayout_4">
+          <item>
+           <layout class="QHBoxLayout" name="horizontalLayout_4">
+            <item>
+             <widget class="QLabel" name="label_home_mea">
+              <property name="text">
+               <string>TextLabel</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QComboBox" name="cbox_home_mea"/>
+            </item>
+           </layout>
+          </item>
+          <item>
+           <widget class="QChart" name="chart_home_mea"/>
+          </item>
+         </layout>
+        </item>
+        <item>
+         <widget class="QChart" name="chart_home_all_idr">
+          <property name="minimumSize">
+           <size>
+            <width>200</width>
+            <height>0</height>
+           </size>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </widget>
+      <widget class="QWidget" name="stk1_acc">
+       <layout class="QVBoxLayout" name="verticalLayout">
+        <property name="leftMargin">
+         <number>0</number>
+        </property>
+        <property name="topMargin">
+         <number>5</number>
+        </property>
+        <property name="rightMargin">
+         <number>0</number>
+        </property>
+        <property name="bottomMargin">
+         <number>0</number>
+        </property>
+        <item>
+         <layout class="QHBoxLayout" name="horizontalLayout_5">
+          <item>
+           <widget class="QLabel" name="label_acc_mea">
+            <property name="text">
+             <string>TextLabel</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QComboBox" name="cbox_acc_mea"/>
+          </item>
+         </layout>
+        </item>
+        <item>
+         <widget class="QChart" name="chart_acc1_a"/>
+        </item>
+        <item>
+         <widget class="QChart" name="chart_acc2_v"/>
+        </item>
+        <item>
+         <widget class="QChart" name="chart_acc3_d"/>
+        </item>
+       </layout>
+      </widget>
+      <widget class="QWidget" name="stk2_gmp">
+       <layout class="QVBoxLayout" name="verticalLayout_2">
+        <property name="leftMargin">
+         <number>0</number>
+        </property>
+        <property name="topMargin">
+         <number>5</number>
+        </property>
+        <property name="rightMargin">
+         <number>0</number>
+        </property>
+        <property name="bottomMargin">
+         <number>0</number>
+        </property>
+        <item>
+         <layout class="QHBoxLayout" name="horizontalLayout_6">
+          <item>
+           <widget class="QLabel" name="label_gmp_mea">
+            <property name="text">
+             <string>TextLabel</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QComboBox" name="cbox_gmp_mea"/>
+          </item>
+         </layout>
+        </item>
+        <item>
+         <widget class="QTabWidget" name="tabWidget_gmp">
+          <property name="currentIndex">
+           <number>0</number>
+          </property>
+          <widget class="QWidget" name="tab_gmp1_response">
+           <attribute name="title">
+            <string>Tab 1</string>
+           </attribute>
+           <layout class="QGridLayout" name="gridLayout_3" rowstretch="1,1" columnstretch="1,3">
+            <property name="leftMargin">
+             <number>0</number>
+            </property>
+            <property name="topMargin">
+             <number>5</number>
+            </property>
+            <property name="rightMargin">
+             <number>0</number>
+            </property>
+            <property name="bottomMargin">
+             <number>0</number>
+            </property>
+            <item row="0" column="0">
+             <widget class="QGroupBox" name="gBox_gmp_reponse_option">
+              <property name="title">
+               <string>GroupBox</string>
+              </property>
+             </widget>
+            </item>
+            <item row="0" column="1" rowspan="2">
+             <widget class="QChart" name="chart_gmp_response">
+              <property name="minimumSize">
+               <size>
+                <width>200</width>
+                <height>0</height>
+               </size>
+              </property>
+             </widget>
+            </item>
+            <item row="1" column="0">
+             <widget class="QTableView" name="table_gmp_response"/>
+            </item>
+           </layout>
+          </widget>
+          <widget class="QWidget" name="tab_gmp2_fourier">
+           <attribute name="title">
+            <string>Tab 2</string>
+           </attribute>
+           <layout class="QGridLayout" name="gridLayout_4" rowstretch="1,1" columnstretch="1,3">
+            <property name="leftMargin">
+             <number>0</number>
+            </property>
+            <property name="topMargin">
+             <number>5</number>
+            </property>
+            <property name="rightMargin">
+             <number>0</number>
+            </property>
+            <property name="bottomMargin">
+             <number>0</number>
+            </property>
+            <item row="0" column="0">
+             <widget class="QGroupBox" name="gBox_gmp_fourier_option">
+              <property name="title">
+               <string>GroupBox</string>
+              </property>
+             </widget>
+            </item>
+            <item row="0" column="1">
+             <widget class="QChart" name="chart_gmp_fourier">
+              <property name="minimumSize">
+               <size>
+                <width>200</width>
+                <height>0</height>
+               </size>
+              </property>
+             </widget>
+            </item>
+            <item row="1" column="0">
+             <widget class="QTableView" name="table_gmp_fourier"/>
+            </item>
+            <item row="1" column="1">
+             <widget class="QChart" name="chart_gmp_power">
+              <property name="minimumSize">
+               <size>
+                <width>200</width>
+                <height>0</height>
+               </size>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </widget>
+         </widget>
+        </item>
+       </layout>
+      </widget>
+      <widget class="QWidget" name="stk3_edp">
+       <layout class="QVBoxLayout" name="verticalLayout_3">
+        <property name="leftMargin">
+         <number>0</number>
+        </property>
+        <property name="topMargin">
+         <number>0</number>
+        </property>
+        <property name="rightMargin">
+         <number>0</number>
+        </property>
+        <property name="bottomMargin">
+         <number>0</number>
+        </property>
+        <item>
+         <widget class="QTabWidget" name="tabWidget_edp">
+          <property name="currentIndex">
+           <number>0</number>
+          </property>
+          <widget class="QWidget" name="tab_edp1_realtime">
+           <attribute name="title">
+            <string>Tab 1</string>
+           </attribute>
+           <layout class="QGridLayout" name="gridLayout" columnstretch="4,1">
+            <property name="leftMargin">
+             <number>0</number>
+            </property>
+            <property name="topMargin">
+             <number>0</number>
+            </property>
+            <property name="rightMargin">
+             <number>0</number>
+            </property>
+            <property name="bottomMargin">
+             <number>0</number>
+            </property>
+            <item row="0" column="0">
+             <widget class="QChart" name="chart_edprt_rt_disp">
+              <property name="minimumSize">
+               <size>
+                <width>200</width>
+                <height>0</height>
+               </size>
+              </property>
+             </widget>
+            </item>
+            <item row="0" column="1" rowspan="2">
+             <widget class="QChart" name="chart_edp_rt_all_idr">
+              <property name="minimumSize">
+               <size>
+                <width>200</width>
+                <height>0</height>
+               </size>
+              </property>
+             </widget>
+            </item>
+            <item row="1" column="0">
+             <widget class="QChart" name="chart_edp_rt_idr">
+              <property name="minimumSize">
+               <size>
+                <width>200</width>
+                <height>0</height>
+               </size>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </widget>
+          <widget class="QWidget" name="tab_edp2_algorirhm">
+           <attribute name="title">
+            <string>Tab 2</string>
+           </attribute>
+           <layout class="QGridLayout" name="gridLayout_2" columnstretch="4,1">
+            <property name="leftMargin">
+             <number>0</number>
+            </property>
+            <property name="topMargin">
+             <number>0</number>
+            </property>
+            <property name="rightMargin">
+             <number>0</number>
+            </property>
+            <property name="bottomMargin">
+             <number>0</number>
+            </property>
+            <item row="0" column="0">
+             <widget class="QChart" name="chart_edprt_al_disp">
+              <property name="minimumSize">
+               <size>
+                <width>200</width>
+                <height>0</height>
+               </size>
+              </property>
+             </widget>
+            </item>
+            <item row="0" column="1" rowspan="2">
+             <widget class="QChart" name="chart_edp_al_all_idr">
+              <property name="minimumSize">
+               <size>
+                <width>200</width>
+                <height>0</height>
+               </size>
+              </property>
+             </widget>
+            </item>
+            <item row="1" column="0">
+             <widget class="QChart" name="chart_edp_al_idr">
+              <property name="minimumSize">
+               <size>
+                <width>200</width>
+                <height>0</height>
+               </size>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </widget>
+         </widget>
+        </item>
+       </layout>
+      </widget>
+      <widget class="QWidget" name="stk4_res">
+       <layout class="QHBoxLayout" name="horizontalLayout_3"/>
+      </widget>
+     </widget>
+    </item>
+    <item>
+     <widget class="Line" name="line_2">
+      <property name="orientation">
+       <enum>Qt::Vertical</enum>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QGraphicsView" name="graph_building_model">
+      <property name="minimumSize">
+       <size>
+        <width>200</width>
+        <height>0</height>
+       </size>
+      </property>
+     </widget>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QMenuBar" name="menuBar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>1000</width>
+     <height>26</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <pointsize>12</pointsize>
+    </font>
+   </property>
+   <widget class="QMenu" name="menuFile">
+    <property name="geometry">
+     <rect>
+      <x>236</x>
+      <y>141</y>
+      <width>148</width>
+      <height>149</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>12</pointsize>
+     </font>
+    </property>
+    <property name="title">
+     <string>文件(F)</string>
+    </property>
+    <addaction name="act_open"/>
+    <addaction name="act_signal"/>
+    <addaction name="separator"/>
+    <addaction name="act_exit"/>
+   </widget>
+   <widget class="QMenu" name="menuOption">
+    <property name="font">
+     <font>
+      <pointsize>12</pointsize>
+     </font>
+    </property>
+    <property name="title">
+     <string>设置(S)</string>
+    </property>
+    <addaction name="act_building"/>
+    <addaction name="act_algotithm"/>
+    <addaction name="act_draw"/>
+   </widget>
+   <widget class="QMenu" name="menuHelp">
+    <property name="font">
+     <font>
+      <pointsize>12</pointsize>
+     </font>
+    </property>
+    <property name="title">
+     <string>帮助(H)</string>
+    </property>
+    <addaction name="act_about"/>
+    <addaction name="act_guide"/>
+    <addaction name="separator"/>
+    <addaction name="act_web"/>
+    <addaction name="act_qt"/>
+   </widget>
+   <addaction name="menuFile"/>
+   <addaction name="menuOption"/>
+   <addaction name="menuHelp"/>
+  </widget>
+  <widget class="QToolBar" name="mainToolBar">
+   <property name="font">
+    <font>
+     <pointsize>12</pointsize>
+    </font>
+   </property>
+   <property name="toolButtonStyle">
+    <enum>Qt::ToolButtonTextBesideIcon</enum>
+   </property>
+   <attribute name="toolBarArea">
+    <enum>TopToolBarArea</enum>
+   </attribute>
+   <attribute name="toolBarBreak">
+    <bool>false</bool>
+   </attribute>
+   <addaction name="act_open"/>
+   <addaction name="separator"/>
+   <addaction name="act_home"/>
+   <addaction name="separator"/>
+   <addaction name="act_building"/>
+   <addaction name="act_algotithm"/>
+   <addaction name="act_draw"/>
+   <addaction name="separator"/>
+   <addaction name="act_guide"/>
+   <addaction name="act_web"/>
+   <addaction name="act_about"/>
+   <addaction name="separator"/>
+   <addaction name="act_exit"/>
+  </widget>
+  <widget class="QStatusBar" name="statusBar">
+   <property name="font">
+    <font>
+     <pointsize>12</pointsize>
+    </font>
+   </property>
+  </widget>
+  <widget class="QToolBar" name="toolBar">
+   <property name="windowTitle">
+    <string>toolBar</string>
+   </property>
+   <attribute name="toolBarArea">
+    <enum>TopToolBarArea</enum>
+   </attribute>
+   <attribute name="toolBarBreak">
+    <bool>false</bool>
+   </attribute>
+   <addaction name="act_save"/>
+   <addaction name="act_deselect"/>
+   <addaction name="separator"/>
+   <addaction name="act_zoom_reset"/>
+   <addaction name="act_zoom_in"/>
+   <addaction name="act_zoom_out"/>
+  </widget>
+  <action name="act_open">
+   <property name="icon">
+    <iconset resource="resource.qrc">
+     <normaloff>:/image/icon/file-open.png</normaloff>:/image/icon/file-open.png</iconset>
+   </property>
+   <property name="text">
+    <string>打开</string>
+   </property>
+   <property name="toolTip">
+    <string>打开文件</string>
+   </property>
+   <property name="statusTip">
+    <string>打开文件</string>
+   </property>
+   <property name="font">
+    <font>
+     <pointsize>12</pointsize>
+    </font>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+O</string>
+   </property>
+  </action>
+  <action name="act_exit">
+   <property name="icon">
+    <iconset resource="resource.qrc">
+     <normaloff>:/image/icon/exit_4.png</normaloff>:/image/icon/exit_4.png</iconset>
+   </property>
+   <property name="text">
+    <string>退出</string>
+   </property>
+   <property name="toolTip">
+    <string>退出</string>
+   </property>
+   <property name="statusTip">
+    <string>退出程序</string>
+   </property>
+   <property name="font">
+    <font>
+     <pointsize>12</pointsize>
+    </font>
+   </property>
+  </action>
+  <action name="act_building">
+   <property name="icon">
+    <iconset resource="resource.qrc">
+     <normaloff>:/image/icon/building_1.png</normaloff>:/image/icon/building_1.png</iconset>
+   </property>
+   <property name="text">
+    <string>建筑</string>
+   </property>
+   <property name="statusTip">
+    <string>建筑信息</string>
+   </property>
+  </action>
+  <action name="act_algotithm">
+   <property name="icon">
+    <iconset resource="resource.qrc">
+     <normaloff>:/image/icon/suanfamoxing.png</normaloff>:/image/icon/suanfamoxing.png</iconset>
+   </property>
+   <property name="text">
+    <string>算法</string>
+   </property>
+   <property name="statusTip">
+    <string>算法设置</string>
+   </property>
+  </action>
+  <action name="act_about">
+   <property name="icon">
+    <iconset resource="resource.qrc">
+     <normaloff>:/image/icon/about_1.png</normaloff>:/image/icon/about_1.png</iconset>
+   </property>
+   <property name="text">
+    <string>关于</string>
+   </property>
+   <property name="statusTip">
+    <string>关于qREST</string>
+   </property>
+   <property name="font">
+    <font>
+     <pointsize>12</pointsize>
+    </font>
+   </property>
+  </action>
+  <action name="act_guide">
+   <property name="icon">
+    <iconset resource="resource.qrc">
+     <normaloff>:/image/icon/help_1.png</normaloff>:/image/icon/help_1.png</iconset>
+   </property>
+   <property name="text">
+    <string>指南</string>
+   </property>
+   <property name="statusTip">
+    <string>使用指南</string>
+   </property>
+   <property name="font">
+    <font>
+     <pointsize>12</pointsize>
+    </font>
+   </property>
+   <property name="shortcut">
+    <string>F1</string>
+   </property>
+  </action>
+  <action name="act_web">
+   <property name="icon">
+    <iconset resource="resource.qrc">
+     <normaloff>:/image/icon/web.png</normaloff>:/image/icon/web.png</iconset>
+   </property>
+   <property name="text">
+    <string>网站</string>
+   </property>
+   <property name="statusTip">
+    <string>项目网站</string>
+   </property>
+   <property name="font">
+    <font>
+     <pointsize>12</pointsize>
+    </font>
+   </property>
+  </action>
+  <action name="act_qt">
+   <property name="text">
+    <string>关于Qt</string>
+   </property>
+   <property name="font">
+    <font>
+     <pointsize>12</pointsize>
+    </font>
+   </property>
+  </action>
+  <action name="act_draw">
+   <property name="icon">
+    <iconset resource="resource.qrc">
+     <normaloff>:/image/icon/setting_1.png</normaloff>:/image/icon/setting_1.png</iconset>
+   </property>
+   <property name="text">
+    <string>绘图</string>
+   </property>
+   <property name="statusTip">
+    <string>绘图设置</string>
+   </property>
+  </action>
+  <action name="act_signal">
+   <property name="text">
+    <string>信号</string>
+   </property>
+   <property name="statusTip">
+    <string>信号</string>
+   </property>
+  </action>
+  <action name="act_home">
+   <property name="icon">
+    <iconset resource="resource.qrc">
+     <normaloff>:/image/icon/iconfonthome_1.png</normaloff>:/image/icon/iconfonthome_1.png</iconset>
+   </property>
+   <property name="text">
+    <string>主页</string>
+   </property>
+   <property name="toolTip">
+    <string>返回主页</string>
+   </property>
+   <property name="menuRole">
+    <enum>QAction::NoRole</enum>
+   </property>
+  </action>
+  <action name="act_zoom_in">
+   <property name="icon">
+    <iconset resource="resource.qrc">
+     <normaloff>:/image/icon/zoomin.png</normaloff>:/image/icon/zoomin.png</iconset>
+   </property>
+   <property name="text">
+    <string>放大</string>
+   </property>
+   <property name="menuRole">
+    <enum>QAction::NoRole</enum>
+   </property>
+  </action>
+  <action name="act_zoom_out">
+   <property name="icon">
+    <iconset resource="resource.qrc">
+     <normaloff>:/image/icon/zoomout.png</normaloff>:/image/icon/zoomout.png</iconset>
+   </property>
+   <property name="text">
+    <string>缩小</string>
+   </property>
+   <property name="menuRole">
+    <enum>QAction::NoRole</enum>
+   </property>
+  </action>
+  <action name="act_zoom_reset">
+   <property name="icon">
+    <iconset resource="resource.qrc">
+     <normaloff>:/image/icon/iconfont_fangdajing.png</normaloff>:/image/icon/iconfont_fangdajing.png</iconset>
+   </property>
+   <property name="text">
+    <string>恢复</string>
+   </property>
+   <property name="menuRole">
+    <enum>QAction::NoRole</enum>
+   </property>
+  </action>
+  <action name="act_deselect">
+   <property name="icon">
+    <iconset resource="resource.qrc">
+     <normaloff>:/image/icon/iconfont16.png</normaloff>:/image/icon/iconfont16.png</iconset>
+   </property>
+   <property name="text">
+    <string>清除选点</string>
+   </property>
+   <property name="menuRole">
+    <enum>QAction::NoRole</enum>
+   </property>
+  </action>
+  <action name="act_save">
+   <property name="icon">
+    <iconset resource="resource.qrc">
+     <normaloff>:/image/icon/save_1.png</normaloff>:/image/icon/save_1.png</iconset>
+   </property>
+   <property name="text">
+    <string>保存</string>
+   </property>
+   <property name="menuRole">
+    <enum>QAction::NoRole</enum>
+   </property>
+  </action>
+ </widget>
+ <layoutdefault spacing="6" margin="11"/>
+ <customwidgets>
+  <customwidget>
+   <class>QChart</class>
+   <extends>QGraphicsView</extends>
+   <header>qchart.h</header>
+  </customwidget>
+ </customwidgets>
+ <resources>
+  <include location="resource.qrc"/>
+ </resources>
+ <connections>
+  <connection>
+   <sender>act_exit</sender>
+   <signal>triggered()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>close()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>299</x>
+     <y>199</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>listWidget</sender>
+   <signal>currentRowChanged(int)</signal>
+   <receiver>stackedWidget</receiver>
+   <slot>setCurrentIndex(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>103</x>
+     <y>217</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>401</x>
+     <y>217</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+</ui>

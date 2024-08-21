@@ -24,9 +24,13 @@
 #include "modified_filtering_integral.h"
 
 // stdc++ headers
+#include <fstream>
 #include <memory>
 #include <numeric>
 #include <vector>
+
+// third-party library headers
+#include "nlohmann/json.hpp"
 
 // project headers
 #include <data_structure/displacement.h>
@@ -41,13 +45,44 @@
 
 namespace edp_calculation
 {
+// 从配置文件中读取参数
+void ModifiedFilteringIntegral::LoadConfig(const std::string &config_file)
+{
+    // JSON配置文件
+    nlohmann::json config;
+    std::ifstream ifs;
+    if (config_file.empty())
+    {
+        ifs.open(("config/EDP_Config.json"));
+    }
+    else
+    {
+        ifs.open(config_file);
+    }
+    if (ifs.is_open())
+    {
+        ifs >> config;
+        ifs.close();
+    }
+    else
+    {
+        throw std::runtime_error("Cannot open the configuration file.");
+    }
+
+    method_.filter_order_ = config["FilterConfig"]["filter_order"];
+    method_.filter_type_ = config["FilterConfig"]["filter_type"];
+    method_.filter_function_ = config["FilterConfig"]["filter_function"];
+    method_.filter_generator_ = config["FilterConfig"]["filter_generator"];
+    method_.interp_type_ = config["InterpConfig"]["interp_type"];
+}
+
 // 滤波积分插值法计算的入口
 void ModifiedFilteringIntegral::CalculateEdp()
 {
     // 1.确定计算参数
     // 1.1确定滤波生成器
     auto filter_generator = numerical_algorithm::ButterworthFilterDesign(
-        filter_order_, 0, 0, method_.filter_type_);
+        method_.filter_order_, 0, 0, method_.filter_type_);
 
     // 1.2确定滤波函数
     std::shared_ptr<numerical_algorithm::BasicFiltering> filter_function =

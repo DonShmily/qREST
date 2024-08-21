@@ -11,7 +11,7 @@
 ** File Created: Tuesday, 23rd July 2024 22:50:47
 ** Author: Dong Feiyue (donfeiyue@outlook.com)
 ** -----
-** Last Modified: Saturday, 10th August 2024 22:27:18
+** Last Modified: Wednesday, 21st August 2024 20:04:29
 ** Modified By: Dong Feiyue (donfeiyue@outlook.com>)
 */
 
@@ -48,6 +48,21 @@
 
 namespace gmp_calculation
 {
+// 计算地震动参数需要参数的结构体
+struct GmpCalculationParameter
+{
+    // 采样频率
+    double frequency_ = 50;
+    // 信号时间步长
+    double time_step_ = 1.0 / frequency_;
+    // 阻尼比
+    double damping_ratio_ = 0.05;
+    // 反应谱横轴周期的步长
+    double response_spectrum_dt_ = 0.01;
+    // 反应谱横轴最大周期
+    double response_spectrum_max_period_ = 5;
+}; // struct GmpCalculationParameter
+
 // 地震反应谱计算结果
 struct ResponseSpectrumResult
 {
@@ -248,8 +263,8 @@ public:
 private:
     // 加速度数据指针
     std::shared_ptr<std::vector<double>> acceleration_ptr_ = nullptr;
-    // 采样频率、数据步长和阻尼比
-    double frequency_{}, time_step_{}, damping_ratio_{};
+    // GMP计算参数
+    GmpCalculationParameter parameter_{};
     // 速度和位移（根据传入的加速度计算）
     std::vector<double> velocity_{}, displacement_{};
 
@@ -287,29 +302,6 @@ private:
     inline void clear_result();
 };
 
-/** 构造函数 **/
-
-// 从std::vector构造
-inline GmpCalculation::GmpCalculation(const std::vector<double> &acceleration,
-                                      double frequency,
-                                      double damping_ratio)
-    : acceleration_ptr_(std::make_shared<std::vector<double>>(acceleration)),
-      frequency_(frequency),
-      time_step_(1.0 / frequency),
-      damping_ratio_(damping_ratio)
-{}
-
-// 从std::vector指针构造
-inline GmpCalculation::GmpCalculation(
-    const std::shared_ptr<std::vector<double>> &acceleration_ptr,
-    double frequency,
-    double damping_ratio)
-    : acceleration_ptr_(acceleration_ptr),
-      frequency_(frequency),
-      time_step_(1.0 / frequency),
-      damping_ratio_(damping_ratio)
-{}
-
 /** 读取和设置参数 **/
 
 // 设置加速度数据
@@ -323,15 +315,15 @@ GmpCalculation::set_acceleration(const std::vector<double> &acceleration)
 // 设置频率
 inline void GmpCalculation::set_frequency(double frequency)
 {
-    frequency_ = frequency;
-    time_step_ = 1.0 / frequency;
+    parameter_.frequency_ = frequency;
+    parameter_.time_step_ = 1.0 / frequency;
     clear_result();
 }
 
 // 设置阻尼比
 inline void GmpCalculation::set_damping_ratio(double damping_ratio)
 {
-    damping_ratio_ = damping_ratio;
+    parameter_.damping_ratio_ = damping_ratio;
     clear_result();
 }
 
@@ -342,12 +334,15 @@ inline std::vector<double> &GmpCalculation::get_acceleration()
 }
 
 // 获取频率
-inline double GmpCalculation::get_frequency() const { return frequency_; }
+inline double GmpCalculation::get_frequency() const
+{
+    return parameter_.frequency_;
+}
 
 // 获取阻尼比
 inline double GmpCalculation::get_damping_ratio() const
 {
-    return damping_ratio_;
+    return parameter_.damping_ratio_;
 }
 
 // 获取速度
@@ -472,7 +467,7 @@ inline double GmpCalculation::Duration()
                             [peak_acceleration](double a) {
                                 return std::abs(a) > 0.05 * peak_acceleration;
                             });
-    return std::distance(it1, it2.base()) * time_step_;
+    return std::distance(it1, it2.base()) * parameter_.time_step_;
 }
 
 /** 地震反应谱 **/
@@ -672,7 +667,8 @@ inline std::vector<double> GmpCalculation::PowerSpectrum()
 // 计算速度
 inline void GmpCalculation::calculate_velocity()
 {
-    velocity_ = numerical_algorithm::Cumtrapz(*acceleration_ptr_, time_step_);
+    velocity_ = numerical_algorithm::Cumtrapz(*acceleration_ptr_,
+                                              parameter_.time_step_);
 }
 
 // 计算位移
@@ -682,7 +678,8 @@ inline void GmpCalculation::calculate_displacement()
     {
         calculate_velocity();
     }
-    displacement_ = numerical_algorithm::Cumtrapz(velocity_, time_step_);
+    displacement_ =
+        numerical_algorithm::Cumtrapz(velocity_, parameter_.time_step_);
 }
 
 // 计算Fourier变换
