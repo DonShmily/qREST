@@ -12,7 +12,7 @@
 ** Author: Dong Feiyue (donfeiyue@outlook.com)
 ** -----
 ** Last Modified: Saturday, 10th August 2024 22:26:30
-** Modified By: Dong Feiyue (donfeiyue@outlook.com>)
+** Modified By: Dong Feiyue (donfeiyue@outlook.com)
 */
 
 // Description:
@@ -45,26 +45,6 @@ class InterStoryDriftResult
 public:
     // 默认构造函数
     InterStoryDriftResult() = default;
-
-    // 拷贝构造函数
-    InterStoryDriftResult(
-        const InterStoryDriftResult &filtering_interp_result) = default;
-
-    // 移动构造函数
-    InterStoryDriftResult(InterStoryDriftResult &&filtering_interp_result) =
-        default;
-
-    // 拷贝赋值函数
-    InterStoryDriftResult &
-    operator=(const InterStoryDriftResult &filtering_interp_result)
-    {
-        if (this != &filtering_interp_result)
-        {
-            displacement_ = filtering_interp_result.displacement_;
-            inter_story_drift_ = filtering_interp_result.inter_story_drift_;
-        }
-        return *this;
-    }
 
     // 析构函数
     ~InterStoryDriftResult() = default;
@@ -116,6 +96,12 @@ public:
     // 移动构造函数
     BasicEdpCalculation(BasicEdpCalculation &&other) = default;
 
+    // 拷贝赋值函数
+    BasicEdpCalculation &operator=(const BasicEdpCalculation &other) = default;
+
+    // 移动赋值函数
+    BasicEdpCalculation &operator=(BasicEdpCalculation &&other) = default;
+
     // 析构函数
     virtual ~BasicEdpCalculation() = default;
 
@@ -127,7 +113,7 @@ public:
 
 protected:
     // 单方向加速度数据指针
-    const data_structure::Acceleration input_acceleration_{};
+    data_structure::Acceleration input_acceleration_{};
     // 建筑信息的指针
     data_structure::Building building_{};
 };

@@ -9,7 +9,7 @@
 ** Author: Dong Feiyue (donfeiyue@outlook.com)                                 *
 ** -----                                                                       *
 ** Last Modified: Saturday, 10th August 2024 9:49:38 pm                        *
-** Modified By: Dong Feiyue (donfeiyue@outlook.com>)                           *
+** Modified By: Dong Feiyue (donfeiyue@outlook.com)                           *
 ** -----                                                                       *
 ** Copyright 2024 - 2024 QLab, QLab                                          *
 */

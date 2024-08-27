@@ -12,7 +12,7 @@
 ** Author: Dong Feiyue (donfeiyue@outlook.com)
 ** -----
 ** Last Modified: Saturday, 10th August 2024 22:26:40
-** Modified By: Dong Feiyue (donfeiyue@outlook.com>)
+** Modified By: Dong Feiyue (donfeiyue@outlook.com)
 */
 
 // Description:
@@ -126,14 +126,8 @@ public:
         method_.high_frequency_ = high_frequency;
     }
 
-    // 拷贝构造函数
-    FilteringIntegral(const FilteringIntegral &filtering_interp) = default;
-
-    // 移动构造函数
-    FilteringIntegral(FilteringIntegral &&filtering_interp) = default;
-
     // 析构函数
-    virtual ~FilteringIntegral() = default;
+    ~FilteringIntegral() = default;
 
     // 设置滤波器阶数
     // @param filter_order 滤波器阶数
@@ -152,7 +146,8 @@ public:
     }
 
     // 从配置文件中读取参数
-    void LoadConfig(const std::string &config_file = "") override;
+    void LoadConfig(
+        const std::string &config_file = "config/EDP_Config.json") override;
 
     // 获取滤波积分插值法计算方法参数
     // @return 滤波积分插值法计算方法参数的引用

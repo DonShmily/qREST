@@ -12,7 +12,7 @@
 ** Author: Dong Feiyue (donfeiyue@outlook.com)
 ** -----
 ** Last Modified: Saturday, 10th August 2024 22:26:56
-** Modified By: Dong Feiyue (donfeiyue@outlook.com>)
+** Modified By: Dong Feiyue (donfeiyue@outlook.com)
 */
 
 // Description:
@@ -50,15 +50,7 @@ void ModifiedFilteringIntegral::LoadConfig(const std::string &config_file)
 {
     // JSON配置文件
     nlohmann::json config;
-    std::ifstream ifs;
-    if (config_file.empty())
-    {
-        ifs.open(("config/EDP_Config.json"));
-    }
-    else
-    {
-        ifs.open(config_file);
-    }
+    std::ifstream ifs(config_file);
     if (ifs.is_open())
     {
         ifs >> config;

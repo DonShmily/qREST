@@ -12,7 +12,7 @@
 ** Author: Dong Feiyue (donfeiyue@outlook.com)
 ** -----
 ** Last Modified: Wednesday, 21st August 2024 20:04:29
-** Modified By: Dong Feiyue (donfeiyue@outlook.com>)
+** Modified By: Dong Feiyue (donfeiyue@outlook.com)
 */
 
 // Description:
@@ -24,6 +24,7 @@
 #ifndef GMP_CALCULATION_GMP_CACULATION_H
 #define GMP_CALCULATION_GMP_CACULATION_H
 
+#include <cstddef>
 #define _USE_MATH_DEFINES
 // stdc++ headers
 #include <cmath>
@@ -61,38 +62,23 @@ struct GmpCalculationParameter
     double response_spectrum_dt_ = 0.01;
     // 反应谱横轴最大周期
     double response_spectrum_max_period_ = 5;
+    // Fourier横轴频率间隔（无需设置，仅作读取用）
+    double fourier_spectrum_df_ = 0;
+    // Fourier谱横轴最大频率，0表示不限制
+    double fourier_spectrum_max_frequency_ = 10;
 }; // struct GmpCalculationParameter
 
 // 地震反应谱计算结果
 struct ResponseSpectrumResult
 {
-    ResponseSpectrumResult() = default;
-    ResponseSpectrumResult(const std::vector<double> &Sa,
-                           const std::vector<double> &Sv,
-                           const std::vector<double> &Sd,
-                           int period_per_second = 100,
-                           double max_period = 5)
-        : Sa(Sa),
-          Sv(Sv),
-          Sd(Sd),
-          period_per_second(period_per_second),
-          max_period(max_period) {};
-
     std::vector<double> Sa{};
     std::vector<double> Sv{};
     std::vector<double> Sd{};
-    int period_per_second = 100;
-    double max_period = 5;
 };
 
 // Ti周期下地震反应谱计算结果
 struct ResponseSpectrumTiResult
 {
-    ResponseSpectrumTiResult() = default;
-    ResponseSpectrumTiResult(const double &SaTi,
-                             const double &SvTi,
-                             const double &SdTi)
-        : SaTi(SaTi), SvTi(SvTi), SdTi(SdTi) {};
     double SaTi{};
     double SvTi{};
     double SdTi{};
@@ -122,15 +108,58 @@ public:
         double frequency,
         double damping_ratio = 0.05);
 
-    // 拷贝构造函数
-    GmpCalculation(const GmpCalculation &other) = default;
-
-    // 移动构造函数
-    GmpCalculation(GmpCalculation &&other) = default;
+    // 从配置文件中读取参数构造
+    // @param acceleration 加速度数据
+    // @param config_file 配置文件路径
+    explicit GmpCalculation(const std::vector<double> &acceleration,
+                            const std::string &config_file = "");
 
     // 析构函数
     ~GmpCalculation() = default;
 
+private:
+    // 加速度数据指针
+    std::shared_ptr<std::vector<double>> acceleration_ptr_ = nullptr;
+    // GMP计算参数
+    GmpCalculationParameter parameter_{};
+    // 速度和位移（根据传入的加速度计算）
+    std::vector<double> velocity_{}, displacement_{};
+
+    /** 各种反应谱计算结果 **/
+    // 反应谱计算结果
+    ResponseSpectrumResult response_spectrum_{};
+    // 反应谱在Ti的计算结果
+    ResponseSpectrumTiResult response_spectrum_ti_{};
+    // 拟反应谱计算结果
+    ResponseSpectrumResult pesudo_response_spectrum_{};
+    // 拟反应谱在Ti的计算结果
+    ResponseSpectrumTiResult pesudo_response_spectrum_ti_{};
+    // 是否已经计算了反应谱
+    bool response_spectrum_flag_{false};
+    // 是否已经计算了拟反应谱
+    bool pesudo_response_spectrum_flag_{false};
+
+    // Fourier变换结果
+    std::vector<std::complex<double>> fourier_transform_result_;
+
+    /** 功能函数 **/
+
+    // 计算速度
+    inline void calculate_velocity();
+
+    // 计算位移
+    inline void calculate_displacement();
+
+    // NewmakeBeta方法计算响应
+    struct ResponseSpectrumTiResult NewmarkBeta(const double &Ti);
+
+    // 计算Fourier变换
+    inline void fourier_transform();
+
+    // 清除已有计算结果
+    inline void clear_result();
+
+public:
     /** 读取和设置参数 **/
 
     // 设置加速度数据
@@ -144,6 +173,13 @@ public:
     // 设置阻尼比
     // @param damping_ratio 阻尼比
     inline void set_damping_ratio(double damping_ratio);
+
+    // 从配置文件中读取参数
+    // @param config_file 配置文件路径
+    void LoadConfig(const std::string &config_file = "config/GMP_Config.json");
+
+    // 获取计算参数
+    const GmpCalculationParameter &get_parameter() const { return parameter_; }
 
     // 获取加速度数据
     // @return 加速度数据
@@ -259,47 +295,6 @@ public:
 
     // 获取功率谱
     inline std::vector<double> PowerSpectrum();
-
-private:
-    // 加速度数据指针
-    std::shared_ptr<std::vector<double>> acceleration_ptr_ = nullptr;
-    // GMP计算参数
-    GmpCalculationParameter parameter_{};
-    // 速度和位移（根据传入的加速度计算）
-    std::vector<double> velocity_{}, displacement_{};
-
-    // 反应谱计算结果
-    ResponseSpectrumResult response_spectrum_{};
-    // 反应谱在Ti的计算结果
-    ResponseSpectrumTiResult response_spectrum_ti_{};
-    // 拟反应谱计算结果
-    ResponseSpectrumResult pesudo_response_spectrum_{};
-    // 拟反应谱在Ti的计算结果
-    ResponseSpectrumTiResult pesudo_response_spectrum_ti_{};
-    // 是否已经计算了反应谱
-    bool response_spectrum_flag_{false};
-    // 是否已经计算了拟反应谱
-    bool pesudo_response_spectrum_flag_{false};
-
-    // Fourier变换结果
-    std::vector<std::complex<double>> fourier_transform_result_;
-
-    /** 功能函数 **/
-
-    // 计算速度
-    inline void calculate_velocity();
-
-    // 计算位移
-    inline void calculate_displacement();
-
-    // NewmakeBeta方法计算响应
-    struct ResponseSpectrumTiResult NewmarkBeta(const double &Ti);
-
-    // 计算Fourier变换
-    inline void fourier_transform();
-
-    // 清除已有计算结果
-    inline void clear_result();
 };
 
 /** 读取和设置参数 **/
@@ -501,11 +496,11 @@ inline double GmpCalculation::DisplacementSpectrumTi(const double &Ti)
 inline ResponseSpectrumResult GmpCalculation::ResponseSpectrum()
 {
     clear_result();
-    int period_length =
-        response_spectrum_.period_per_second * response_spectrum_.max_period;
+    int period_length = parameter_.response_spectrum_max_period_
+                        / parameter_.response_spectrum_dt_;
     for (int Ti = 1; Ti <= period_length; ++Ti)
     {
-        NewmarkBeta(1.0 * Ti / response_spectrum_.period_per_second);
+        NewmarkBeta(Ti * parameter_.response_spectrum_dt_);
         response_spectrum_.Sa.push_back(response_spectrum_ti_.SaTi);
         response_spectrum_.Sv.push_back(response_spectrum_ti_.SvTi);
         response_spectrum_.Sd.push_back(response_spectrum_ti_.SdTi);
@@ -575,8 +570,8 @@ inline double GmpCalculation::PseudoVelocitySpectrumTi(const double &Ti)
 // 获取拟反应谱
 inline ResponseSpectrumResult GmpCalculation::PseudoResponseSpectrum()
 {
-    double period_length =
-        response_spectrum_.period_per_second * response_spectrum_.max_period;
+    double period_length = parameter_.response_spectrum_max_period_
+                           / parameter_.response_spectrum_dt_;
     double omega;
     if (!response_spectrum_flag_)
     {
@@ -584,7 +579,7 @@ inline ResponseSpectrumResult GmpCalculation::PseudoResponseSpectrum()
     }
     for (int Ti = 1; Ti <= period_length; ++Ti)
     {
-        omega = 2 * M_PI / Ti * response_spectrum_.period_per_second;
+        omega = 2 * M_PI / Ti * parameter_.response_spectrum_dt_;
         pesudo_response_spectrum_.Sa.push_back(response_spectrum_.Sd[Ti - 1]
                                                * omega * omega);
         pesudo_response_spectrum_.Sv.push_back(response_spectrum_.Sd[Ti - 1]
@@ -624,12 +619,21 @@ inline std::vector<double> GmpCalculation::FourierAmplitudeSpectrum()
     {
         fourier_transform();
     }
-    std::vector<double> amplitude_spectrum(fourier_transform_result_.size());
-    for (size_t i = 0; i != fourier_transform_result_.size(); i++)
+    std::size_t max_index =
+        static_cast<std::size_t>(parameter_.fourier_spectrum_max_frequency_
+                                 / parameter_.fourier_spectrum_df_);
+    std::vector<double> amplitude_spectrum(max_index);
+    for (size_t i = 0; i != max_index; i++)
     {
         amplitude_spectrum[i] = std::abs(fourier_transform_result_[i]);
     }
-    return amplitude_spectrum;
+    if (max_index == 0)
+        return amplitude_spectrum;
+    else
+    {
+        return std::vector<double>(amplitude_spectrum.begin(),
+                                   amplitude_spectrum.begin() + max_index);
+    }
 }
 
 // 获取Fourier相位谱
@@ -639,12 +643,21 @@ inline std::vector<double> GmpCalculation::FourierPhaseSpectrum()
     {
         fourier_transform();
     }
-    std::vector<double> phase_spectrum(fourier_transform_result_.size());
-    for (size_t i = 0; i != fourier_transform_result_.size(); i++)
+    std::size_t max_index =
+        static_cast<std::size_t>(parameter_.fourier_spectrum_max_frequency_
+                                 / parameter_.fourier_spectrum_df_);
+    std::vector<double> phase_spectrum(max_index);
+    for (size_t i = 0; i != max_index; i++)
     {
         phase_spectrum[i] = std::arg(fourier_transform_result_[i]);
     }
-    return phase_spectrum;
+    if (max_index == 0)
+        return phase_spectrum;
+    else
+    {
+        return std::vector<double>(phase_spectrum.begin(),
+                                   phase_spectrum.begin() + max_index);
+    }
 }
 
 // 获取功率谱
@@ -654,12 +667,21 @@ inline std::vector<double> GmpCalculation::PowerSpectrum()
     {
         fourier_transform();
     }
-    std::vector<double> power_spectrum(fourier_transform_result_.size());
-    for (size_t i = 0; i != fourier_transform_result_.size(); i++)
+    std::size_t max_index =
+        static_cast<std::size_t>(parameter_.fourier_spectrum_max_frequency_
+                                 / parameter_.fourier_spectrum_df_);
+    std::vector<double> power_spectrum(max_index);
+    for (size_t i = 0; i != max_index; i++)
     {
         power_spectrum[i] = std::norm(fourier_transform_result_[i]);
     }
-    return power_spectrum;
+    if (max_index == 0)
+        return power_spectrum;
+    else
+    {
+        return std::vector<double>(power_spectrum.begin(),
+                                   power_spectrum.begin() + max_index);
+    }
 }
 
 /** 功能函数 **/
@@ -693,6 +715,9 @@ inline void GmpCalculation::fourier_transform()
         FFTW_ESTIMATE);
     fftw_execute(plan);
     fftw_destroy_plan(plan);
+
+    parameter_.fourier_spectrum_df_ =
+        parameter_.frequency_ / fourier_transform_result_.size();
 }
 
 // 清除已有计算结果

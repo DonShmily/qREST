@@ -12,7 +12,7 @@
 ** Author: Dong Feiyue (donfeiyue@outlook.com)
 ** -----
 ** Last Modified: Tuesday, 13th August 2024 14:26:30
-** Modified By: Dong Feiyue (donfeiyue@outlook.com>)
+** Modified By: Dong Feiyue (donfeiyue@outlook.com)
 */
 
 // Description:

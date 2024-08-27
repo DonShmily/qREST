@@ -12,7 +12,7 @@
 ** Author: Dong Feiyue (donfeiyue@outlook.com)
 ** -----
 ** Last Modified: Saturday, 10th August 2024 22:28:33
-** Modified By: Dong Feiyue (donfeiyue@outlook.com>)
+** Modified By: Dong Feiyue (donfeiyue@outlook.com)
 */
 
 // Description:
@@ -59,12 +59,6 @@ public:
     {
         filter_design.get_filter_coefficients(coefficients_a_, coefficients_b_);
     }
-
-    // 拷贝构造函数
-    Filter(const Filter &filter) = default;
-
-    // 移动构造函数
-    Filter(Filter &&filter) = default;
 
     // 析构函数
     ~Filter() = default;

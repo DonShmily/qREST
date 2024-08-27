@@ -12,7 +12,7 @@
 ** Author: Dong Feiyue (donfeiyue@outlook.com)
 ** -----
 ** Last Modified: Saturday, 10th August 2024 22:24:59
-** Modified By: Dong Feiyue (donfeiyue@outlook.com>)
+** Modified By: Dong Feiyue (donfeiyue@outlook.com)
 */
 
 // Description:
@@ -59,15 +59,6 @@ public:
     BasicData(std::istream &stream,
               std::size_t row_number,
               std::size_t col_number);
-
-    // 拷贝构造函数
-    BasicData(const BasicData &data) = default;
-
-    // 移动构造函数
-    BasicData(BasicData &&data) = default;
-
-    // 拷贝赋值函数
-    BasicData &operator=(const BasicData &data) = default;
 
     // 析构函数
     virtual ~BasicData() = default;

@@ -12,7 +12,7 @@
 ** Author: Dong Feiyue (donfeiyue@outlook.com)
 ** -----
 ** Last Modified: Saturday, 10th August 2024 22:28:06
-** Modified By: Dong Feiyue (donfeiyue@outlook.com>)
+** Modified By: Dong Feiyue (donfeiyue@outlook.com)
 */
 
 // Description:
@@ -41,12 +41,6 @@ class BasicFiltering
 public:
     // 默认构造函数
     BasicFiltering() = default;
-
-    // 拷贝构造函数
-    BasicFiltering(const BasicFiltering &filtering) = default;
-
-    // 移动构造函数
-    BasicFiltering(BasicFiltering &&filtering) = default;
 
     // 析构函数
     virtual ~BasicFiltering() = default;

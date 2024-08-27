@@ -23,23 +23,52 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
+    <QtUic Include="..\..\src\qrest_ui\about_dialog.ui">
+      <Filter>Form Files</Filter>
+    </QtUic>
     <QtUic Include="..\..\src\qrest_ui\main_window.ui">
       <Filter>Form Files</Filter>
     </QtUic>
   </ItemGroup>
   <ItemGroup>
-    <QtRcc Include="..\..\src\qrest_ui\resource.qrc">
-      <Filter>Resource Files</Filter>
-    </QtRcc>
-  </ItemGroup>
-  <ItemGroup>
-    <ClCompile Include="..\..\src\qrest_ui\main_window.cpp">
+    <ClCompile Include="..\..\src\qrest_ui\main.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\qrest_ui\main_window_qt.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\qrest_ui\chart_data.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\qrest_ui\data_interface.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\qrest_ui\main_window_process.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\src\qrest_ui\main_window.h">
+    <ClInclude Include="x64\Debug\uic\ui_about_dialog.h">
+      <Filter>Form Files</Filter>
+    </ClInclude>
+    <ClInclude Include="x64\Debug\uic\ui_main_window.h">
+      <Filter>Form Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\qrest_ui\chart_data.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\src\qrest_ui\data_interface.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <QtMoc Include="..\..\src\qrest_ui\main_window.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+  </ItemGroup>
+  <ItemGroup>
+    <QtRcc Include="..\..\src\qrest_ui\resource.qrc">
+      <Filter>Resource Files</Filter>
+    </QtRcc>
   </ItemGroup>
 </Project>

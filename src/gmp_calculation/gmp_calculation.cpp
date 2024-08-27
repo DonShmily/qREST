@@ -12,7 +12,7 @@
 ** Author: Dong Feiyue (donfeiyue@outlook.com)
 ** -----
 ** Last Modified: Saturday, 10th August 2024 22:27:14
-** Modified By: Dong Feiyue (donfeiyue@outlook.com>)
+** Modified By: Dong Feiyue (donfeiyue@outlook.com)
 */
 
 // Description:
@@ -23,8 +23,13 @@
 
 // stdc++ headers
 #include <cmath>
+#include <fstream>
 #include <vector>
 
+// third-party library headers
+#include "nlohmann/json.hpp"
+
+// project headers
 #include "numerical_algorithm/vector_calculation.h"
 
 namespace gmp_calculation
@@ -51,6 +56,14 @@ inline GmpCalculation::GmpCalculation(
     parameter_.frequency_ = frequency;
     parameter_.time_step_ = 1.0 / frequency;
     parameter_.damping_ratio_ = damping_ratio;
+}
+
+// 从配置文件中读取参数构造
+GmpCalculation::GmpCalculation(const std::vector<double> &acceleration,
+                               const std::string &config_file)
+    : acceleration_ptr_(std::make_shared<std::vector<double>>(acceleration))
+{
+    LoadConfig(config_file);
 }
 
 // NewmakeBeta方法计算响应
@@ -91,6 +104,38 @@ ResponseSpectrumTiResult GmpCalculation::NewmarkBeta(const double &Ti)
     response_spectrum_ti_.SvTi = numerical_algorithm::FindMaxAbs(v);
     response_spectrum_ti_.SdTi = numerical_algorithm::FindMaxAbs(u);
     return response_spectrum_ti_;
+}
+
+// 从配置文件中读取参数
+void GmpCalculation::LoadConfig(const std::string &config_file)
+{
+    // 导入新配置需要清除已有结果
+    clear_result();
+
+    // JSON配置文件
+    nlohmann::json config;
+    std::ifstream ifs(config_file);
+    if (ifs.is_open())
+    {
+        ifs >> config;
+        ifs.close();
+    }
+    else
+    {
+        throw std::runtime_error("Cannot open the configuration file.");
+    }
+
+    // 读取参数
+    parameter_.frequency_ = config["AccConfig"]["frequency"];
+    parameter_.time_step_ = 1.0 / parameter_.frequency_;
+    parameter_.damping_ratio_ =
+        config["ResponseSpectrumConfig"]["damping_ratio"];
+    parameter_.response_spectrum_dt_ =
+        config["ResponseSpectrumConfig"]["period_step"];
+    parameter_.response_spectrum_max_period_ =
+        config["ResponseSpectrumConfig"]["max_period"];
+    parameter_.fourier_spectrum_max_frequency_ =
+        config["FourierConfig"]["max_frequency"];
 }
 
 } // namespace gmp_calculation

@@ -1,10 +1,10 @@
 ﻿/**
 **            qREST - Quick Response Evaluation for Safety Tagging
 **     Institute of Engineering Mechanics, China Earthquake Administration
-** 
+**
 **                 Copyright 2024 - 2024 QLab, Dong Feiyue
 **                          All Rights Reserved.
-** 
+**
 ** Project: qREST
 ** File: \src\numerical_algorithm\butterworth_filter_design.cpp
 ** -----
@@ -12,7 +12,7 @@
 ** Author: Dong Feiyue (donfeiyue@outlook.com)
 ** -----
 ** Last Modified: Saturday, 10th August 2024 22:28:11
-** Modified By: Dong Feiyue (donfeiyue@outlook.com>)
+** Modified By: Dong Feiyue (donfeiyue@outlook.com)
 */
 
 // Description:

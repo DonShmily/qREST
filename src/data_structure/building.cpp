@@ -12,7 +12,7 @@
 ** Author: Dong Feiyue (donfeiyue@outlook.com)
 ** -----
 ** Last Modified: Saturday, 10th August 2024 22:25:04
-** Modified By: Dong Feiyue (donfeiyue@outlook.com>)
+** Modified By: Dong Feiyue (donfeiyue@outlook.com)
 */
 
 // Description:
@@ -22,11 +22,36 @@
 #include "building.h"
 
 // stdc++ headers
+#include <fstream>
 #include <vector>
 
+// third-party library headers
+#include "nlohmann/json.hpp"
 
 namespace data_structure
 {
+// 从配置文件读取
+void Building::LoadConfig(const std::string &config_file)
+{
+    // JSON配置文件
+    nlohmann::json config;
+    std::ifstream ifs(config_file);
+    if (ifs.is_open())
+    {
+        ifs >> config;
+        ifs.close();
+    }
+    else
+    {
+        throw std::runtime_error("Cannot open the configuration file.");
+    }
+
+    // 读取配置
+    floor_height_ =
+        config["Building"]["floor_height"].get<std::vector<double>>();
+    measuren_height_ =
+        config["Building"]["measuren_height"].get<std::vector<double>>();
+}
 
 // 计算建筑层间高度
 void Building::calculate_inter_height()

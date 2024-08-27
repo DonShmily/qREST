@@ -12,7 +12,7 @@
 ** Author: Dong Feiyue (donfeiyue@outlook.com)
 ** -----
 ** Last Modified: Saturday, 10th August 2024 22:25:47
-** Modified By: Dong Feiyue (donfeiyue@outlook.com>)
+** Modified By: Dong Feiyue (donfeiyue@outlook.com)
 */
 
 // Description:
@@ -36,16 +36,6 @@ class InterStoryDrift : public BasicData
 public:
     // 构造函数
     InterStoryDrift() = default;
-
-    // 拷贝构造函数
-    InterStoryDrift(const InterStoryDrift &inter_story_drift) = default;
-
-    // 移动构造函数
-    InterStoryDrift(InterStoryDrift &&inter_story_drift) = default;
-
-    // 拷贝赋值函数
-    InterStoryDrift &
-    operator=(const InterStoryDrift &inter_story_drift) = default;
 
     // 析构函数
     ~InterStoryDrift() = default;

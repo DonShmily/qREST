@@ -12,7 +12,7 @@
 ** Author: Dong Feiyue (donfeiyue@outlook.com)
 ** -----
 ** Last Modified: Saturday, 10th August 2024 22:28:01
-** Modified By: Dong Feiyue (donfeiyue@outlook.com>)
+** Modified By: Dong Feiyue (donfeiyue@outlook.com)
 */
 
 // Description:
@@ -64,12 +64,6 @@ public:
     BasicFilterDesign(int filter_order,
                       double frequency,
                       FilterType filter_type = FilterType::lowpass);
-
-    // 拷贝构造函数
-    BasicFilterDesign(const BasicFilterDesign &filter_design) = default;
-
-    // 移动构造函数
-    BasicFilterDesign(BasicFilterDesign &&filter_design) = default;
 
     // 析构函数
     virtual ~BasicFilterDesign() = default;

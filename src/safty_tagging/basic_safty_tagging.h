@@ -12,7 +12,7 @@
 ** Author: Dong Feiyue (donfeiyue@outlook.com)
 ** -----
 ** Last Modified: Saturday, 10th August 2024 22:29:38
-** Modified By: Dong Feiyue (donfeiyue@outlook.com>)
+** Modified By: Dong Feiyue (donfeiyue@outlook.com)
 */
 
 // Description:
@@ -29,12 +29,6 @@ class BasicSaftyTagging
 public:
     // 默认构造函数
     BasicSaftyTagging() = default;
-
-    // 拷贝构造函数
-    BasicSaftyTagging(const BasicSaftyTagging &safty_tagging) = default;
-
-    // 移动构造函数
-    BasicSaftyTagging(BasicSaftyTagging &&safty_tagging) = default;
 
     // 析构函数
     virtual ~BasicSaftyTagging() = default;

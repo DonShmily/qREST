@@ -12,7 +12,7 @@
 ** Author: Dong Feiyue (donfeiyue@outlook.com)
 ** -----
 ** Last Modified: Saturday, 10th August 2024 22:29:26
-** Modified By: Dong Feiyue (donfeiyue@outlook.com>)
+** Modified By: Dong Feiyue (donfeiyue@outlook.com)
 */
 
 // Description:
@@ -51,14 +51,6 @@ public:
     // 默认构造函数
     BasedOnInterStoryDrift() = default;
 
-    // 拷贝构造函数
-    BasedOnInterStoryDrift(
-        const BasedOnInterStoryDrift &based_on_inter_story_drift) = default;
-
-    // 移动构造函数
-    BasedOnInterStoryDrift(
-        BasedOnInterStoryDrift &&based_on_inter_story_drift) = default;
-
     // 从层间位移角计算结果构造
     // @param inter_story_drift 层间位移角计算结果
     explicit BasedOnInterStoryDrift(
@@ -87,7 +79,7 @@ public:
 
     // 从配置文件中读取安全评价限值
     // @param config_file 配置文件路径
-    void LoadConfig(const std::string &config_file = "");
+    void LoadConfig(const std::string &config_file = "config/EDP_Config.json");
 
     // 安全评价计算，
     int TagSafty() override;

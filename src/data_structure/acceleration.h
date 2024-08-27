@@ -12,7 +12,7 @@
 ** Author: Dong Feiyue (donfeiyue@outlook.com)
 ** -----
 ** Last Modified: Saturday, 10th August 2024 22:24:49
-** Modified By: Dong Feiyue (donfeiyue@outlook.com>)
+** Modified By: Dong Feiyue (donfeiyue@outlook.com)
 */
 
 // Description:
@@ -91,15 +91,19 @@ public:
     // @param col_index 指定列的索引
     // @param scale 调幅因子
     Acceleration(const Acceleration &acceleration,
-                 const std::initializer_list<std::size_t> &col_index,
+                 const std::vector<std::size_t> &col_index,
                  const double &frequency,
                  const double &scale = 1.0);
 
-    // 拷贝构造函数
-    Acceleration(const Acceleration &acceleration) = default;
-
-    // 移动构造函数
-    Acceleration(Acceleration &&acceleration) = default;
+    // 从指定列的std::vector构造，从整体的加速度类型变量的部分列构造，col_index为指定列的索引
+    // @param acceleration_vector 加速度数据
+    // @param frequency 采样频率
+    // @param col_index 指定列的索引
+    // @param scale 调幅因子
+    Acceleration(const std::vector<std::vector<double>> &acceleration_vector,
+                 const std::vector<std::size_t> &col_index,
+                 const double &frequency,
+                 const double &scale = 1.0);
 
     // 析构函数
     ~Acceleration() = default;

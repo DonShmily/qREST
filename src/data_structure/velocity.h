@@ -12,7 +12,7 @@
 ** Author: Dong Feiyue (donfeiyue@outlook.com)
 ** -----
 ** Last Modified: Saturday, 10th August 2024 22:25:54
-** Modified By: Dong Feiyue (donfeiyue@outlook.com>)
+** Modified By: Dong Feiyue (donfeiyue@outlook.com)
 */
 
 // Description:
@@ -56,12 +56,6 @@ public:
              const double &frequency)
         : BasicData(stream, row_number, col_number), frequency_(frequency)
     {}
-
-    // 拷贝构造函数
-    Velocity(const Velocity &data) = default;
-
-    // 移动构造函数
-    Velocity(Velocity &&data) = default;
 
     // 析构函数
     ~Velocity() = default;

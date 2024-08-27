@@ -6,14 +6,25 @@
 **                          All Rights Reserved.
 **
 ** Project: qREST
-** File: \src\safty_tagging\basic_safty_tagging.cpp
+** File: \src\qrest_ui\main.cpp
 ** -----
-** File Created: Monday, 5th August 2024 17:40:31
+** File Created: Friday, 16th August 2024 13:34:22
 ** Author: Dong Feiyue (donfeiyue@outlook.com)
 ** -----
-** Last Modified: Saturday, 10th August 2024 22:29:33
+** Last Modified: Monday, 26th August 2024 10:21:21
 ** Modified By: Dong Feiyue (donfeiyue@outlook.com)
 */
 
-// Description:
-// 基于工程需求参量安全评价基类。
+// Description: 主函数，UI界面的程序入口
+
+#include "main_window.h"
+
+#include <QtWidgets/QApplication>
+
+int main(int argc, char *argv[])
+{
+    QApplication a(argc, argv);
+    QRestMainWindow w;
+    w.show();
+    return a.exec();
+}

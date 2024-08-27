@@ -12,7 +12,7 @@
 ** Author: Dong Feiyue (donfeiyue@outlook.com)
 ** -----
 ** Last Modified: Saturday, 10th August 2024 22:28:18
-** Modified By: Dong Feiyue (donfeiyue@outlook.com>)
+** Modified By: Dong Feiyue (donfeiyue@outlook.com)
 */
 
 // Description:
@@ -64,13 +64,6 @@ public:
     ButterworthFilterDesign(int filter_order,
                             double frequency,
                             FilterType filter_type = FilterType::lowpass);
-
-    // 拷贝构造函数
-    ButterworthFilterDesign(const ButterworthFilterDesign &filter_design) =
-        default;
-
-    // 移动构造函数
-    ButterworthFilterDesign(ButterworthFilterDesign &&filter_design) = default;
 
     // 析构函数
     ~ButterworthFilterDesign() = default;

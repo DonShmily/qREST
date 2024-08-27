@@ -12,7 +12,7 @@
 ** Author: Dong Feiyue (donfeiyue@outlook.com)
 ** -----
 ** Last Modified: Saturday, 10th August 2024 22:24:45
-** Modified By: Dong Feiyue (donfeiyue@outlook.com>)
+** Modified By: Dong Feiyue (donfeiyue@outlook.com)
 */
 
 // Description:
@@ -22,7 +22,7 @@
 #include "acceleration.h"
 
 // stdc++ headers
-#include <initializer_list>
+#include <vector>
 
 
 namespace data_structure
@@ -30,16 +30,34 @@ namespace data_structure
 
 // 从指定列构造，从整体的加速度类型变量的部分列构造，col_index为指定列的索引
 Acceleration::Acceleration(const Acceleration &acceleration,
-                           const std::initializer_list<std::size_t> &col_index,
+                           const std::vector<std::size_t> &col_index,
                            const double &frequency,
                            const double &scale)
     : frequency_(frequency)
 {
     resize(acceleration.get_row_number(), col_index.size());
     std::size_t i = 0;
-    for (const auto &index : col_index)
+    for (auto index : col_index)
     {
         data_->at(i) = acceleration.data_->at(index);
+        ++i;
+    }
+    adjust_acceleration(scale);
+}
+
+// 从指定列的std::vector构造，从整体的加速度类型变量的部分列构造，col_index为指定列的索引
+Acceleration::Acceleration(
+    const std::vector<std::vector<double>> &acceleration_vector,
+    const std::vector<std::size_t> &col_index,
+    const double &frequency,
+    const double &scale)
+    : frequency_(frequency)
+{
+    resize(acceleration_vector.front().size(), col_index.size());
+    std::size_t i = 0;
+    for (auto index : col_index)
+    {
+        data_->at(i) = acceleration_vector.at(index);
         ++i;
     }
     adjust_acceleration(scale);

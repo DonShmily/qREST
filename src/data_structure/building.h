@@ -12,7 +12,7 @@
 ** Author: Dong Feiyue (donfeiyue@outlook.com)
 ** -----
 ** Last Modified: Saturday, 10th August 2024 22:25:08
-** Modified By: Dong Feiyue (donfeiyue@outlook.com>)
+** Modified By: Dong Feiyue (donfeiyue@outlook.com)
 */
 
 // Description:
@@ -24,6 +24,8 @@
 #define DATA_STRUCTURE_BUILDING_H_
 
 // stdc++ headers
+#include <cstddef>
+#include <string>
 #include <vector>
 
 namespace data_structure
@@ -44,26 +46,24 @@ public:
         calculate_inter_height();
     }
 
-    // 拷贝构造函数
-    Building(const Building &building_message) = default;
-
-    // 移动构造函数
-    Building(Building &&building_message) = default;
-
     // 析构函数
     ~Building() = default;
+
+    // 从配置文件读取建筑信息
+    void
+    LoadConfig(const std::string &config_file = "config/Building_Info.json");
 
     // 设置建筑信息
     void set_building_message() {}
 
     // 获取建筑测点高度
-    std::vector<double> get_measuren_height() { return measuren_height_; }
+    std::vector<double> &get_measuren_height() { return measuren_height_; }
 
     // 获取建筑楼层高度
-    std::vector<double> get_floor_height() { return floor_height_; }
+    std::vector<double> &get_floor_height() { return floor_height_; }
 
     // 获取建筑层间高度
-    std::vector<double> get_inter_height() { return inter_height_; }
+    std::vector<double> &get_inter_height() { return inter_height_; }
 
 private:
     // 建筑测点高度坐标

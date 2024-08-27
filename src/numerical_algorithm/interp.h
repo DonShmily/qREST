@@ -12,7 +12,7 @@
 ** Author: Dong Feiyue (donfeiyue@outlook.com)
 ** -----
 ** Last Modified: Saturday, 10th August 2024 22:29:07
-** Modified By: Dong Feiyue (donfeiyue@outlook.com>)
+** Modified By: Dong Feiyue (donfeiyue@outlook.com)
 */
 
 // Description:
@@ -67,12 +67,6 @@ public:
     // 由插值方法参数构造
     // @param interp_type 插值算法类型
     explicit Interp(InterpType interp_type);
-
-    // 拷贝构造函数
-    Interp(const Interp &interp) = default;
-
-    // 移动构造函数
-    Interp(Interp &&interp) = default;
 
     // 析构函数
     ~Interp() = default;

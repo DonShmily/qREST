@@ -12,7 +12,7 @@
 ** Author: Dong Feiyue (donfeiyue@outlook.com)
 ** -----
 ** Last Modified: Saturday, 10th August 2024 22:27:00
-** Modified By: Dong Feiyue (donfeiyue@outlook.com>)
+** Modified By: Dong Feiyue (donfeiyue@outlook.com)
 */
 
 // Description:
@@ -81,14 +81,6 @@ public:
         method_.filter_order_ = filter_order;
     }
 
-    // 拷贝构造函数
-    ModifiedFilteringIntegral(
-        const ModifiedFilteringIntegral &filtering_interp) = default;
-
-    // 移动构造函数
-    ModifiedFilteringIntegral(ModifiedFilteringIntegral &&filtering_interp) =
-        default;
-
     // 析构函数
     ~ModifiedFilteringIntegral() = default;
 
@@ -100,7 +92,8 @@ public:
     }
 
     // 从配置文件中读取参数
-    void LoadConfig(const std::string &config_file = "") override;
+    void LoadConfig(
+        const std::string &config_file = "config/EDP_Config.json") override;
 
     // 获取滤波积分插值法计算方法参数
     // @return 滤波积分插值法计算方法参数的引用
@@ -116,7 +109,7 @@ public:
 private:
     // 滤波积分插值法计算方法参数
     FilteringIntegralMethod method_{};
-    // 计算结果的指针
+    // 计算结果
     InterStoryDriftResult result_{};
 
     // 滤波积分插值法计算单列加速度

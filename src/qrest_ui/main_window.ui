@@ -11,10 +11,25 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>QtMainWindow</string>
+   <string>qREST</string>
   </property>
   <widget class="QWidget" name="centralWidget">
-   <layout class="QHBoxLayout" name="horizontalLayout" stretch="1,0,6,0,1">
+   <layout class="QHBoxLayout" name="horizontalLayout" stretch="1,0,4,0,1">
+    <property name="spacing">
+     <number>6</number>
+    </property>
+    <property name="leftMargin">
+     <number>0</number>
+    </property>
+    <property name="topMargin">
+     <number>0</number>
+    </property>
+    <property name="rightMargin">
+     <number>0</number>
+    </property>
+    <property name="bottomMargin">
+     <number>0</number>
+    </property>
     <item>
      <widget class="QListWidget" name="listWidget">
       <property name="sizePolicy">
@@ -172,7 +187,7 @@
        <number>0</number>
       </property>
       <widget class="QWidget" name="stk0_home">
-       <layout class="QHBoxLayout" name="horizontalLayout_2" stretch="5,1">
+       <layout class="QGridLayout" name="gridLayout_5" rowstretch="0,1,1" columnstretch="3,1">
         <property name="leftMargin">
          <number>0</number>
         </property>
@@ -185,29 +200,41 @@
         <property name="bottomMargin">
          <number>0</number>
         </property>
-        <item>
-         <layout class="QVBoxLayout" name="verticalLayout_4">
+        <property name="horizontalSpacing">
+         <number>6</number>
+        </property>
+        <item row="0" column="0">
+         <layout class="QHBoxLayout" name="horizontalLayout_4" stretch="1,1,2">
           <item>
-           <layout class="QHBoxLayout" name="horizontalLayout_4">
-            <item>
-             <widget class="QLabel" name="label_home_mea">
-              <property name="text">
-               <string>TextLabel</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QComboBox" name="cbox_home_mea"/>
-            </item>
-           </layout>
+           <widget class="QLabel" name="label_home_mea">
+            <property name="text">
+             <string>测点选择</string>
+            </property>
+            <property name="alignment">
+             <set>Qt::AlignCenter</set>
+            </property>
+           </widget>
           </item>
           <item>
-           <widget class="QChart" name="chart_home_mea"/>
+           <widget class="QComboBox" name="cbox_home_mea"/>
+          </item>
+          <item>
+           <spacer name="horizontalSpacer">
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>40</width>
+              <height>20</height>
+             </size>
+            </property>
+           </spacer>
           </item>
          </layout>
         </item>
-        <item>
-         <widget class="QChart" name="chart_home_all_idr">
+        <item row="0" column="1" rowspan="3">
+         <widget class="QChartView" name="chart_home_all_idr">
           <property name="minimumSize">
            <size>
             <width>200</width>
@@ -215,6 +242,12 @@
            </size>
           </property>
          </widget>
+        </item>
+        <item row="1" column="0">
+         <widget class="QChartView" name="chart_home_mea_acc"/>
+        </item>
+        <item row="2" column="0">
+         <widget class="QChartView" name="chart_home_mea_acc_2"/>
         </item>
        </layout>
       </widget>
@@ -247,13 +280,13 @@
          </layout>
         </item>
         <item>
-         <widget class="QChart" name="chart_acc1_a"/>
+         <widget class="QChartView" name="chart_acc1_a"/>
         </item>
         <item>
-         <widget class="QChart" name="chart_acc2_v"/>
+         <widget class="QChartView" name="chart_acc2_v"/>
         </item>
         <item>
-         <widget class="QChart" name="chart_acc3_d"/>
+         <widget class="QChartView" name="chart_acc3_d"/>
         </item>
        </layout>
       </widget>
@@ -315,14 +348,7 @@
              </widget>
             </item>
             <item row="0" column="1" rowspan="2">
-             <widget class="QChart" name="chart_gmp_response">
-              <property name="minimumSize">
-               <size>
-                <width>200</width>
-                <height>0</height>
-               </size>
-              </property>
-             </widget>
+             <widget class="QChartView" name="chart_gmp_response"/>
             </item>
             <item row="1" column="0">
              <widget class="QTableView" name="table_gmp_response"/>
@@ -354,7 +380,7 @@
              </widget>
             </item>
             <item row="0" column="1">
-             <widget class="QChart" name="chart_gmp_fourier">
+             <widget class="QChartView" name="chart_gmp_fourier">
               <property name="minimumSize">
                <size>
                 <width>200</width>
@@ -367,7 +393,7 @@
              <widget class="QTableView" name="table_gmp_fourier"/>
             </item>
             <item row="1" column="1">
-             <widget class="QChart" name="chart_gmp_power">
+             <widget class="QChartView" name="chart_gmp_power">
               <property name="minimumSize">
                <size>
                 <width>200</width>
@@ -384,11 +410,14 @@
       </widget>
       <widget class="QWidget" name="stk3_edp">
        <layout class="QVBoxLayout" name="verticalLayout_3">
+        <property name="spacing">
+         <number>5</number>
+        </property>
         <property name="leftMargin">
          <number>0</number>
         </property>
         <property name="topMargin">
-         <number>0</number>
+         <number>5</number>
         </property>
         <property name="rightMargin">
          <number>0</number>
@@ -399,13 +428,13 @@
         <item>
          <widget class="QTabWidget" name="tabWidget_edp">
           <property name="currentIndex">
-           <number>0</number>
+           <number>1</number>
           </property>
           <widget class="QWidget" name="tab_edp1_realtime">
            <attribute name="title">
             <string>Tab 1</string>
            </attribute>
-           <layout class="QGridLayout" name="gridLayout" columnstretch="4,1">
+           <layout class="QGridLayout" name="gridLayout" columnstretch="3,1">
             <property name="leftMargin">
              <number>0</number>
             </property>
@@ -419,7 +448,7 @@
              <number>0</number>
             </property>
             <item row="0" column="0">
-             <widget class="QChart" name="chart_edprt_rt_disp">
+             <widget class="QChartView" name="chart_edprt_rt_disp">
               <property name="minimumSize">
                <size>
                 <width>200</width>
@@ -429,7 +458,7 @@
              </widget>
             </item>
             <item row="0" column="1" rowspan="2">
-             <widget class="QChart" name="chart_edp_rt_all_idr">
+             <widget class="QChartView" name="chart_edp_rt_all_idr">
               <property name="minimumSize">
                <size>
                 <width>200</width>
@@ -439,7 +468,7 @@
              </widget>
             </item>
             <item row="1" column="0">
-             <widget class="QChart" name="chart_edp_rt_idr">
+             <widget class="QChartView" name="chart_edp_rt_idr">
               <property name="minimumSize">
                <size>
                 <width>200</width>
@@ -454,7 +483,7 @@
            <attribute name="title">
             <string>Tab 2</string>
            </attribute>
-           <layout class="QGridLayout" name="gridLayout_2" columnstretch="4,1">
+           <layout class="QGridLayout" name="gridLayout_2" columnstretch="3,1">
             <property name="leftMargin">
              <number>0</number>
             </property>
@@ -468,7 +497,7 @@
              <number>0</number>
             </property>
             <item row="0" column="0">
-             <widget class="QChart" name="chart_edprt_al_disp">
+             <widget class="QChartView" name="chart_edprt_al_disp">
               <property name="minimumSize">
                <size>
                 <width>200</width>
@@ -478,7 +507,7 @@
              </widget>
             </item>
             <item row="0" column="1" rowspan="2">
-             <widget class="QChart" name="chart_edp_al_all_idr">
+             <widget class="QChartView" name="chart_edp_al_all_idr">
               <property name="minimumSize">
                <size>
                 <width>200</width>
@@ -488,7 +517,7 @@
              </widget>
             </item>
             <item row="1" column="0">
-             <widget class="QChart" name="chart_edp_al_idr">
+             <widget class="QChartView" name="chart_edp_al_idr">
               <property name="minimumSize">
                <size>
                 <width>200</width>
@@ -504,7 +533,20 @@
        </layout>
       </widget>
       <widget class="QWidget" name="stk4_res">
-       <layout class="QHBoxLayout" name="horizontalLayout_3"/>
+       <layout class="QHBoxLayout" name="horizontalLayout_3">
+        <property name="leftMargin">
+         <number>0</number>
+        </property>
+        <property name="topMargin">
+         <number>0</number>
+        </property>
+        <property name="rightMargin">
+         <number>0</number>
+        </property>
+        <property name="bottomMargin">
+         <number>0</number>
+        </property>
+       </layout>
       </widget>
      </widget>
     </item>
@@ -533,7 +575,7 @@
      <x>0</x>
      <y>0</y>
      <width>1000</width>
-     <height>26</height>
+     <height>27</height>
     </rect>
    </property>
    <property name="font">
@@ -547,7 +589,7 @@
       <x>236</x>
       <y>141</y>
       <width>148</width>
-      <height>149</height>
+      <height>144</height>
      </rect>
     </property>
     <property name="font">
@@ -878,9 +920,9 @@
  <layoutdefault spacing="6" margin="11"/>
  <customwidgets>
   <customwidget>
-   <class>QChart</class>
+   <class>QChartView</class>
    <extends>QGraphicsView</extends>
-   <header>qchart.h</header>
+   <header>qchartview.h</header>
   </customwidget>
  </customwidgets>
  <resources>
