@@ -1,4 +1,4 @@
-/**
+﻿/**
 **            qREST - Quick Response Evaluation for Safety Tagging
 **     Institute of Engineering Mechanics, China Earthquake Administration
 **
@@ -11,7 +11,7 @@
 ** File Created: Monday, 26th August 2024 10:46:57
 ** Author: Dong Feiyue (donfeiyue@outlook.com)
 ** -----
-** Last Modified: Monday, 26th August 2024 10:48:08
+** Last Modified: Tuesday, 27th August 2024 22:20:40
 ** Modified By: Dong Feiyue (donfeiyue@outlook.com)
 */
 
@@ -34,7 +34,7 @@
 struct DataInterfaceConfig
 {
     // 方向数量
-    size_t direction_ = 3;
+    size_t direction_ = 1;
     // 测点数量
     size_t mea_number_ = 9;
     // 时间点计数
@@ -48,6 +48,8 @@ struct DataInterfaceConfig
 // 数据接口类，用于获取数据，读取文件或者串口通信，产出数据为Acceleration和Building类型
 class DataInterface
 {
+    friend class QRestMainWindow;
+
 public:
     // 构造函数
     DataInterface() = default;

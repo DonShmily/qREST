@@ -41,7 +41,7 @@ public:
     // 从std::vector<double>构造
     Building(const std::vector<double> &measuren_height,
              const std::vector<double> &floor_height)
-        : measuren_height_(measuren_height), floor_height_(floor_height)
+        : measure_height_(measuren_height), floor_height_(floor_height)
     {
         calculate_inter_height();
     }
@@ -57,7 +57,7 @@ public:
     void set_building_message() {}
 
     // 获取建筑测点高度
-    std::vector<double> &get_measuren_height() { return measuren_height_; }
+    std::vector<double> &get_measuren_height() { return measure_height_; }
 
     // 获取建筑楼层高度
     std::vector<double> &get_floor_height() { return floor_height_; }
@@ -67,7 +67,7 @@ public:
 
 private:
     // 建筑测点高度坐标
-    std::vector<double> measuren_height_{};
+    std::vector<double> measure_height_{};
     // 建筑楼层高度
     std::vector<double> floor_height_{};
     // 建筑层间高度

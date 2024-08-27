@@ -100,7 +100,7 @@ int BasedOnInterStoryDrift::TagSafty()
     is_tagged_ = true;
 
     // 根据最大层间位移角进行安全评价
-    std::size_t safty_res;
+    std::size_t safty_res = 0;
     for (std::size_t i = 0; i != safty_tagging_limit_.size(); ++i)
     {
         if (max_idr_res < safty_tagging_limit_[i])

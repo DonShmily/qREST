@@ -20,13 +20,15 @@
 #ifndef MAIN_WINDOW_H
 #define MAIN_WINDOW_H
 
-// Qt headers
+// stdc++ headers
+#include <cstddef>
 #include <memory>
+
+// Qt headers
 #include <QtCharts/QtCharts>
 #include <QtWidgets/QMainWindow>
 
-
-// UI headers
+// Qt UI headers
 #include "ui_main_window.h"
 
 // project headers
@@ -60,27 +62,45 @@ private:
     // 主窗口的UI
     Ui::MainWindow *ui;
 
-    // 图表数据
     // 数据接口，储存原始数据
-    std::unique_ptr<DataInterface> data_interface;
+    std::unique_ptr<DataInterface> data_interface{};
+    // 绘图数据对象
+    std::unique_ptr<ChartData> chart_data{};
 
-    // 主窗口的私有函数
+    // 当前页面展示的测点编号
+    int cur_mea_point = 0;
+    // 当前页面展示的楼层编号
+    int cur_floor = 0;
+
+    /** 主窗口的私有函数 */
+
+    // 初始化界面
+    void InitUI();
 
     // 初始化Home页面
     void InitHomePage();
-    //// 初始化ACC页面
-    // void InitAccPage();
-    //// 初始化GMP页面
-    // void InitGmpPage();
-    //// 初始化EDP页面
-    // void InitEdpPage();
-    //// 初始化Result页面
-    // void InitResultPage();
+    // 更新Home页面
+    void UpdateHomePage(std::size_t mea_point);
+    // 初始化ACC页面
+    void InitAccPage();
+    // 更新ACC页面
+    void UpdateAccPage(std::size_t mea_point);
+    std::size_t gmp_type = 0;
+    // 初始化GMP页面
+    void InitGmpPage();
+    // 更新GMP页面
+    void UpdateGmpPage(std::size_t mea_point);
+    // 初始化EDP页面
+    void InitEdpPage();
+    // 更新EDP页面
+    void UpdateEdpPage(std::size_t mea_point);
+    // 初始化Result页面
+    void InitResultPage();
 
     // 初始化
 
 private slots:
-    // 菜单栏action的槽函数
+    /** 菜单栏action的槽函数*/
 
     // 文件菜单下的action
     void on_act_open_triggered();
@@ -97,7 +117,15 @@ private slots:
     void on_act_web_triggered();
     void on_act_qt_triggered();
 
-    //
+    /** 更换当前测点/楼层的ComboBox槽函数 */
+    void on_cbox_home_mea_currentIndexChanged(int index);
+    void on_cbox_acc_mea_currentIndexChanged(int index);
+    void on_cbox_gmp_mea_currentIndexChanged(int index);
+    void on_cbox_reponse_currentIndexChanged(int index);
+    void on_cbox_edp_floor_currentIndexChanged(int index);
+
+    // ListWidget更改后更新相应的页面
+    void on_listWidget_currentRowChanged(int currentRow);
 };
 
 #endif // MAIN_WINDOW_H

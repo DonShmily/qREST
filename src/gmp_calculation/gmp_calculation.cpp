@@ -59,11 +59,10 @@ inline GmpCalculation::GmpCalculation(
 }
 
 // 从配置文件中读取参数构造
-GmpCalculation::GmpCalculation(const std::vector<double> &acceleration,
-                               const std::string &config_file)
+GmpCalculation::GmpCalculation(const std::vector<double> &acceleration)
     : acceleration_ptr_(std::make_shared<std::vector<double>>(acceleration))
 {
-    LoadConfig(config_file);
+    LoadConfig();
 }
 
 // NewmakeBeta方法计算响应

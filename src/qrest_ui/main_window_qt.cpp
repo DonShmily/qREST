@@ -17,10 +17,13 @@
 
 // Description: 实现了主窗口类的实现，Qt的UI界面主要逻辑的实现
 
+// assosiated headers
 #include "main_window.h"
 
+// stdc++ headers
 #include <memory>
-#include "QtWidgets/qmessagebox.h"
+
+// Qt UI headers
 #include "ui_about_dialog.h"
 
 
@@ -28,6 +31,7 @@ QRestMainWindow::QRestMainWindow(QWidget *parent)
     : QMainWindow(parent), ui(new Ui::MainWindow())
 {
     ui->setupUi(this);
+    ui->toolBar->setVisible(false);
 }
 
 QRestMainWindow::~QRestMainWindow()
@@ -52,6 +56,8 @@ void QRestMainWindow::on_act_open_triggered()
         data_interface =
             std::make_unique<DataInterface>(file_name.toStdString());
     }
+    chart_data = std::make_unique<ChartData>(
+        data_interface->acceleration_data_[0], data_interface->building_);
     // 读取文件后根据数据初始化主页
     InitHomePage();
 }
@@ -81,4 +87,59 @@ void QRestMainWindow::on_act_qt_triggered()
 {
     QString dlgTitle = "About Qt";
     QMessageBox::aboutQt(this, dlgTitle);
+}
+
+void QRestMainWindow::on_cbox_home_mea_currentIndexChanged(int index)
+{
+    cur_mea_point = index;
+    UpdateHomePage(index);
+}
+
+void QRestMainWindow::on_cbox_acc_mea_currentIndexChanged(int index)
+{
+    cur_mea_point = index;
+    UpdateAccPage(index);
+}
+
+void QRestMainWindow::on_cbox_gmp_mea_currentIndexChanged(int index)
+{
+    cur_mea_point = index;
+    UpdateGmpPage(index);
+}
+
+void QRestMainWindow::on_cbox_reponse_currentIndexChanged(int index)
+{
+    gmp_type = index;
+    UpdateGmpPage(cur_mea_point);
+}
+
+void QRestMainWindow::on_cbox_edp_floor_currentIndexChanged(int index)
+{
+    cur_floor = index;
+    UpdateEdpPage(index);
+}
+
+void QRestMainWindow::on_listWidget_currentRowChanged(int currentRow)
+{
+    switch (currentRow)
+    {
+        case 0:
+            // 尚未接收数据，无法初始化该页面
+            // InitHomePage();
+            break;
+        case 1:
+            InitAccPage();
+            break;
+        case 2:
+            InitGmpPage();
+            break;
+        case 3:
+            InitEdpPage();
+            break;
+        case 4:
+            InitResultPage();
+            break;
+        default:
+            break;
+    }
 }

@@ -102,6 +102,7 @@ QLineSeries *ChartData::get_acceleration(std::size_t idx)
 
     // 获取加速度数据
     const auto &acc = acc_.col(idx);
+    acc_series_ = std::make_unique<QLineSeries>();
     for (std::size_t i = 0; i != time_.size(); ++i)
     {
         acc_series_->append(time_[i], acc[i]);
@@ -127,6 +128,7 @@ QLineSeries *ChartData::get_velocity(std::size_t idx)
 
     // 获取速度数据
     const auto &vel = gmp_.get_velocity();
+    vel_series_ = std::make_unique<QLineSeries>();
     for (std::size_t i = 0; i != time_.size(); ++i)
     {
         vel_series_->append(time_[i], vel[i]);
@@ -152,6 +154,7 @@ QLineSeries *ChartData::get_displacement(std::size_t idx)
 
     // 获取位移数据
     const auto &disp = gmp_.get_displacement();
+    disp_series_ = std::make_unique<QLineSeries>();
     for (std::size_t i = 0; i != time_.size(); ++i)
     {
         disp_series_->append(time_[i], disp[i]);
@@ -177,6 +180,7 @@ QLineSeries *ChartData::get_sa(std::size_t idx)
 
     // 获取Sa数据
     const auto &sa = gmp_.AccelerationSpectrum();
+    sa_series_ = std::make_unique<QLineSeries>();
     for (std::size_t i = 0; i != period_.size(); ++i)
     {
         sa_series_->append(period_[i], sa[i]);
@@ -202,6 +206,7 @@ QLineSeries *ChartData::get_sv(std::size_t idx)
 
     // 获取Sv数据
     const auto &sv = gmp_.VelocitySpectrum();
+    sv_series_ = std::make_unique<QLineSeries>();
     for (std::size_t i = 0; i != period_.size(); ++i)
     {
         sv_series_->append(period_[i], sv[i]);
@@ -227,6 +232,7 @@ QLineSeries *ChartData::get_sd(std::size_t idx)
 
     // 获取Sd数据
     const auto &sd = gmp_.DisplacementSpectrum();
+    sd_series_ = std::make_unique<QLineSeries>();
     for (std::size_t i = 0; i != period_.size(); ++i)
     {
         sd_series_->append(period_[i], sd[i]);
@@ -252,6 +258,7 @@ QLineSeries *ChartData::get_amplitude(std::size_t idx)
 
     // 获取幅值谱数据
     const auto &amp = gmp_.FourierAmplitudeSpectrum();
+    amp_series_ = std::make_unique<QLineSeries>();
     for (std::size_t i = 0; i != freq_.size(); ++i)
     {
         amp_series_->append(freq_[i], amp[i]);
@@ -277,6 +284,7 @@ QLineSeries *ChartData::get_power(std::size_t idx)
 
     // 获取功率谱数据
     const auto &pow = gmp_.PowerSpectrum();
+    pow_series_ = std::make_unique<QLineSeries>();
     for (std::size_t i = 0; i != freq_.size(); ++i)
     {
         pow_series_->append(freq_[i], pow[i]);
@@ -302,6 +310,7 @@ QLineSeries *ChartData::get_fi_idr(std::size_t idx)
 
     // 获取层间位移角数据
     const auto &idr = fi_.get_filtering_interp_result().get_inter_story_drift();
+    fi_idr_series_ = std::make_unique<QLineSeries>();
     for (std::size_t i = 0; i != time_.size(); ++i)
     {
         fi_idr_series_->append(time_[i], idr.get_col(idx)[i]);
@@ -327,6 +336,7 @@ QLineSeries *ChartData::get_fi_disp(std::size_t idx)
 
     // 获取FilteringIntegral指定楼层位移时程数据
     const auto &disp = fi_.get_filtering_interp_result().get_displacement();
+    fi_disp_series_ = std::make_unique<QLineSeries>();
     for (std::size_t i = 0; i != time_.size(); ++i)
     {
         fi_disp_series_->append(time_[i], disp.get_col(idx)[i]);
@@ -349,10 +359,12 @@ QLineSeries *ChartData::get_fi_all_idr()
         fi_.get_filtering_interp_result());
     safty_.TagSafty();
     const auto &idr = safty_.get_max_inter_story_drift_result();
+    fi_all_idr_series_ = std::make_unique<QLineSeries>();
     for (std::size_t i = 0; i != idr.abs_max_inter_story_drift_.size(); ++i)
     {
-        fi_all_idr_series_->append(idr.abs_max_inter_story_drift_[i].first,
-                                   building_.get_floor_height()[i + 1]);
+        fi_all_idr_series_->append(
+            std::abs(idr.abs_max_inter_story_drift_[i].first),
+            building_.get_floor_height()[i + 1]);
     }
 
     return fi_all_idr_series_.get();
@@ -376,6 +388,7 @@ QLineSeries *ChartData::get_mfi_idr(std::size_t idx)
     // 获取ModifiedFilteringIntegral指定楼层层间位移角时程数据
     const auto &idr =
         mfi_.get_filtering_interp_result().get_inter_story_drift();
+    mfi_idr_series_ = std::make_unique<QLineSeries>();
     for (std::size_t i = 0; i != time_.size(); ++i)
     {
         mfi_idr_series_->append(time_[i], idr.get_col(idx)[i]);
@@ -401,6 +414,7 @@ QLineSeries *ChartData::get_mfi_disp(std::size_t idx)
 
     // 获取ModifiedFilteringIntegral指定楼层位移时程数据
     const auto &disp = mfi_.get_filtering_interp_result().get_displacement();
+    mfi_disp_series_ = std::make_unique<QLineSeries>();
     for (std::size_t i = 0; i != time_.size(); ++i)
     {
         mfi_disp_series_->append(time_[i], disp.get_col(idx)[i]);
@@ -423,10 +437,12 @@ QLineSeries *ChartData::get_mfi_all_idr()
         mfi_.get_filtering_interp_result());
     safty_.TagSafty();
     const auto &idr = safty_.get_max_inter_story_drift_result();
+    mfi_all_idr_series_ = std::make_unique<QLineSeries>();
     for (std::size_t i = 0; i != idr.abs_max_inter_story_drift_.size(); ++i)
     {
-        mfi_all_idr_series_->append(idr.abs_max_inter_story_drift_[i].first,
-                                    building_.get_floor_height()[i + 1]);
+        mfi_all_idr_series_->append(
+            std::abs(idr.abs_max_inter_story_drift_[i].first),
+            building_.get_floor_height()[i + 1]);
     }
 
     return mfi_all_idr_series_.get();

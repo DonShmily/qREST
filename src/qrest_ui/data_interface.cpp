@@ -34,12 +34,14 @@
 DataInterface::DataInterface(const std::string &file_path)
 {
     ReadFile(file_path);
+    LoadBuilding();
 }
 
 // 读取串口的构造函数
 DataInterface::DataInterface(const std::string &port, const int &baudrate)
 {
     ReadSerialPort(port, baudrate);
+    LoadBuilding();
 }
 
 // 读取文件

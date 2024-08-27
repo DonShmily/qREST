@@ -49,8 +49,10 @@ void Building::LoadConfig(const std::string &config_file)
     // 读取配置
     floor_height_ =
         config["Building"]["floor_height"].get<std::vector<double>>();
-    measuren_height_ =
-        config["Building"]["measuren_height"].get<std::vector<double>>();
+    measure_height_ =
+        config["Building"]["measurement_height"].get<std::vector<double>>();
+
+    calculate_inter_height();
 }
 
 // 计算建筑层间高度

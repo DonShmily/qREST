@@ -111,8 +111,7 @@ public:
     // 从配置文件中读取参数构造
     // @param acceleration 加速度数据
     // @param config_file 配置文件路径
-    explicit GmpCalculation(const std::vector<double> &acceleration,
-                            const std::string &config_file = "");
+    explicit GmpCalculation(const std::vector<double> &acceleration);
 
     // 析构函数
     ~GmpCalculation() = default;
