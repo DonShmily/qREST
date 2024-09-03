@@ -23,46 +23,30 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <QtUic Include="..\..\src\qrest_ui\about_dialog.ui">
-      <Filter>Form Files</Filter>
-    </QtUic>
-    <QtUic Include="..\..\src\qrest_ui\main_window.ui">
-      <Filter>Form Files</Filter>
-    </QtUic>
-  </ItemGroup>
-  <ItemGroup>
-    <ClCompile Include="..\..\src\qrest_ui\chart_data.cpp">
+    <ClCompile Include="..\..\src\custom_qt\interactive_chart.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\qrest_ui\data_interface.cpp">
+    <ClCompile Include="..\..\src\custom_qt\interactive_chartview.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\qrest_ui\main.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\qrest_ui\main_window_process.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\qrest_ui\main_window_qt.cpp">
+    <ClCompile Include="..\..\src\custom_qt\interactive_series.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\src\qrest_ui\chart_data.h">
+    <ClInclude Include="..\..\src\custom_qt\interactive_chart.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\qrest_ui\data_interface.h">
+    <ClInclude Include="..\..\src\custom_qt\interactive_chartview.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\custom_qt\interactive_series.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <QtMoc Include="..\..\src\qrest_ui\main_window.h">
-      <Filter>Header Files</Filter>
-    </QtMoc>
-  </ItemGroup>
-  <ItemGroup>
-    <QtRcc Include="..\..\src\qrest_ui\resource.qrc">
-      <Filter>Resource Files</Filter>
-    </QtRcc>
+    <QtUic Include="..\..\src\custom_qt\interactive_dialog.ui">
+      <Filter>Form Files</Filter>
+    </QtUic>
   </ItemGroup>
 </Project>

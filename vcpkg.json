@@ -4,7 +4,6 @@
     "fftw3",
     "gsl",
     "mathgl",
-    "nlohmann-json",
-    "zlib"
+    "nlohmann-json"
   ]
 }
