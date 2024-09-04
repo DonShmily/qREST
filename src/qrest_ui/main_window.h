@@ -48,8 +48,6 @@ class QRestMainWindow : public QMainWindow
 {
     Q_OBJECT
 
-    friend class MainProcess;
-
 public:
     // 构造函数
     QRestMainWindow(QWidget *parent = nullptr);
@@ -67,6 +65,8 @@ private:
     // 绘图数据对象
     std::unique_ptr<ChartData> chart_data{};
 
+    // 当前选择的方向：0-X方向，1-Y方向，2-Z方向
+    int cur_direction = 0;
     // 当前页面展示的测点编号
     int cur_mea_point = 0;
     // 当前页面展示的楼层编号

@@ -57,7 +57,8 @@ void QRestMainWindow::on_act_open_triggered()
             std::make_unique<DataInterface>(file_name.toStdString());
     }
     chart_data = std::make_unique<ChartData>(
-        data_interface->acceleration_data_[0], data_interface->building_);
+        data_interface->acceleration_data_[cur_direction],
+        data_interface->building_);
     // 读取文件后根据数据初始化主页
     InitHomePage();
 }

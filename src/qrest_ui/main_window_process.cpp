@@ -56,19 +56,20 @@ void QRestMainWindow::InitHomePage()
     QValueAxis *axis_time_acc = new QValueAxis();
     axis_time_acc->setTitleText(tr("时间(s)"));
     axis_time_acc->setTickCount(11);
-    axis_time_acc->setMinorTickCount(2);
+    axis_time_acc->setMinorTickCount(1);
     axis_time_acc->setRange(0,
                             data_interface->config_.time_count_
                                 / data_interface->config_.frequency_);
-    axis_time_acc->setLabelFormat("%f");
+    axis_time_acc->setLabelFormat("%g");
 
     // 加速度坐标轴
     QValueAxis *axis_acc = new QValueAxis();
     axis_acc->setTitleText(tr("加速度(m/s^2)"));
     axis_acc->setTickCount(5);
     axis_acc->setMinorTickCount(2);
+    // TODO: 修正一些参数的读取
     axis_acc->setRange(-0.04, 0.04);
-    axis_acc->setLabelFormat("%.2e");
+    axis_acc->setLabelFormat("%g");
 
     // 为加速度时程绘图对象添加数据
     QLineSeries *mea_acc = chart_data->get_acceleration(cur_mea_point);
@@ -95,7 +96,7 @@ void QRestMainWindow::InitHomePage()
     axis_time_disp->setRange(0,
                              data_interface->config_.time_count_
                                  / data_interface->config_.frequency_);
-    axis_time_disp->setLabelFormat("%f");
+    axis_time_disp->setLabelFormat("%g");
 
     // 位移坐标轴
     QValueAxis *axis_disp = new QValueAxis();
@@ -103,7 +104,7 @@ void QRestMainWindow::InitHomePage()
     axis_disp->setTickCount(5);
     axis_disp->setMinorTickCount(2);
     axis_disp->setRange(-0.1, 0.1);
-    axis_disp->setLabelFormat("%.2e");
+    axis_disp->setLabelFormat("%.1e");
 
     // 为位移时程绘图对象添加数据
     QLineSeries *mea_disp = chart_data->get_displacement(cur_mea_point);
@@ -126,9 +127,9 @@ void QRestMainWindow::InitHomePage()
     QValueAxis *axis_idr = new QValueAxis();
     axis_idr->setTitleText(tr("层间位移角"));
     axis_idr->setTickCount(5);
-    axis_idr->setMinorTickCount(2);
+    // axis_idr->setMinorTickCount(2);
     axis_idr->setRange(0, 1.2e-4);
-    axis_idr->setLabelFormat("%.2e");
+    axis_idr->setLabelFormat("%g");
 
     // 楼层高度坐标轴
     QValueAxis *axis_floor = new QValueAxis();
@@ -137,7 +138,7 @@ void QRestMainWindow::InitHomePage()
     axis_floor->setMinorTickCount(2);
     axis_floor->setRange(data_interface->building_.get_floor_height().front(),
                          data_interface->building_.get_floor_height().back());
-    axis_floor->setLabelFormat("%.1f");
+    axis_floor->setLabelFormat("%g");
 
     // 为层间位移角绘图对象添加数据
     QLineSeries *idr = chart_data->get_mfi_all_idr();
