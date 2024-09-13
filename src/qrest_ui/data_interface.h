@@ -49,6 +49,7 @@ struct DataInterfaceConfig
 class DataInterface
 {
     friend class QRestMainWindow;
+    friend class ChartData;
 
 public:
     // 构造函数
@@ -90,7 +91,7 @@ public:
 
 private:
     // 读取得到的加速度数据
-    std::vector<data_structure::Acceleration> acceleration_data_;
+    std::vector<data_structure::Acceleration> acc_;
 
     // 读取得到的建筑信息
     data_structure::Building building_;

@@ -40,7 +40,12 @@ public:
     // 获取安全评价结果
     virtual int get_tagging_result() = 0;
 
+    // 是否已经完成安全评价
+    bool is_calculated() { return is_tagged_; }
+
 protected:
+    // 是否已经完成安全评价
+    bool is_tagged_{false};
     // 安全评价结果，数字越低越安全，0为safe
     int safty_tagging_result_{};
 };

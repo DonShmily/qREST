@@ -43,6 +43,21 @@ class MainWindow;
 };
 QT_END_NAMESPACE
 
+// 主窗口中所有页面是否已经初始化的结构体
+struct PageInitStatus
+{
+    bool home_page = false;
+    bool acc_page = false;
+    bool acc_tab_time = false;
+    bool acc_tab_response = false;
+    bool acc_tab_fourier = false;
+    bool shm_page = false;
+    bool edp_page = false;
+    bool edp_tab_realtime = false;
+    bool edp_tab_algorithm = false;
+    bool result_page = false;
+};
+
 // qREST主窗口
 class QRestMainWindow : public QMainWindow
 {
@@ -58,24 +73,27 @@ private:
     // 主窗口成员变量
 
     // 主窗口的UI
-    Ui::MainWindow *ui;
+    Ui::MainWindow *ui_;
+
+    // 窗口是否已经被初始化
+    std::unique_ptr<PageInitStatus> page_initialized_ =
+        std::make_unique<PageInitStatus>();
 
     // 数据接口，储存原始数据
-    std::unique_ptr<DataInterface> data_interface{};
+    std::shared_ptr<DataInterface> data_interface_{};
     // 绘图数据对象
-    std::unique_ptr<ChartData> chart_data{};
+    std::unique_ptr<ChartData> chart_data_{};
 
     // 当前选择的方向：0-X方向，1-Y方向，2-Z方向
-    int cur_direction = 0;
+    int cur_direction_ = 0;
     // 当前页面展示的测点编号
-    int cur_mea_point = 0;
+    int cur_mea_point_ = 0;
     // 当前页面展示的楼层编号
-    int cur_floor = 0;
+    int cur_floor_ = 0;
+    // 当前页面展示的反应谱类型
+    int gmp_type_ = 0;
 
     /** 主窗口的私有函数 */
-
-    // 初始化界面
-    void InitUI();
 
     // 初始化Home页面
     void InitHomePage();
@@ -83,21 +101,34 @@ private:
     void UpdateHomePage(std::size_t mea_point);
     // 初始化ACC页面
     void InitAccPage();
-    // 更新ACC页面
-    void UpdateAccPage(std::size_t mea_point);
-    std::size_t gmp_type = 0;
-    // 初始化GMP页面
-    void InitGmpPage();
-    // 更新GMP页面
-    void UpdateGmpPage(std::size_t mea_point);
+    // 初始化SHM页面
+    void InitShmPage();
     // 初始化EDP页面
     void InitEdpPage();
-    // 更新EDP页面
-    void UpdateEdpPage(std::size_t mea_point);
     // 初始化Result页面
     void InitResultPage();
 
-    // 初始化
+    // 初始化和更新各页面下的tab
+    // 初始化ACC页面下的tab_time
+    void InitAccTabTime();
+    // 更新ACC页面下的tab_time
+    void UpdateAccTabTime(std::size_t mea_point);
+    // 初始化ACC页面下的tab_response
+    void InitAccTabResponse();
+    // 更新ACC页面下的tab_response
+    void UpdateAccTabResponse(std::size_t mea_point, std::size_t gmp_type);
+    // 初始化ACC页面下的tab_fourier
+    void InitAccTabFourier();
+    // 更新ACC页面下的tab_fourier
+    void UpdateAccTabFourier(std::size_t mea_point);
+    // 初始化EDP页面下的tab_realtime
+    void InitEdpTabRealtime();
+    // 更新EDP页面下的tab_realtime
+    void UpdateEdpTabRealtime(std::size_t mea_point);
+    // 初始化EDP页面下的tab_algorithm
+    void InitEdpTabAlgorithm();
+    // 更新EDP页面下的tab_algorithm
+    void UpdateEdpTabAlgorithm(std::size_t mea_point);
 
 private slots:
     /** 菜单栏action的槽函数*/
@@ -117,15 +148,23 @@ private slots:
     void on_act_web_triggered();
     void on_act_qt_triggered();
 
-    /** 更换当前测点/楼层的ComboBox槽函数 */
+    // ListWidget更改后更新相应的页面
+    void on_listWidget_currentRowChanged(int currentRow);
+
+    // TabWidget更改后更新相应的页面
+    void on_tabWidget_acc_currentChanged(int index);
+    void on_tabWidget_edp_currentChanged(int index);
+
+    // 更换当前测点/楼层的ComboBox槽函数
     void on_cbox_home_mea_currentIndexChanged(int index);
     void on_cbox_acc_mea_currentIndexChanged(int index);
     void on_cbox_gmp_mea_currentIndexChanged(int index);
+    void on_cbox_fourier_mea_currentIndexChanged(int index);
     void on_cbox_reponse_currentIndexChanged(int index);
     void on_cbox_edp_floor_currentIndexChanged(int index);
 
-    // ListWidget更改后更新相应的页面
-    void on_listWidget_currentRowChanged(int currentRow);
+    // 点击Building模型的槽函数
+    void on_widget_building_rectangleClicked(int index);
 };
 
 #endif // MAIN_WINDOW_H

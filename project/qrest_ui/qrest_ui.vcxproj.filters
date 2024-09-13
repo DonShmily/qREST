@@ -54,9 +54,15 @@
     <ClInclude Include="..\..\src\qrest_ui\data_interface.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="x64\Debug-Static\uic\ui_main_window.h">
+      <Filter>Form Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <QtMoc Include="..\..\src\qrest_ui\main_window.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="..\..\src\qrest_ui\rectangle_widget.h">
       <Filter>Header Files</Filter>
     </QtMoc>
   </ItemGroup>

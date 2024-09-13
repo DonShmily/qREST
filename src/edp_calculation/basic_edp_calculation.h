@@ -90,18 +90,6 @@ public:
         : input_acceleration_(*acceleration_ptr), building_(*building_ptr)
     {}
 
-    // 拷贝构造函数
-    BasicEdpCalculation(const BasicEdpCalculation &other) = default;
-
-    // 移动构造函数
-    BasicEdpCalculation(BasicEdpCalculation &&other) = default;
-
-    // 拷贝赋值函数
-    BasicEdpCalculation &operator=(const BasicEdpCalculation &other) = default;
-
-    // 移动赋值函数
-    BasicEdpCalculation &operator=(BasicEdpCalculation &&other) = default;
-
     // 析构函数
     virtual ~BasicEdpCalculation() = default;
 
@@ -111,7 +99,12 @@ public:
     // 计算工程需求参量函数入口
     virtual void CalculateEdp() = 0;
 
+    // 当前输入是否已经完成计算
+    bool is_calculated() const { return is_calculated_; }
+
 protected:
+    // 完成计算的标志
+    bool is_calculated_ = false;
     // 单方向加速度数据指针
     data_structure::Acceleration input_acceleration_{};
     // 建筑信息的指针

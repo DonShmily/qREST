@@ -22,21 +22,30 @@
 
 // stdc++ headers
 #include <cstddef>
+#include <vector>
 
 // project headers
 #include "gmp_calculation/gmp_calculation.h"
 #include "safty_tagging/based_on_inter_story_drift.h"
+
+
+// 转换point_vector为QList<QPoint>指针的静态函数
+std::unique_ptr<QList<QPointF>>
+ChartData::PointsVector2QList(const ChartData::points_vector &points)
+{
+    auto list = std::make_unique<QList<QPointF>>();
+    for (std::size_t i = 0; i < points.first.size(); ++i)
+    {
+        list->emplace_back(points.first[i], points.second[i]);
+    }
+    return list;
+}
 
 // 清除计算结果
 void ChartData::clear()
 {
     // 将计算结果标志位全部置为false
     gmp_calculated_ = false;
-    fi_calculated_ = false;
-    mfi_calculated_ = false;
-    safty_calculated_ = false;
-
-    // 将横轴std::vector置为空
     time_.clear();
     period_.clear();
     freq_.clear();
@@ -47,52 +56,52 @@ void ChartData::CalculateGmp(std::size_t idx)
 {
     // 计算对象赋值
     cur_idx_ = idx;
-    gmp_ = gmp_calculation::GmpCalculation(acc_.col(cur_idx_));
-    gmp_calculated_ = true;
+    gmp_ = gmp_calculation::GmpCalculation(
+        data_interface_->acc_[cur_dir_].col(cur_idx_));
 }
 
 // FilteringIntegral计算EDP
 void ChartData::CalculateEdpFi()
 {
     // 计算对象赋值
-    if (fi_calculated_)
+    if (fi_[cur_dir_].is_calculated())
     {
         return;
     }
-    fi_ = edp_calculation::FilteringIntegral(acc_, building_);
-    fi_.CalculateEdp();
-    fi_calculated_ = true;
+    fi_[cur_dir_] = edp_calculation::FilteringIntegral(
+        data_interface_->acc_[cur_dir_], data_interface_->building_);
+    fi_[cur_dir_].CalculateEdp();
 }
 
 // ModifiedFilteringIntegral计算EDP
 void ChartData::CalculateEdpMfi()
 {
     // 计算对象赋值
-    if (mfi_calculated_)
+    if (mfi_[cur_dir_].is_calculated())
     {
         return;
     }
-    mfi_ = edp_calculation::ModifiedFilteringIntegral(acc_, building_);
-    mfi_.CalculateEdp();
-    mfi_calculated_ = true;
+    mfi_[cur_dir_] = edp_calculation::ModifiedFilteringIntegral(
+        data_interface_->acc_[cur_dir_], data_interface_->building_);
+    mfi_[cur_dir_].CalculateEdp();
 }
 
 // 计算安全评价结果
 void ChartData::CalculateSafty()
 {
     // 计算对象赋值
-    if (safty_calculated_)
+    if (safty_[cur_dir_].is_calculated())
     {
         return;
     }
-    safty_ = safty_tagging::BasedOnInterStoryDrift(
-        mfi_.get_filtering_interp_result());
-    safty_.TagSafty();
-    safty_calculated_ = true;
+    CalculateEdpMfi();
+    safty_[cur_dir_] = safty_tagging::BasedOnInterStoryDrift(
+        mfi_[cur_dir_].get_filtering_interp_result());
+    safty_[cur_dir_].TagSafty();
 }
 
 // 获取加速度数据
-QLineSeries *ChartData::get_acceleration(std::size_t idx)
+ChartData::points_vector ChartData::get_acceleration(std::size_t idx)
 {
     // 生成时间横轴
     if (time_.empty())
@@ -101,18 +110,12 @@ QLineSeries *ChartData::get_acceleration(std::size_t idx)
     }
 
     // 获取加速度数据
-    const auto &acc = acc_.col(idx);
-    acc_series_ = std::make_unique<QLineSeries>();
-    for (std::size_t i = 0; i != time_.size(); ++i)
-    {
-        acc_series_->append(time_[i], acc[i]);
-    }
-
-    return acc_series_.get();
+    const auto &acc = data_interface_->acc_[cur_dir_].col(idx);
+    return {time_, acc};
 }
 
 // 获取速度数据
-QLineSeries *ChartData::get_velocity(std::size_t idx)
+ChartData::points_vector ChartData::get_velocity(std::size_t idx)
 {
     // 计算GMP
     if (!gmp_calculated_ || cur_idx_ != idx)
@@ -128,17 +131,11 @@ QLineSeries *ChartData::get_velocity(std::size_t idx)
 
     // 获取速度数据
     const auto &vel = gmp_.get_velocity();
-    vel_series_ = std::make_unique<QLineSeries>();
-    for (std::size_t i = 0; i != time_.size(); ++i)
-    {
-        vel_series_->append(time_[i], vel[i]);
-    }
-
-    return vel_series_.get();
+    return {time_, vel};
 }
 
 // 获取位移数据
-QLineSeries *ChartData::get_displacement(std::size_t idx)
+ChartData::points_vector ChartData::get_displacement(std::size_t idx)
 {
     // 计算GMP
     if (!gmp_calculated_ || cur_idx_ != idx)
@@ -154,17 +151,11 @@ QLineSeries *ChartData::get_displacement(std::size_t idx)
 
     // 获取位移数据
     const auto &disp = gmp_.get_displacement();
-    disp_series_ = std::make_unique<QLineSeries>();
-    for (std::size_t i = 0; i != time_.size(); ++i)
-    {
-        disp_series_->append(time_[i], disp[i]);
-    }
-
-    return disp_series_.get();
+    return {time_, disp};
 }
 
 // 获取Sa数据
-QLineSeries *ChartData::get_sa(std::size_t idx)
+ChartData::points_vector ChartData::get_sa(std::size_t idx)
 {
     // 计算GMP
     if (!gmp_calculated_ || cur_idx_ != idx)
@@ -180,17 +171,11 @@ QLineSeries *ChartData::get_sa(std::size_t idx)
 
     // 获取Sa数据
     const auto &sa = gmp_.AccelerationSpectrum();
-    sa_series_ = std::make_unique<QLineSeries>();
-    for (std::size_t i = 0; i != period_.size(); ++i)
-    {
-        sa_series_->append(period_[i], sa[i]);
-    }
-
-    return sa_series_.get();
+    return {period_, sa};
 }
 
 // 获取Sv数据
-QLineSeries *ChartData::get_sv(std::size_t idx)
+ChartData::points_vector ChartData::get_sv(std::size_t idx)
 {
     // 计算GMP
     if (!gmp_calculated_ || cur_idx_ != idx)
@@ -206,17 +191,11 @@ QLineSeries *ChartData::get_sv(std::size_t idx)
 
     // 获取Sv数据
     const auto &sv = gmp_.VelocitySpectrum();
-    sv_series_ = std::make_unique<QLineSeries>();
-    for (std::size_t i = 0; i != period_.size(); ++i)
-    {
-        sv_series_->append(period_[i], sv[i]);
-    }
-
-    return sv_series_.get();
+    return {period_, sv};
 }
 
 // 获取Sd数据
-QLineSeries *ChartData::get_sd(std::size_t idx)
+ChartData::points_vector ChartData::get_sd(std::size_t idx)
 {
     // 计算GMP
     if (!gmp_calculated_ || cur_idx_ != idx)
@@ -232,17 +211,11 @@ QLineSeries *ChartData::get_sd(std::size_t idx)
 
     // 获取Sd数据
     const auto &sd = gmp_.DisplacementSpectrum();
-    sd_series_ = std::make_unique<QLineSeries>();
-    for (std::size_t i = 0; i != period_.size(); ++i)
-    {
-        sd_series_->append(period_[i], sd[i]);
-    }
-
-    return sd_series_.get();
+    return {period_, sd};
 }
 
 // 获取幅值谱数据
-QLineSeries *ChartData::get_amplitude(std::size_t idx)
+ChartData::points_vector ChartData::get_amplitude(std::size_t idx)
 {
     // 计算GMP
     if (!gmp_calculated_ || cur_idx_ != idx)
@@ -258,17 +231,11 @@ QLineSeries *ChartData::get_amplitude(std::size_t idx)
 
     // 获取幅值谱数据
     const auto &amp = gmp_.FourierAmplitudeSpectrum();
-    amp_series_ = std::make_unique<QLineSeries>();
-    for (std::size_t i = 0; i != freq_.size(); ++i)
-    {
-        amp_series_->append(freq_[i], amp[i]);
-    }
-
-    return amp_series_.get();
+    return {freq_, amp};
 }
 
 // 获取功率谱数据
-QLineSeries *ChartData::get_power(std::size_t idx)
+ChartData::points_vector ChartData::get_power(std::size_t idx)
 {
     // 计算GMP
     if (!gmp_calculated_ || cur_idx_ != idx)
@@ -284,23 +251,14 @@ QLineSeries *ChartData::get_power(std::size_t idx)
 
     // 获取功率谱数据
     const auto &pow = gmp_.PowerSpectrum();
-    pow_series_ = std::make_unique<QLineSeries>();
-    for (std::size_t i = 0; i != freq_.size(); ++i)
-    {
-        pow_series_->append(freq_[i], pow[i]);
-    }
-
-    return pow_series_.get();
+    return {freq_, pow};
 }
 
 // 获取层间位移角数据
-QLineSeries *ChartData::get_fi_idr(std::size_t idx)
+ChartData::points_vector ChartData::get_fi_idr(std::size_t idx)
 {
     // 计算滤波积分
-    if (!fi_calculated_)
-    {
-        CalculateEdpFi();
-    }
+    CalculateEdpFi();
 
     // 生成时间横轴
     if (time_.empty())
@@ -309,24 +267,16 @@ QLineSeries *ChartData::get_fi_idr(std::size_t idx)
     }
 
     // 获取层间位移角数据
-    const auto &idr = fi_.get_filtering_interp_result().get_inter_story_drift();
-    fi_idr_series_ = std::make_unique<QLineSeries>();
-    for (std::size_t i = 0; i != time_.size(); ++i)
-    {
-        fi_idr_series_->append(time_[i], idr.get_col(idx)[i]);
-    }
-
-    return fi_idr_series_.get();
+    const auto &idr =
+        fi_[cur_dir_].get_filtering_interp_result().get_inter_story_drift();
+    return {time_, idr.get_col(idx)};
 }
 
 // 获取FilteringIntegral指定楼层位移时程数据
-QLineSeries *ChartData::get_fi_disp(std::size_t idx)
+ChartData::points_vector ChartData::get_fi_disp(std::size_t idx)
 {
     // 计算滤波积分
-    if (!fi_calculated_)
-    {
-        CalculateEdpFi();
-    }
+    CalculateEdpFi();
 
     // 生成时间横轴
     if (time_.empty())
@@ -335,49 +285,36 @@ QLineSeries *ChartData::get_fi_disp(std::size_t idx)
     }
 
     // 获取FilteringIntegral指定楼层位移时程数据
-    const auto &disp = fi_.get_filtering_interp_result().get_displacement();
-    fi_disp_series_ = std::make_unique<QLineSeries>();
-    for (std::size_t i = 0; i != time_.size(); ++i)
-    {
-        fi_disp_series_->append(time_[i], disp.get_col(idx)[i]);
-    }
-
-    return fi_disp_series_.get();
+    const auto &disp =
+        fi_[cur_dir_].get_filtering_interp_result().get_displacement();
+    return {time_, disp.get_col(idx)};
 }
 
 // 获取FilteringIntegral层间位移角分布数据
-QLineSeries *ChartData::get_fi_all_idr()
+ChartData::points_vector ChartData::get_fi_all_idr()
 {
     // 计算滤波积分
-    if (!fi_calculated_)
-    {
-        CalculateEdpFi();
-    }
+    CalculateEdpFi();
 
     // 获取FilteringIntegral层间位移角分布数据
-    safty_ = safty_tagging::BasedOnInterStoryDrift(
-        fi_.get_filtering_interp_result());
-    safty_.TagSafty();
-    const auto &idr = safty_.get_max_inter_story_drift_result();
-    fi_all_idr_series_ = std::make_unique<QLineSeries>();
-    for (std::size_t i = 0; i != idr.abs_max_inter_story_drift_.size(); ++i)
-    {
-        fi_all_idr_series_->append(
-            std::abs(idr.abs_max_inter_story_drift_[i].first),
-            building_.get_floor_height()[i + 1]);
-    }
+    safty_[cur_dir_] = safty_tagging::BasedOnInterStoryDrift(
+        fi_[cur_dir_].get_filtering_interp_result());
+    safty_[cur_dir_].TagSafty();
+    const auto &idr = safty_[cur_dir_].get_max_inter_story_drift_result();
+    std::vector<double> abs_idr(idr.abs_max_idr_.size());
+    std::transform(idr.abs_max_idr_.begin(),
+                   idr.abs_max_idr_.end(),
+                   abs_idr.begin(),
+                   [](const double &val) { return std::abs(val); });
 
-    return fi_all_idr_series_.get();
+    return {idr.abs_max_idr_, data_interface_->building_.get_floor_height()};
 }
 
 // 获取ModifiedFilteringIntegral指定楼层层间位移角时程数据
-QLineSeries *ChartData::get_mfi_idr(std::size_t idx)
+ChartData::points_vector ChartData::get_mfi_idr(std::size_t idx)
 {
     // 计算改进滤波积分
-    if (!mfi_calculated_)
-    {
-        CalculateEdpMfi();
-    }
+    CalculateEdpMfi();
 
     // 生成时间横轴
     if (time_.empty())
@@ -387,24 +324,15 @@ QLineSeries *ChartData::get_mfi_idr(std::size_t idx)
 
     // 获取ModifiedFilteringIntegral指定楼层层间位移角时程数据
     const auto &idr =
-        mfi_.get_filtering_interp_result().get_inter_story_drift();
-    mfi_idr_series_ = std::make_unique<QLineSeries>();
-    for (std::size_t i = 0; i != time_.size(); ++i)
-    {
-        mfi_idr_series_->append(time_[i], idr.get_col(idx)[i]);
-    }
-
-    return mfi_idr_series_.get();
+        mfi_[cur_dir_].get_filtering_interp_result().get_inter_story_drift();
+    return {time_, idr.get_col(idx)};
 }
 
 // 获取ModifiedFilteringIntegral指定楼层位移时程数据
-QLineSeries *ChartData::get_mfi_disp(std::size_t idx)
+ChartData::points_vector ChartData::get_mfi_disp(std::size_t idx)
 {
     // 计算改进滤波积分
-    if (!mfi_calculated_)
-    {
-        CalculateEdpMfi();
-    }
+    CalculateEdpMfi();
 
     // 生成时间横轴
     if (time_.empty())
@@ -413,48 +341,38 @@ QLineSeries *ChartData::get_mfi_disp(std::size_t idx)
     }
 
     // 获取ModifiedFilteringIntegral指定楼层位移时程数据
-    const auto &disp = mfi_.get_filtering_interp_result().get_displacement();
-    mfi_disp_series_ = std::make_unique<QLineSeries>();
-    for (std::size_t i = 0; i != time_.size(); ++i)
-    {
-        mfi_disp_series_->append(time_[i], disp.get_col(idx)[i]);
-    }
-
-    return mfi_disp_series_.get();
+    const auto &disp =
+        mfi_[cur_dir_].get_filtering_interp_result().get_displacement();
+    return {time_, disp.get_col(idx)};
 }
 
 // 获取ModifiedFilteringIntegral层间位移角分布数据
-QLineSeries *ChartData::get_mfi_all_idr()
+ChartData::points_vector ChartData::get_mfi_all_idr()
 {
     // 计算改进滤波积分
-    if (!mfi_calculated_)
-    {
-        CalculateEdpMfi();
-    }
+    CalculateEdpMfi();
 
     // 获取ModifiedFilteringIntegral层间位移角分布数据
-    safty_ = safty_tagging::BasedOnInterStoryDrift(
-        mfi_.get_filtering_interp_result());
-    safty_.TagSafty();
-    const auto &idr = safty_.get_max_inter_story_drift_result();
-    mfi_all_idr_series_ = std::make_unique<QLineSeries>();
-    for (std::size_t i = 0; i != idr.abs_max_inter_story_drift_.size(); ++i)
-    {
-        mfi_all_idr_series_->append(
-            std::abs(idr.abs_max_inter_story_drift_[i].first),
-            building_.get_floor_height()[i + 1]);
-    }
+    safty_[cur_dir_] = safty_tagging::BasedOnInterStoryDrift(
+        mfi_[cur_dir_].get_filtering_interp_result());
+    safty_[cur_dir_].TagSafty();
+    const auto &idr = safty_[cur_dir_].get_max_inter_story_drift_result();
+    std::vector<double> abs_idr(idr.abs_max_idr_.size());
+    std::transform(idr.abs_max_idr_.begin(),
+                   idr.abs_max_idr_.end(),
+                   abs_idr.begin(),
+                   [](const double &val) { return std::abs(val); });
 
-    return mfi_all_idr_series_.get();
+    return {abs_idr, data_interface_->building_.get_floor_height()};
 }
 
 // 生成横轴时间的函数
 void ChartData::get_time_()
 {
-    time_.resize(acc_.col(0).size());
+    time_.resize(data_interface_->config_.time_count_);
     for (std::size_t i = 0; i < time_.size(); ++i)
     {
-        time_[i] = i * acc_.get_time_step();
+        time_[i] = 1.0 * i / data_interface_->config_.frequency_;
     }
 }
 

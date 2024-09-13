@@ -28,18 +28,41 @@
 
 
 QRestMainWindow::QRestMainWindow(QWidget *parent)
-    : QMainWindow(parent), ui(new Ui::MainWindow())
+    : QMainWindow(parent), ui_(new Ui::MainWindow())
 {
-    ui->setupUi(this);
-    ui->toolBar->setVisible(false);
+    ui_->setupUi(this);
+    ui_->toolBar->setVisible(false);
 }
 
 QRestMainWindow::~QRestMainWindow()
 {
-    if (ui != nullptr)
+    if (ui_ != nullptr)
     {
-        delete ui;
+        delete ui_;
     }
+}
+
+void QRestMainWindow::on_tabWidget_acc_currentChanged(int index)
+{
+    switch (index)
+    {
+        case 0:
+            UpdateAccTabTime(cur_mea_point_);
+            break;
+        case 1:
+            UpdateAccTabResponse(cur_mea_point_, gmp_type_);
+            break;
+        case 2:
+            UpdateAccTabFourier(cur_mea_point_);
+            break;
+        default:
+            break;
+    }
+}
+
+void QRestMainWindow::on_tabWidget_edp_currentChanged(int index)
+{
+    //
 }
 
 void QRestMainWindow::on_act_open_triggered()
@@ -53,14 +76,16 @@ void QRestMainWindow::on_act_open_triggered()
     }
     else
     {
-        data_interface =
-            std::make_unique<DataInterface>(file_name.toStdString());
+        data_interface_ =
+            std::make_shared<DataInterface>(file_name.toStdString());
     }
-    chart_data = std::make_unique<ChartData>(
-        data_interface->acceleration_data_[cur_direction],
-        data_interface->building_);
+    chart_data_ = std::make_unique<ChartData>(data_interface_);
     // 读取文件后根据数据初始化主页
     InitHomePage();
+
+    // 初始化建筑模型
+    ui_->widget_building->setNumRectangles(
+        data_interface_->building_.get_measuren_height().size());
 }
 
 void QRestMainWindow::on_act_about_triggered()
@@ -92,52 +117,111 @@ void QRestMainWindow::on_act_qt_triggered()
 
 void QRestMainWindow::on_cbox_home_mea_currentIndexChanged(int index)
 {
-    cur_mea_point = index;
+    cur_mea_point_ = index;
     UpdateHomePage(index);
 }
 
 void QRestMainWindow::on_cbox_acc_mea_currentIndexChanged(int index)
 {
-    cur_mea_point = index;
-    UpdateAccPage(index);
+    cur_mea_point_ = index;
+    UpdateAccTabTime(index);
 }
 
 void QRestMainWindow::on_cbox_gmp_mea_currentIndexChanged(int index)
 {
-    cur_mea_point = index;
-    UpdateGmpPage(index);
+    cur_mea_point_ = index;
+    UpdateAccTabResponse(index, gmp_type_);
+}
+
+void QRestMainWindow::on_cbox_fourier_mea_currentIndexChanged(int index)
+{
+    cur_mea_point_ = index;
+    UpdateAccTabFourier(index);
 }
 
 void QRestMainWindow::on_cbox_reponse_currentIndexChanged(int index)
 {
-    gmp_type = index;
-    UpdateGmpPage(cur_mea_point);
+    gmp_type_ = index;
+    UpdateAccTabResponse(cur_mea_point_, index);
 }
 
 void QRestMainWindow::on_cbox_edp_floor_currentIndexChanged(int index)
 {
-    cur_floor = index;
-    UpdateEdpPage(index);
+    cur_floor_ = index;
+    UpdateEdpTabAlgorithm(cur_floor_);
+}
+
+void QRestMainWindow::on_widget_building_rectangleClicked(int index)
+{
+    cur_floor_ = index;
+    switch (ui_->listWidget->currentRow())
+    {
+        case 0:
+            UpdateHomePage(index);
+            break;
+        case 1:
+            switch (ui_->tabWidget_acc->currentIndex())
+            {
+                case 0:
+                    UpdateAccTabTime(index);
+                    break;
+                case 1:
+                    UpdateAccTabResponse(cur_mea_point_, gmp_type_);
+                    break;
+                case 2:
+                    UpdateAccTabFourier(index);
+                    break;
+                default:
+                    break;
+            }
+            break;
+        case 2:
+            // UpdateShmPage(index);
+            break;
+        case 3:
+            switch (ui_->tabWidget_edp->currentIndex())
+            {
+                case 0:
+                    UpdateEdpTabRealtime(index);
+                    break;
+                case 1:
+                    UpdateEdpTabAlgorithm(index);
+                    break;
+                default:
+                    break;
+            }
+            break;
+        case 4:
+            // UpdateResultPage(index);
+            break;
+        default:
+            break;
+    }
 }
 
 void QRestMainWindow::on_listWidget_currentRowChanged(int currentRow)
 {
+    ui_->listWidget->setCurrentRow(currentRow);
     switch (currentRow)
     {
         case 0:
-            // 尚未接收数据，无法初始化该页面
+            if (page_initialized_->home_page) break;
             // InitHomePage();
             break;
         case 1:
+            if (page_initialized_->acc_page) break;
             InitAccPage();
             break;
         case 2:
-            InitGmpPage();
+            if (page_initialized_->shm_page) break;
+            InitShmPage();
             break;
         case 3:
+            if (page_initialized_->edp_page) break;
             InitEdpPage();
             break;
         case 4:
+            if (page_initialized_->result_page) break;
             InitResultPage();
             break;
         default:

@@ -124,6 +124,9 @@ void ModifiedFilteringIntegral::CalculateEdp()
             numerical_algorithm::VectorOperation(
                 interstory_displacement.data()[i], interstory_height[i], '/'));
     }
+
+    // 3.计算完成
+    is_calculated_ = true;
 }
 
 // 滤波积分插值法计算单列加速度

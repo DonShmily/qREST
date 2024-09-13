@@ -79,8 +79,7 @@ void DataInterface::ReadFile(const std::string &file_path)
         {
             col_idx.push_back(j + config_.direction_ * i);
         }
-        acceleration_data_.emplace_back(
-            ori_acc, col_idx, config_.frequency_, config_.scale_);
+        acc_.emplace_back(ori_acc, col_idx, config_.frequency_, config_.scale_);
     }
 }
 
@@ -95,7 +94,7 @@ void DataInterface::ReadSerialPort(const std::string &port, const int &baudrate)
 data_structure::Acceleration
 DataInterface::GetAccelerationData(std::size_t index) const
 {
-    return acceleration_data_.at(index);
+    return acc_.at(index);
 }
 
 // 加载配置

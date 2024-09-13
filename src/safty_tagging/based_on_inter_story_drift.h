@@ -39,9 +39,12 @@ namespace safty_tagging
 // 最大层间位移角结果，储存正负向最大层间位移角及对应时间，最大位移及对应时间
 struct AllMaxIdr
 {
+    // 是否需要时间信息
+    bool need_time_{false};
     // 各层最大层间位移角结果及对应时间
-    std::vector<std::pair<double, double>> pos_max_inter_story_drift_{},
-        neg_max_inter_story_drift_{}, abs_max_inter_story_drift_{};
+    std::vector<std::pair<double, double>> pos_max_idr_time_{},
+        neg_max_idr_time_{}, abs_max_idr_time_{};
+    std::vector<double> pos_max_idr_{}, neg_max_idr_{}, abs_max_idr_{};
 };
 
 // 基于层间位移角的安全评价方法
@@ -85,49 +88,19 @@ public:
     int TagSafty() override;
 
     // 获取安全评价结果
-    int get_tagging_result() override
-    {
-        if (!is_tagged_)
-        {
-            TagSafty();
-        }
-        return safty_tagging_result_;
-    }
+    int get_tagging_result() override;
 
     // 获取最大层间位移角结果
     // @return 所有层的最大层间位移角结果
-    AllMaxIdr get_max_inter_story_drift_result()
-    {
-        if (!is_tagged_)
-        {
-            TagSafty();
-        }
-        return all_max_idr_;
-    }
+    AllMaxIdr get_max_inter_story_drift_result();
 
     // 获取所有层的最大层间位移角
     // @return 最大层间位移角值
-    double get_all_max_idr()
-    {
-        if (!is_tagged_)
-        {
-            TagSafty();
-        }
-        return std::max_element(all_max_idr_.abs_max_inter_story_drift_.begin(),
-                                all_max_idr_.abs_max_inter_story_drift_.end())
-            ->first;
-    }
+    double get_all_max_idr();
 
     // 获取所有层的最最大层间位移角信息：出现的时间、楼层和大小
     // @return 最大层间位移角信息：楼层索引、时间、层间位移角值
-    std::tuple<std::size_t, double, double> get_max_idr()
-    {
-        if (!is_tagged_)
-        {
-            TagSafty();
-        }
-        return max_idr_;
-    }
+    std::tuple<std::size_t, double, double> get_max_idr();
 
 private:
     // 层间位移角的计算结果

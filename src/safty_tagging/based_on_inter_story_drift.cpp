@@ -23,6 +23,7 @@
 
 // third-party library headers
 #include "nlohmann/json.hpp"
+#include "safty_tagging/basic_safty_tagging.h"
 
 // stdc++ headers
 #include <fstream>
@@ -52,6 +53,50 @@ void BasedOnInterStoryDrift::LoadConfig(const std::string &config_file)
         config["SaftyTagging"]["idr_limits"].get<std::vector<double>>();
 }
 
+// 获取安全评价结果
+int BasedOnInterStoryDrift::get_tagging_result()
+{
+    if (!is_tagged_)
+    {
+        TagSafty();
+    }
+    return safty_tagging_result_;
+}
+
+// 获取最大层间位移角结果
+AllMaxIdr BasedOnInterStoryDrift::get_max_inter_story_drift_result()
+{
+    {
+        if (!is_tagged_)
+        {
+            TagSafty();
+        }
+        return all_max_idr_;
+    }
+}
+
+// 获取所有层的最大层间位移角
+double BasedOnInterStoryDrift::get_all_max_idr()
+{
+    if (!is_tagged_)
+    {
+        TagSafty();
+    }
+    return std::max_element(all_max_idr_.abs_max_idr_time_.begin(),
+                            all_max_idr_.abs_max_idr_time_.end())
+        ->first;
+}
+
+// 获取所有层的最最大层间位移角信息：出现的时间、楼层和大小
+std::tuple<std::size_t, double, double> BasedOnInterStoryDrift::get_max_idr()
+{
+    if (!is_tagged_)
+    {
+        TagSafty();
+    }
+    return max_idr_;
+}
+
 // 安全评价计算
 int BasedOnInterStoryDrift::TagSafty()
 {
@@ -69,33 +114,40 @@ int BasedOnInterStoryDrift::TagSafty()
          abs_max_drift_idx =
              inter_story_drift_.get_inter_story_drift().AbsoluteMax();
     // 初始化最大层间位移角结果
-    all_max_idr_.pos_max_inter_story_drift_.resize(story_number);
-    all_max_idr_.neg_max_inter_story_drift_.resize(story_number);
-    all_max_idr_.abs_max_inter_story_drift_.resize(story_number);
+    all_max_idr_.pos_max_idr_time_.resize(story_number);
+    all_max_idr_.neg_max_idr_time_.resize(story_number);
+    all_max_idr_.abs_max_idr_time_.resize(story_number);
 
     // 计算各层最大层间位移角
     for (std::size_t i = 0; i != story_number; ++i)
     {
-        all_max_idr_.pos_max_inter_story_drift_.at(i) =
-            std::make_pair(pos_max_drift_idx[i].first,
-                           pos_max_drift_idx[i].second * 1.0 / freq);
-        all_max_idr_.neg_max_inter_story_drift_.at(i) =
-            std::make_pair(neg_max_drift_idx[i].first,
-                           neg_max_drift_idx[i].second * 1.0 / freq);
-        all_max_idr_.abs_max_inter_story_drift_.at(i) =
-            std::make_pair(abs_max_drift_idx[i].first,
-                           abs_max_drift_idx[i].second * 1.0 / freq);
+        if (all_max_idr_.need_time_)
+        {
+            all_max_idr_.pos_max_idr_time_.at(i) =
+                std::make_pair(pos_max_drift_idx[i].first,
+                               pos_max_drift_idx[i].second * 1.0 / freq);
+            all_max_idr_.neg_max_idr_time_.at(i) =
+                std::make_pair(neg_max_drift_idx[i].first,
+                               neg_max_drift_idx[i].second * 1.0 / freq);
+            all_max_idr_.abs_max_idr_time_.at(i) =
+                std::make_pair(abs_max_drift_idx[i].first,
+                               abs_max_drift_idx[i].second * 1.0 / freq);
+        }
+        all_max_idr_.pos_max_idr_.push_back(pos_max_drift_idx[i].first);
+        all_max_idr_.neg_max_idr_.push_back(neg_max_drift_idx[i].first);
+        all_max_idr_.abs_max_idr_.push_back(abs_max_drift_idx[i].first);
     }
 
     // 计算最大层间位移角
-    auto max_driift_idx =
-        std::max_element(all_max_idr_.abs_max_inter_story_drift_.begin(),
-                         all_max_idr_.abs_max_inter_story_drift_.end());
-    double time = max_driift_idx->second;
-    size_t floor =
-        max_driift_idx - all_max_idr_.abs_max_inter_story_drift_.begin();
-    double max_idr_res = max_driift_idx->first;
-    max_idr_ = std::make_tuple(floor, time, max_idr_res);
+    auto max_driift_idx = std::max_element(all_max_idr_.abs_max_idr_.begin(),
+                                           all_max_idr_.abs_max_idr_.end());
+    size_t floor = max_driift_idx - all_max_idr_.abs_max_idr_.begin();
+
+    if (all_max_idr_.need_time_)
+    {
+        double time = all_max_idr_.abs_max_idr_time_.at(floor).second;
+        max_idr_ = std::make_tuple(floor, time, *max_driift_idx);
+    }
 
     is_tagged_ = true;
 
@@ -103,12 +155,15 @@ int BasedOnInterStoryDrift::TagSafty()
     std::size_t safty_res = 0;
     for (std::size_t i = 0; i != safty_tagging_limit_.size(); ++i)
     {
-        if (max_idr_res < safty_tagging_limit_[i])
+        if (*max_driift_idx < safty_tagging_limit_[i])
         {
             safty_res = i;
             break;
         }
     }
+
+    // 完成安全评价
+    is_tagged_ = true;
     return safty_res;
 }
 } // namespace safty_tagging
