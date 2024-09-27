@@ -64,6 +64,7 @@ public:
         fi_.resize(data_interface_->config_.direction_);
         mfi_.resize(data_interface_->config_.direction_);
         safty_idr_.resize(data_interface_->config_.direction_);
+        safty_acc_.resize(data_interface_->config_.direction_);
     }
 
     // 析构函数

@@ -31,7 +31,6 @@ QRestMainWindow::QRestMainWindow(QWidget *parent)
     : QMainWindow(parent), ui_(new Ui::MainWindow())
 {
     ui_->setupUi(this);
-    ui_->toolBar->setVisible(false);
 }
 
 QRestMainWindow::~QRestMainWindow()
@@ -40,29 +39,6 @@ QRestMainWindow::~QRestMainWindow()
     {
         delete ui_;
     }
-}
-
-void QRestMainWindow::on_tabWidget_acc_currentChanged(int index)
-{
-    switch (index)
-    {
-        case 0:
-            UpdateAccTabTime(cur_mea_point_);
-            break;
-        case 1:
-            UpdateAccTabResponse(cur_mea_point_, gmp_type_);
-            break;
-        case 2:
-            UpdateAccTabFourier(cur_mea_point_);
-            break;
-        default:
-            break;
-    }
-}
-
-void QRestMainWindow::on_tabWidget_edp_currentChanged(int index)
-{
-    //
 }
 
 void QRestMainWindow::on_act_open_triggered()
@@ -82,10 +58,6 @@ void QRestMainWindow::on_act_open_triggered()
     chart_data_ = std::make_unique<ChartData>(data_interface_);
     // 读取文件后根据数据初始化主页
     InitHomePage();
-
-    // 初始化建筑模型
-    ui_->widget_building->setNumRectangles(
-        data_interface_->building_.get_measuren_height().size());
 }
 
 void QRestMainWindow::on_act_about_triggered()
@@ -115,116 +87,57 @@ void QRestMainWindow::on_act_qt_triggered()
     QMessageBox::aboutQt(this, dlgTitle);
 }
 
-void QRestMainWindow::on_cbox_home_mea_currentIndexChanged(int index)
+void QRestMainWindow::on_stackedWidget_currentChanged(int index)
 {
-    cur_mea_point_ = index;
-    UpdateHomePage(index);
-}
-
-void QRestMainWindow::on_cbox_acc_mea_currentIndexChanged(int index)
-{
-    cur_mea_point_ = index;
-    UpdateAccTabTime(index);
-}
-
-void QRestMainWindow::on_cbox_gmp_mea_currentIndexChanged(int index)
-{
-    cur_mea_point_ = index;
-    UpdateAccTabResponse(index, gmp_type_);
-}
-
-void QRestMainWindow::on_cbox_fourier_mea_currentIndexChanged(int index)
-{
-    cur_mea_point_ = index;
-    UpdateAccTabFourier(index);
-}
-
-void QRestMainWindow::on_cbox_reponse_currentIndexChanged(int index)
-{
-    gmp_type_ = index;
-    UpdateAccTabResponse(cur_mea_point_, index);
-}
-
-void QRestMainWindow::on_cbox_edp_floor_currentIndexChanged(int index)
-{
-    cur_floor_ = index;
-    UpdateEdpTabAlgorithm(cur_floor_);
-}
-
-void QRestMainWindow::on_widget_building_rectangleClicked(int index)
-{
-    cur_floor_ = index;
-    switch (ui_->listWidget->currentRow())
+    switch (index)
     {
         case 0:
-            UpdateHomePage(index);
+            if (!page_initialized_->home_page)
+            {
+                InitHomePage();
+            }
             break;
         case 1:
-            switch (ui_->tabWidget_acc->currentIndex())
+            if (!page_initialized_->gmp_page)
             {
-                case 0:
-                    UpdateAccTabTime(index);
-                    break;
-                case 1:
-                    UpdateAccTabResponse(cur_mea_point_, gmp_type_);
-                    break;
-                case 2:
-                    UpdateAccTabFourier(index);
-                    break;
-                default:
-                    break;
+                InitGmpPage();
             }
             break;
         case 2:
-            // UpdateShmPage(index);
+            if (!page_initialized_->mea_page)
+            {
+                InitMeaPage();
+            }
             break;
         case 3:
-            switch (ui_->tabWidget_edp->currentIndex())
+            if (!page_initialized_->shm_page)
             {
-                case 0:
-                    UpdateEdpTabRealtime(index);
-                    break;
-                case 1:
-                    UpdateEdpTabAlgorithm(index);
-                    break;
-                default:
-                    break;
+                InitShmPage();
             }
             break;
         case 4:
-            // UpdateResultPage(index);
-            break;
-        default:
+            if (!page_initialized_->edp_page)
+            {
+                InitEdpPage();
+            }
             break;
     }
 }
 
-void QRestMainWindow::on_listWidget_currentRowChanged(int currentRow)
+void QRestMainWindow::on_widget_building_rectangleClicked(int index)
 {
-    ui_->listWidget->setCurrentRow(currentRow);
-    switch (currentRow)
+    //
+}
+
+void QRestMainWindow::on_tabWidget_mea_currentChanged(int index)
+{
+    switch (index)
     {
         case 0:
-            if (page_initialized_->home_page) break;
-            // InitHomePage();
+            InitMeaTabSingle();
             break;
         case 1:
-            if (page_initialized_->acc_page) break;
-            InitAccPage();
-            break;
-        case 2:
-            if (page_initialized_->shm_page) break;
-            InitShmPage();
-            break;
-        case 3:
-            if (page_initialized_->edp_page) break;
-            InitEdpPage();
-            break;
-        case 4:
-            if (page_initialized_->result_page) break;
-            InitResultPage();
-            break;
-        default:
+            InitMeaTabMultiple();
             break;
     }
 }

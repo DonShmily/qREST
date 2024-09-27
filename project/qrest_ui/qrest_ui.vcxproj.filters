@@ -21,6 +21,9 @@
       <UniqueIdentifier>{639EADAA-A684-42e4-A9AD-28FC9BCB8F7C}</UniqueIdentifier>
       <Extensions>ts</Extensions>
     </Filter>
+    <Filter Include="QCustomPlot">
+      <UniqueIdentifier>{3c21d22f-c134-47e6-8f6d-e930f70a0ecf}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <QtUic Include="..\..\src\qrest_ui\about_dialog.ui">
@@ -49,6 +52,9 @@
     <ClCompile Include="..\..\src\qrest_ui\main_window_qt.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\src\qrest_ui\qcustomplot.cpp">
+      <Filter>QCustomPlot</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\src\qrest_ui\chart_data.h">
@@ -60,6 +66,9 @@
     <ClInclude Include="x64\Debug-Static\uic\ui_main_window.h">
       <Filter>Form Files</Filter>
     </ClInclude>
+    <ClInclude Include="x64\Debug-Static\uic\ui_mainwindow.h">
+      <Filter>Form Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <QtMoc Include="..\..\src\qrest_ui\main_window.h">
@@ -67,6 +76,9 @@
     </QtMoc>
     <QtMoc Include="..\..\src\qrest_ui\rectangle_widget.h">
       <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="..\..\src\qrest_ui\qcustomplot.h">
+      <Filter>QCustomPlot</Filter>
     </QtMoc>
   </ItemGroup>
   <ItemGroup>

@@ -60,25 +60,25 @@
   </ImportGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'" Label="QtSettings">
     <QtInstall>6.6.3_msvc2019_64</QtInstall>
-    <QtModules>charts;core;gui;widgets</QtModules>
+    <QtModules>core;gui;widgets;printsupport;charts</QtModules>
     <QtBuildConfig>debug</QtBuildConfig>
     <QtDeploy>true</QtDeploy>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug-Static|x64'" Label="QtSettings">
     <QtInstall>6.6.3_msvc2019_64</QtInstall>
-    <QtModules>charts;core;gui;widgets</QtModules>
+    <QtModules>core;gui;widgets;printsupport;charts</QtModules>
     <QtBuildConfig>debug</QtBuildConfig>
     <QtDeploy>true</QtDeploy>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'" Label="QtSettings">
     <QtInstall>6.6.3_msvc2019_64</QtInstall>
-    <QtModules>charts;core;gui;widgets</QtModules>
+    <QtModules>core;gui;widgets;printsupport;charts</QtModules>
     <QtBuildConfig>release</QtBuildConfig>
     <QtDeploy>true</QtDeploy>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release-Static|x64'" Label="QtSettings">
     <QtInstall>6.6.3_msvc2019_64</QtInstall>
-    <QtModules>charts;core;gui;widgets</QtModules>
+    <QtModules>core;gui;widgets;printsupport;charts</QtModules>
     <QtBuildConfig>release</QtBuildConfig>
     <QtDeploy>true</QtDeploy>
   </PropertyGroup>
@@ -233,11 +233,14 @@
     <ClCompile Include="..\..\src\qrest_ui\main.cpp" />
     <ClCompile Include="..\..\src\qrest_ui\main_window_process.cpp" />
     <ClCompile Include="..\..\src\qrest_ui\main_window_qt.cpp" />
+    <ClCompile Include="..\..\src\qrest_ui\qcustomplot.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\src\qrest_ui\chart_data.h" />
     <ClInclude Include="..\..\src\qrest_ui\data_interface.h" />
     <QtMoc Include="..\..\src\qrest_ui\rectangle_widget.h" />
+    <QtMoc Include="..\..\src\qrest_ui\qcustomplot.h" />
+    <ClInclude Include="x64\Debug-Static\uic\ui_mainwindow.h" />
     <ClInclude Include="x64\Debug-Static\uic\ui_main_window.h" />
     <QtMoc Include="..\..\src\qrest_ui\main_window.h" />
   </ItemGroup>

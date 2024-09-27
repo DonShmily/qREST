@@ -257,10 +257,12 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\src\safty_tagging\based_on_acceleration.cpp" />
     <ClCompile Include="..\..\src\safty_tagging\based_on_inter_story_drift.cpp" />
     <ClCompile Include="..\..\src\safty_tagging\basic_safty_tagging.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\src\safty_tagging\based_on_acceleration.h" />
     <ClInclude Include="..\..\src\safty_tagging\based_on_inter_story_drift.h" />
     <ClInclude Include="..\..\src\safty_tagging\basic_safty_tagging.h" />
   </ItemGroup>

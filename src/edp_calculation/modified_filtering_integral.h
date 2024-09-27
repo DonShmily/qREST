@@ -115,7 +115,7 @@ private:
     // 滤波积分插值法计算方法参数
     FilteringIntegralMethod method_{};
     // 计算结果
-    std::shared_ptr<EdpResult> result_{};
+    std::shared_ptr<EdpResult> result_ = std::make_shared<EdpResult>();
 
     // 滤波积分插值法计算单列加速度
     void CalculateSingle(const std::size_t &col);

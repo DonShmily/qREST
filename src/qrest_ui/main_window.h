@@ -27,9 +27,11 @@
 // Qt headers
 #include <QtCharts/QtCharts>
 #include <QtWidgets/QMainWindow>
+#include "qcustomplot.h"
 
 // Qt UI headers
 #include "ui_main_window.h"
+// #include "ui_mainwindow.h"
 
 // project headers
 #include "chart_data.h"
@@ -47,15 +49,12 @@ QT_END_NAMESPACE
 struct PageInitStatus
 {
     bool home_page = false;
-    bool acc_page = false;
-    bool acc_tab_time = false;
-    bool acc_tab_response = false;
-    bool acc_tab_fourier = false;
+    bool gmp_page = false;
+    bool mea_page = false;
+    bool mea_tab_single = false;
+    bool mea_tab_multiple = false;
     bool shm_page = false;
     bool edp_page = false;
-    bool edp_tab_realtime = false;
-    bool edp_tab_algorithm = false;
-    bool result_page = false;
 };
 
 // qREST主窗口
@@ -98,37 +97,33 @@ private:
     // 初始化Home页面
     void InitHomePage();
     // 更新Home页面
-    void UpdateHomePage(std::size_t mea_point);
-    // 初始化ACC页面
-    void InitAccPage();
+    void UpdateHomePage();
+    // 初始化GMP页面
+    void InitGmpPage();
+    // 更新GMP页面
+    void UpdateGmpPage();
+    // 初始化Mea页面
+    void InitMeaPage();
+    // 更新Mea页面
+    void UpdateMeaPage();
     // 初始化SHM页面
     void InitShmPage();
+    // 更新SHM页面
+    void UpdateShmPage();
     // 初始化EDP页面
     void InitEdpPage();
-    // 初始化Result页面
-    void InitResultPage();
+    // 更新EDP页面
+    void UpdateEdpPage();
 
     // 初始化和更新各页面下的tab
-    // 初始化ACC页面下的tab_time
-    void InitAccTabTime();
-    // 更新ACC页面下的tab_time
-    void UpdateAccTabTime(std::size_t mea_point);
-    // 初始化ACC页面下的tab_response
-    void InitAccTabResponse();
-    // 更新ACC页面下的tab_response
-    void UpdateAccTabResponse(std::size_t mea_point, std::size_t gmp_type);
-    // 初始化ACC页面下的tab_fourier
-    void InitAccTabFourier();
-    // 更新ACC页面下的tab_fourier
-    void UpdateAccTabFourier(std::size_t mea_point);
-    // 初始化EDP页面下的tab_realtime
-    void InitEdpTabRealtime();
-    // 更新EDP页面下的tab_realtime
-    void UpdateEdpTabRealtime(std::size_t mea_point);
-    // 初始化EDP页面下的tab_algorithm
-    void InitEdpTabAlgorithm();
-    // 更新EDP页面下的tab_algorithm
-    void UpdateEdpTabAlgorithm(std::size_t mea_point);
+    // 初始化Mea页面SingleTab
+    void InitMeaTabSingle();
+    // 更新Mea页面SingleTab
+    void UpdateMeaTabSingle();
+    // 初始化Mea页面MultipleTab
+    void InitMeaTabMultiple();
+    // 更新Mea页面MultipleTab
+    void UpdateMeaTabMultiple();
 
 private slots:
     /** 菜单栏action的槽函数*/
@@ -148,20 +143,18 @@ private slots:
     void on_act_web_triggered();
     void on_act_qt_triggered();
 
-    // ListWidget更改后更新相应的页面
-    void on_listWidget_currentRowChanged(int currentRow);
+    // 上部按钮控制stackedWidget的槽函数
+    void on_btn1_main_home_clicked() { ui_->stackedWidget->setCurrentIndex(0); }
+    void on_btn2_main_gmp_clicked() { ui_->stackedWidget->setCurrentIndex(1); }
+    void on_btn3_main_mea_clicked() { ui_->stackedWidget->setCurrentIndex(2); }
+    void on_btn4_main_shm_clicked() { ui_->stackedWidget->setCurrentIndex(3); }
+    void on_btn5_main_edp_clicked() { ui_->stackedWidget->setCurrentIndex(4); }
+
+    // 更换stackedWidget后更新相应的页面
+    void on_stackedWidget_currentChanged(int index);
 
     // TabWidget更改后更新相应的页面
-    void on_tabWidget_acc_currentChanged(int index);
-    void on_tabWidget_edp_currentChanged(int index);
-
-    // 更换当前测点/楼层的ComboBox槽函数
-    void on_cbox_home_mea_currentIndexChanged(int index);
-    void on_cbox_acc_mea_currentIndexChanged(int index);
-    void on_cbox_gmp_mea_currentIndexChanged(int index);
-    void on_cbox_fourier_mea_currentIndexChanged(int index);
-    void on_cbox_reponse_currentIndexChanged(int index);
-    void on_cbox_edp_floor_currentIndexChanged(int index);
+    void on_tabWidget_mea_currentChanged(int index);
 
     // 点击Building模型的槽函数
     void on_widget_building_rectangleClicked(int index);

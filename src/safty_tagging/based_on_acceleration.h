@@ -52,6 +52,7 @@ public:
     // @param edp_result 工程需求参量计算结果
     explicit BasedOnAcceleration(
         std::shared_ptr<edp_calculation::EdpResult> edp_result)
+        : edp_result_(edp_result)
     {}
 
     // 从配置文件中读取安全评价限值

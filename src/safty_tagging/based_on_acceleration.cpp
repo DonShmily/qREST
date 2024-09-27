@@ -104,10 +104,6 @@ int BasedOnAcceleration::TagSafty()
     auto pos_max_acc = edp_result_->get_acceleration().PositiveMax(),
          neg_max_acc = edp_result_->get_acceleration().NegativeMax(),
          abs_max_acc = edp_result_->get_acceleration().AbsoluteMax();
-    // 初始化最大加速度结果
-    all_max_acc_.pos_max_acc_.resize(story_number);
-    all_max_acc_.neg_max_acc_.resize(story_number);
-    all_max_acc_.abs_max_acc_.resize(story_number);
 
     // 计算最大加速度信息
     for (size_t i = 0; i < story_number; ++i)

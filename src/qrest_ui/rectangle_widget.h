@@ -30,7 +30,7 @@ protected:
 
         // 设置线宽为 5 像素
         QPen pen;
-        pen.setWidth(5);         // 设置线宽
+        pen.setWidth(2);         // 设置线宽
         pen.setColor(Qt::black); // 设置线条颜色
         painter.setPen(pen);
 
@@ -39,7 +39,8 @@ protected:
         int widgetHeight = height();
 
         // 每个矩形的高度和宽度，左右预留1/4个宽度
-        rectHeight = widgetHeight / (numRectangles == 0 ? 1 : numRectangles);
+        rectHeight =
+            widgetHeight / (numRectangles == 0 ? 1 : numRectangles + 2);
         rectWidth = widgetWidth * 2 / 3;
 
         // 绘制每个矩形
