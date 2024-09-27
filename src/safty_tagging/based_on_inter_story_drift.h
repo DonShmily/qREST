@@ -11,7 +11,7 @@
 ** File Created: Monday, 5th August 2024 17:40:31
 ** Author: Dong Feiyue (donfeiyue@outlook.com)
 ** -----
-** Last Modified: Saturday, 10th August 2024 22:29:26
+** Last Modified: Thursday, 26th September 2024 22:52:40
 ** Modified By: Dong Feiyue (donfeiyue@outlook.com)
 */
 
@@ -23,12 +23,12 @@
 
 // stdc++ headers
 #include <cstddef>
+#include <memory>
 #include <tuple>
 #include <utility>
 #include <vector>
 
 // project headers
-
 #include "basic_safty_tagging.h"
 #include "edp_calculation/basic_edp_calculation.h"
 
@@ -54,22 +54,22 @@ public:
     // 默认构造函数
     BasedOnInterStoryDrift() = default;
 
-    // 从层间位移角计算结果构造
-    // @param inter_story_drift 层间位移角计算结果
+    // 从工程需求参量计算结果构造
+    // @param edp_result 工程需求参量计算结果
     explicit BasedOnInterStoryDrift(
-        const edp_calculation::InterStoryDriftResult &inter_story_drift)
-        : inter_story_drift_(inter_story_drift)
+        std::shared_ptr<edp_calculation::EdpResult> edp_result)
+        : edp_result_(edp_result)
     {}
 
     // 析构函数
     ~BasedOnInterStoryDrift() = default;
 
-    // 设置评价对象（层间位移角结果）
-    // @param inter_story_drift 层间位移角计算结果
+    // 设置评价对象（工程需求参量结果）
+    // @param edp_result 工程需求参量计算结果
     void set_inter_story_drift(
-        const edp_calculation::InterStoryDriftResult &inter_story_drift)
+        std::shared_ptr<edp_calculation::EdpResult> edp_result)
     {
-        inter_story_drift_ = inter_story_drift;
+        edp_result = edp_result;
         clear();
     }
 
@@ -82,12 +82,15 @@ public:
 
     // 从配置文件中读取安全评价限值
     // @param config_file 配置文件路径
-    void LoadConfig(const std::string &config_file = "config/EDP_Config.json");
+    void LoadConfig(
+        const std::string &config_file = "config/EDP_Config.json") override;
 
-    // 安全评价计算，
+    // 安全评价计算，返回值越小越安全
+    // @return 安全评价结果，数字越低越安全，0为safe
     int TagSafty() override;
 
     // 获取安全评价结果
+    // @return 安全评价结果，数字越低越安全，0为safe
     int get_tagging_result() override;
 
     // 获取最大层间位移角结果
@@ -103,17 +106,14 @@ public:
     std::tuple<std::size_t, double, double> get_max_idr();
 
 private:
-    // 层间位移角的计算结果
-    edp_calculation::InterStoryDriftResult inter_story_drift_;
+    // 工程需求参量计算结果，本类只是用层间位移角部分
+    std::shared_ptr<edp_calculation::EdpResult> edp_result_;
 
     // 各层最大层间位移角结果
     AllMaxIdr all_max_idr_;
 
     // 最大层间位移角结果，楼层索引、时间、层间位移角值
     std::tuple<std::size_t, double, double> max_idr_{};
-
-    // 是否已经完成了安全评价
-    bool is_tagged_{false};
 
     // 安全评价的限值
     std::vector<double> safty_tagging_limit_{};

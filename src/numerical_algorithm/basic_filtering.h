@@ -18,8 +18,8 @@
 // Description:
 // 数值算法：滤波算法基类
 
-#ifndef NUMERICAL_ALGORITHM_BASIC_FILTERING_H_
-#define NUMERICAL_ALGORITHM_BASIC_FILTERING_H_
+#ifndef NUMERICAL_ALGORITHM_BASIC_FILTERING_H
+#define NUMERICAL_ALGORITHM_BASIC_FILTERING_H
 
 // stdc++ headers
 #include <vector>
@@ -62,4 +62,4 @@ protected:
 
 } // namespace numerical_algorithm
 
-#endif // NUMERICAL_ALGORITHM_BASIC_FILTERING_H_
+#endif // NUMERICAL_ALGORITHM_BASIC_FILTERING_H

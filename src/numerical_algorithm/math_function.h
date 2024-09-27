@@ -17,8 +17,8 @@
 
 // Description: 定义了一些常用的数学函数，用于数值计算
 
-#ifndef MATH_FUNCTION_H
-#define MATH_FUNCTION_H
+#ifndef NUMERICAL_ALGORITHM_MATH_FUNCTION_H
+#define NUMERICAL_ALGORITHM_MATH_FUNCTION_H
 
 #define _USE_MATH_DEFINES
 
@@ -51,4 +51,4 @@ inline double floor_magnitude(double x)
 
 } // namespace numerical_algorithm
 
-#endif // MATH_FUNCTION_H
+#endif // NUMERICAL_ALGORITHM_MATH_FUNCTION_H

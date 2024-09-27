@@ -18,8 +18,8 @@
 // Description:
 // 数值算法：向量计算，拓展std::vector的操作
 
-#ifndef NUMERICAL_ALGORITHM_VECTOR_CALCULATION_H_
-#define NUMERICAL_ALGORITHM_VECTOR_CALCULATION_H_
+#ifndef NUMERICAL_ALGORITHM_VECTOR_CALCULATION_H
+#define NUMERICAL_ALGORITHM_VECTOR_CALCULATION_H
 
 // stdc++ headers
 #include <algorithm>
@@ -261,4 +261,4 @@ inline std::vector<double> Convolution(const std::vector<double> &vector_x,
 
 } // namespace numerical_algorithm
 
-#endif // NUMERICAL_ALGORITHM_VECTOR_CALCULATION_H_
+#endif // NUMERICAL_ALGORITHM_VECTOR_CALCULATION_H

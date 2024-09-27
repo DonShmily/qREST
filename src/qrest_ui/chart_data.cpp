@@ -1,4 +1,4 @@
-/**
+﻿/**
 **            qREST - Quick Response Evaluation for Safety Tagging
 **     Institute of Engineering Mechanics, China Earthquake Administration
 **
@@ -22,6 +22,7 @@
 
 // stdc++ headers
 #include <cstddef>
+#include <memory>
 #include <vector>
 
 // project headers
@@ -31,7 +32,7 @@
 
 // 转换point_vector为QList<QPoint>指针的静态函数
 std::unique_ptr<QList<QPointF>>
-ChartData::PointsVector2QList(const ChartData::points_vector &points)
+ChartData::PointsVector2PointList(const ChartData::points_vector &points)
 {
     auto list = std::make_unique<QList<QPointF>>();
     for (std::size_t i = 0; i < points.first.size(); ++i)
@@ -39,6 +40,19 @@ ChartData::PointsVector2QList(const ChartData::points_vector &points)
         list->emplace_back(points.first[i], points.second[i]);
     }
     return list;
+}
+
+// 转换point_vector为std::pair<QList<qreal>, QList<qreal>>指针的静态函数
+std::unique_ptr<std::pair<QList<qreal>, QList<qreal>>>
+ChartData::PointsVector2DoubleList(const ChartData::points_vector &points)
+{
+    auto pnt_list = std::make_unique<std::pair<QList<qreal>, QList<qreal>>>();
+    for (std::size_t i = 0; i < points.first.size(); ++i)
+    {
+        pnt_list->first.push_back(points.first[i]);
+        pnt_list->second.push_back(points.second[i]);
+    }
+    return pnt_list;
 }
 
 // 清除计算结果
@@ -56,7 +70,7 @@ void ChartData::CalculateGmp(std::size_t idx)
 {
     // 计算对象赋值
     cur_idx_ = idx;
-    gmp_ = gmp_calculation::GmpCalculation(
+    gmp_[cur_dir_] = gmp_calculation::GmpCalculation(
         data_interface_->acc_[cur_dir_].col(cur_idx_));
 }
 
@@ -90,14 +104,14 @@ void ChartData::CalculateEdpMfi()
 void ChartData::CalculateSafty()
 {
     // 计算对象赋值
-    if (safty_[cur_dir_].is_calculated())
+    if (safty_idr_[cur_dir_].is_calculated())
     {
         return;
     }
     CalculateEdpMfi();
-    safty_[cur_dir_] = safty_tagging::BasedOnInterStoryDrift(
-        mfi_[cur_dir_].get_filtering_interp_result());
-    safty_[cur_dir_].TagSafty();
+    safty_idr_[cur_dir_] =
+        safty_tagging::BasedOnInterStoryDrift(mfi_[cur_dir_].get_result_ptr());
+    safty_idr_[cur_dir_].TagSafty();
 }
 
 // 获取加速度数据
@@ -106,7 +120,7 @@ ChartData::points_vector ChartData::get_acceleration(std::size_t idx)
     // 生成时间横轴
     if (time_.empty())
     {
-        get_time_();
+        get_time();
     }
 
     // 获取加速度数据
@@ -126,11 +140,11 @@ ChartData::points_vector ChartData::get_velocity(std::size_t idx)
     // 生成时间横轴
     if (time_.empty())
     {
-        get_time_();
+        get_time();
     }
 
     // 获取速度数据
-    const auto &vel = gmp_.get_velocity();
+    const auto &vel = gmp_[cur_dir_].get_velocity();
     return {time_, vel};
 }
 
@@ -146,11 +160,11 @@ ChartData::points_vector ChartData::get_displacement(std::size_t idx)
     // 生成时间横轴
     if (time_.empty())
     {
-        get_time_();
+        get_time();
     }
 
     // 获取位移数据
-    const auto &disp = gmp_.get_displacement();
+    const auto &disp = gmp_[cur_dir_].get_displacement();
     return {time_, disp};
 }
 
@@ -166,11 +180,11 @@ ChartData::points_vector ChartData::get_sa(std::size_t idx)
     // 生成周期横轴
     if (period_.empty())
     {
-        get_period_();
+        get_period();
     }
 
     // 获取Sa数据
-    const auto &sa = gmp_.AccelerationSpectrum();
+    const auto &sa = gmp_[cur_dir_].AccelerationSpectrum();
     return {period_, sa};
 }
 
@@ -186,11 +200,11 @@ ChartData::points_vector ChartData::get_sv(std::size_t idx)
     // 生成周期横轴
     if (period_.empty())
     {
-        get_period_();
+        get_period();
     }
 
     // 获取Sv数据
-    const auto &sv = gmp_.VelocitySpectrum();
+    const auto &sv = gmp_[cur_dir_].VelocitySpectrum();
     return {period_, sv};
 }
 
@@ -206,11 +220,11 @@ ChartData::points_vector ChartData::get_sd(std::size_t idx)
     // 生成周期横轴
     if (period_.empty())
     {
-        get_period_();
+        get_period();
     }
 
     // 获取Sd数据
-    const auto &sd = gmp_.DisplacementSpectrum();
+    const auto &sd = gmp_[cur_dir_].DisplacementSpectrum();
     return {period_, sd};
 }
 
@@ -226,11 +240,11 @@ ChartData::points_vector ChartData::get_amplitude(std::size_t idx)
     // 生成频率横轴
     if (freq_.empty())
     {
-        get_freq_();
+        get_freqency();
     }
 
     // 获取幅值谱数据
-    const auto &amp = gmp_.FourierAmplitudeSpectrum();
+    const auto &amp = gmp_[cur_dir_].FourierAmplitudeSpectrum();
     return {freq_, amp};
 }
 
@@ -246,11 +260,11 @@ ChartData::points_vector ChartData::get_power(std::size_t idx)
     // 生成频率横轴
     if (freq_.empty())
     {
-        get_freq_();
+        get_freqency();
     }
 
     // 获取功率谱数据
-    const auto &pow = gmp_.PowerSpectrum();
+    const auto &pow = gmp_[cur_dir_].PowerSpectrum();
     return {freq_, pow};
 }
 
@@ -263,12 +277,11 @@ ChartData::points_vector ChartData::get_fi_idr(std::size_t idx)
     // 生成时间横轴
     if (time_.empty())
     {
-        get_time_();
+        get_time();
     }
 
     // 获取层间位移角数据
-    const auto &idr =
-        fi_[cur_dir_].get_filtering_interp_result().get_inter_story_drift();
+    const auto &idr = fi_[cur_dir_].get_result().get_inter_story_drift();
     return {time_, idr.get_col(idx)};
 }
 
@@ -281,12 +294,11 @@ ChartData::points_vector ChartData::get_fi_disp(std::size_t idx)
     // 生成时间横轴
     if (time_.empty())
     {
-        get_time_();
+        get_time();
     }
 
     // 获取FilteringIntegral指定楼层位移时程数据
-    const auto &disp =
-        fi_[cur_dir_].get_filtering_interp_result().get_displacement();
+    const auto &disp = fi_[cur_dir_].get_result().get_displacement();
     return {time_, disp.get_col(idx)};
 }
 
@@ -297,10 +309,10 @@ ChartData::points_vector ChartData::get_fi_all_idr()
     CalculateEdpFi();
 
     // 获取FilteringIntegral层间位移角分布数据
-    safty_[cur_dir_] = safty_tagging::BasedOnInterStoryDrift(
-        fi_[cur_dir_].get_filtering_interp_result());
-    safty_[cur_dir_].TagSafty();
-    const auto &idr = safty_[cur_dir_].get_max_inter_story_drift_result();
+    safty_idr_[cur_dir_] =
+        safty_tagging::BasedOnInterStoryDrift(fi_[cur_dir_].get_result_ptr());
+    safty_idr_[cur_dir_].TagSafty();
+    const auto &idr = safty_idr_[cur_dir_].get_max_inter_story_drift_result();
     std::vector<double> abs_idr(idr.abs_max_idr_.size());
     std::transform(idr.abs_max_idr_.begin(),
                    idr.abs_max_idr_.end(),
@@ -319,12 +331,11 @@ ChartData::points_vector ChartData::get_mfi_idr(std::size_t idx)
     // 生成时间横轴
     if (time_.empty())
     {
-        get_time_();
+        get_time();
     }
 
     // 获取ModifiedFilteringIntegral指定楼层层间位移角时程数据
-    const auto &idr =
-        mfi_[cur_dir_].get_filtering_interp_result().get_inter_story_drift();
+    const auto &idr = mfi_[cur_dir_].get_result().get_inter_story_drift();
     return {time_, idr.get_col(idx)};
 }
 
@@ -337,12 +348,11 @@ ChartData::points_vector ChartData::get_mfi_disp(std::size_t idx)
     // 生成时间横轴
     if (time_.empty())
     {
-        get_time_();
+        get_time();
     }
 
     // 获取ModifiedFilteringIntegral指定楼层位移时程数据
-    const auto &disp =
-        mfi_[cur_dir_].get_filtering_interp_result().get_displacement();
+    const auto &disp = mfi_[cur_dir_].get_result().get_displacement();
     return {time_, disp.get_col(idx)};
 }
 
@@ -353,10 +363,10 @@ ChartData::points_vector ChartData::get_mfi_all_idr()
     CalculateEdpMfi();
 
     // 获取ModifiedFilteringIntegral层间位移角分布数据
-    safty_[cur_dir_] = safty_tagging::BasedOnInterStoryDrift(
-        mfi_[cur_dir_].get_filtering_interp_result());
-    safty_[cur_dir_].TagSafty();
-    const auto &idr = safty_[cur_dir_].get_max_inter_story_drift_result();
+    safty_idr_[cur_dir_] =
+        safty_tagging::BasedOnInterStoryDrift(mfi_[cur_dir_].get_result_ptr());
+    safty_idr_[cur_dir_].TagSafty();
+    const auto &idr = safty_idr_[cur_dir_].get_max_inter_story_drift_result();
     std::vector<double> abs_idr(idr.abs_max_idr_.size());
     std::transform(idr.abs_max_idr_.begin(),
                    idr.abs_max_idr_.end(),
@@ -366,8 +376,28 @@ ChartData::points_vector ChartData::get_mfi_all_idr()
     return {abs_idr, data_interface_->building_.get_floor_height()};
 }
 
+// 获取最大楼面加速度数据
+ChartData::points_vector ChartData::get_max_acc()
+{
+    // 计算安全评价
+    CalculateEdpMfi();
+
+    // 获取最大楼面加速度数据
+    safty_acc_[cur_dir_] =
+        safty_tagging::BasedOnAcceleration(mfi_[cur_dir_].get_result_ptr());
+    safty_acc_[cur_dir_].TagSafty();
+    const auto &acc = safty_acc_[cur_dir_].get_max_acc_result();
+    std::vector<double> abs_acc(acc.abs_max_acc_.size());
+    std::transform(acc.abs_max_acc_.begin(),
+                   acc.abs_max_acc_.end(),
+                   abs_acc.begin(),
+                   [](const double &val) { return std::abs(val); });
+
+    return {abs_acc, data_interface_->building_.get_floor_height()};
+}
+
 // 生成横轴时间的函数
-void ChartData::get_time_()
+void ChartData::get_time()
 {
     time_.resize(data_interface_->config_.time_count_);
     for (std::size_t i = 0; i < time_.size(); ++i)
@@ -377,21 +407,21 @@ void ChartData::get_time_()
 }
 
 // 生成反应谱横轴的函数
-void ChartData::get_period_()
+void ChartData::get_period()
 {
-    period_.resize(gmp_.AccelerationSpectrum().size());
+    period_.resize(gmp_[cur_dir_].AccelerationSpectrum().size());
     for (std::size_t i = 0; i != period_.size(); ++i)
     {
-        period_[i] = i * gmp_.get_parameter().response_spectrum_dt_;
+        period_[i] = i * gmp_[cur_dir_].get_parameter().response_spectrum_dt_;
     }
 }
 
 // 生成Fourier谱横轴的函数
-void ChartData::get_freq_()
+void ChartData::get_freqency()
 {
-    freq_.resize(gmp_.FourierAmplitudeSpectrum().size());
+    freq_.resize(gmp_[cur_dir_].FourierAmplitudeSpectrum().size());
     for (std::size_t i = 0; i != freq_.size(); ++i)
     {
-        freq_[i] = i * gmp_.get_parameter().fourier_spectrum_df_;
+        freq_[i] = i * gmp_[cur_dir_].get_parameter().fourier_spectrum_df_;
     }
 }

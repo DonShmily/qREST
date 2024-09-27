@@ -11,7 +11,7 @@
 ** File Created: Monday, 5th August 2024 17:40:31
 ** Author: Dong Feiyue (donfeiyue@outlook.com)
 ** -----
-** Last Modified: Saturday, 10th August 2024 22:29:21
+** Last Modified: Thursday, 26th September 2024 22:53:05
 ** Modified By: Dong Feiyue (donfeiyue@outlook.com)
 */
 
@@ -23,7 +23,6 @@
 
 // third-party library headers
 #include "nlohmann/json.hpp"
-#include "safty_tagging/basic_safty_tagging.h"
 
 // stdc++ headers
 #include <fstream>
@@ -51,6 +50,7 @@ void BasedOnInterStoryDrift::LoadConfig(const std::string &config_file)
     // 读取层间位移角安全评价限值
     safty_tagging_limit_ =
         config["SaftyTagging"]["idr_limits"].get<std::vector<double>>();
+    all_max_idr_.need_time_ = config["SaftyTagging"]["need_time"];
 }
 
 // 获取安全评价结果
@@ -82,9 +82,8 @@ double BasedOnInterStoryDrift::get_all_max_idr()
     {
         TagSafty();
     }
-    return std::max_element(all_max_idr_.abs_max_idr_time_.begin(),
-                            all_max_idr_.abs_max_idr_time_.end())
-        ->first;
+    return *std::max_element(all_max_idr_.abs_max_idr_.begin(),
+                             all_max_idr_.abs_max_idr_.end());
 }
 
 // 获取所有层的最最大层间位移角信息：出现的时间、楼层和大小
@@ -101,18 +100,14 @@ std::tuple<std::size_t, double, double> BasedOnInterStoryDrift::get_max_idr()
 int BasedOnInterStoryDrift::TagSafty()
 {
     // 获取有层间位移角的层数
-    size_t story_number =
-        inter_story_drift_.get_inter_story_drift().get_col_number();
+    size_t story_number = edp_result_->get_inter_story_drift().get_col_number();
     // 获取采样频率
-    double freq = inter_story_drift_.get_displacement().get_frequency();
+    double freq = edp_result_->get_displacement().get_frequency();
 
     // 获取最大层间位移角信息（索引）
-    auto pos_max_drift_idx =
-             inter_story_drift_.get_inter_story_drift().PositiveMax(),
-         neg_max_drift_idx =
-             inter_story_drift_.get_inter_story_drift().NegativeMax(),
-         abs_max_drift_idx =
-             inter_story_drift_.get_inter_story_drift().AbsoluteMax();
+    auto pos_max_drift_idx = edp_result_->get_inter_story_drift().PositiveMax(),
+         neg_max_drift_idx = edp_result_->get_inter_story_drift().NegativeMax(),
+         abs_max_drift_idx = edp_result_->get_inter_story_drift().AbsoluteMax();
     // 初始化最大层间位移角结果
     all_max_idr_.pos_max_idr_time_.resize(story_number);
     all_max_idr_.neg_max_idr_time_.resize(story_number);
@@ -148,8 +143,6 @@ int BasedOnInterStoryDrift::TagSafty()
         double time = all_max_idr_.abs_max_idr_time_.at(floor).second;
         max_idr_ = std::make_tuple(floor, time, *max_driift_idx);
     }
-
-    is_tagged_ = true;
 
     // 根据最大层间位移角进行安全评价
     std::size_t safty_res = 0;

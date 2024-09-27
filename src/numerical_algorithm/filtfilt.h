@@ -18,8 +18,8 @@
 // Description：
 // 数值算法：filtfilt滤波方法类
 
-#ifndef NUMERICAL_ALGORITHM_FILTFILT_H_
-#define NUMERICAL_ALGORITHM_FILTFILT_H_
+#ifndef NUMERICAL_ALGORITHM_FILTFILT_H
+#define NUMERICAL_ALGORITHM_FILTFILT_H
 
 // stdc++ headers
 #include <algorithm>
@@ -149,4 +149,4 @@ private:
 
 } // namespace numerical_algorithm
 
-#endif // NUMERICAL_ALGORITHM_FILTFILT_H_
+#endif // NUMERICAL_ALGORITHM_FILTFILT_H

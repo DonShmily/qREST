@@ -69,6 +69,12 @@ public:
     // 获取数据矩阵的引用
     std::vector<std::vector<double>> &data() { return *data_; }
 
+    // 获取数据矩阵指针
+    std::shared_ptr<std::vector<std::vector<double>>> data_ptr()
+    {
+        return data_;
+    }
+
     // 重新设置大小
     // @param row_number 行数
     // @param col_number 列数

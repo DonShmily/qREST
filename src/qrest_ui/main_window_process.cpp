@@ -127,7 +127,7 @@ void QRestMainWindow::InitHomePage()
     // 为层间位移角绘图对象添加数据
     QLineSeries *idr = new QLineSeries();
     const auto &idr_pnts = chart_data_->get_mfi_all_idr();
-    idr->replace(*ChartData::PointsVector2QList(idr_pnts));
+    idr->replace(*ChartData::PointsVector2PointList(idr_pnts));
     chart_idr->addSeries(idr);
     chart_idr->addAxis(axis_idr, Qt::AlignBottom);
     chart_idr->addAxis(axis_floor, Qt::AlignLeft);
@@ -161,7 +161,7 @@ void QRestMainWindow::UpdateHomePage(std::size_t mea_point)
     mea_acc->setName(tr("测点%1的加速度时程").arg(mea_point + 1));
     mea_acc->clear();
     const auto &acc_pnts = chart_data_->get_acceleration(mea_point);
-    mea_acc->replace(*ChartData::PointsVector2QList(acc_pnts));
+    mea_acc->replace(*ChartData::PointsVector2PointList(acc_pnts));
     // 更新坐标轴
     auto max_val = std::abs(*std::max_element(
         acc_pnts.second.begin(), acc_pnts.second.end(), [](double a, double b) {
@@ -181,7 +181,7 @@ void QRestMainWindow::UpdateHomePage(std::size_t mea_point)
     mea_disp->setName(tr("测点%1的位移时程").arg(mea_point + 1));
     mea_disp->clear();
     const auto &disp_pnts = chart_data_->get_displacement(mea_point);
-    mea_disp->replace(*ChartData::PointsVector2QList(disp_pnts));
+    mea_disp->replace(*ChartData::PointsVector2PointList(disp_pnts));
     // 更新坐标轴
     max_val = std::abs(*std::max_element(
         disp_pnts.second.begin(),
@@ -326,7 +326,7 @@ void QRestMainWindow::UpdateAccTabTime(std::size_t mea_point)
     mea_acc->setName(tr("测点%1的加速度时程").arg(mea_point + 1));
     mea_acc->clear();
     const auto &acc_pnts = chart_data_->get_acceleration(mea_point);
-    mea_acc->replace(*ChartData::PointsVector2QList(acc_pnts));
+    mea_acc->replace(*ChartData::PointsVector2PointList(acc_pnts));
     // 更新坐标轴
     auto max_val = std::abs(*std::max_element(
         acc_pnts.second.begin(), acc_pnts.second.end(), [](double a, double b) {
@@ -346,7 +346,7 @@ void QRestMainWindow::UpdateAccTabTime(std::size_t mea_point)
     mea_vel->setName(tr("测点%1的速度时程").arg(mea_point + 1));
     mea_vel->clear();
     const auto &vel_pnts = chart_data_->get_velocity(mea_point);
-    mea_vel->replace(*ChartData::PointsVector2QList(vel_pnts));
+    mea_vel->replace(*ChartData::PointsVector2PointList(vel_pnts));
     // 更新坐标轴
     max_val = std::abs(*std::max_element(
         vel_pnts.second.begin(), vel_pnts.second.end(), [](double a, double b) {
@@ -366,7 +366,7 @@ void QRestMainWindow::UpdateAccTabTime(std::size_t mea_point)
     mea_disp->setName(tr("测点%1的位移时程").arg(mea_point + 1));
     mea_disp->clear();
     const auto &disp_pnts = chart_data_->get_displacement(mea_point);
-    mea_disp->replace(*ChartData::PointsVector2QList(disp_pnts));
+    mea_disp->replace(*ChartData::PointsVector2PointList(disp_pnts));
     // 更新坐标轴
     max_val = std::abs(*std::max_element(
         disp_pnts.second.begin(),
@@ -442,7 +442,7 @@ void QRestMainWindow::UpdateAccTabResponse(std::size_t mea_point,
             axis_gmp->setTitleText(tr("Sa(m/s^2)"));
             gmp->setName(tr("测点%1的加速度反应谱").arg(mea_point + 1));
             gmp_pnts = chart_data_->get_sa(mea_point);
-            gmp->replace(*ChartData::PointsVector2QList(gmp_pnts));
+            gmp->replace(*ChartData::PointsVector2PointList(gmp_pnts));
             break;
         case 1:
             // 速度谱
@@ -450,7 +450,7 @@ void QRestMainWindow::UpdateAccTabResponse(std::size_t mea_point,
             axis_gmp->setTitleText(tr("Sv(m/s)"));
             gmp->setName(tr("测点%1的速度反应谱").arg(mea_point + 1));
             gmp_pnts = chart_data_->get_sv(mea_point);
-            gmp->replace(*ChartData::PointsVector2QList(gmp_pnts));
+            gmp->replace(*ChartData::PointsVector2PointList(gmp_pnts));
             break;
         case 2:
             // 位移谱
@@ -458,7 +458,7 @@ void QRestMainWindow::UpdateAccTabResponse(std::size_t mea_point,
             axis_gmp->setTitleText(tr("Sd(m)"));
             gmp->setName(tr("测点%1的位移反应谱").arg(mea_point + 1));
             gmp_pnts = chart_data_->get_sd(mea_point);
-            gmp->replace(*ChartData::PointsVector2QList(gmp_pnts));
+            gmp->replace(*ChartData::PointsVector2PointList(gmp_pnts));
             break;
         case 3:
             // 拟加速度谱
@@ -563,7 +563,7 @@ void QRestMainWindow::UpdateAccTabFourier(std::size_t mea_point)
     axis_amp_freq->setTitleText(tr("频率(Hz)"));
     amp->setName(tr("测点%1的幅值谱").arg(mea_point + 1));
     const auto &amp_pnts = chart_data_->get_amplitude(mea_point);
-    amp->replace(*ChartData::PointsVector2QList(amp_pnts));
+    amp->replace(*ChartData::PointsVector2PointList(amp_pnts));
     // 更新坐标轴
     auto max_val = std::abs(
         *std::max_element(amp_pnts.second.begin(), amp_pnts.second.end()));
@@ -580,7 +580,7 @@ void QRestMainWindow::UpdateAccTabFourier(std::size_t mea_point)
     axis_pow_freq->setTitleText(tr("频率(Hz)"));
     pow->setName(tr("测点%1的功率谱").arg(mea_point + 1));
     const auto &pow_pnts = chart_data_->get_power(mea_point);
-    pow->replace(*ChartData::PointsVector2QList(pow_pnts));
+    pow->replace(*ChartData::PointsVector2PointList(pow_pnts));
     // 更新坐标轴
     max_val = std::abs(
         *std::max_element(pow_pnts.second.begin(), pow_pnts.second.end()));
@@ -711,7 +711,7 @@ void QRestMainWindow::InitEdpTabAlgorithm()
     // 为层间位移角分布绘图对象添加数据
     QLineSeries *all_idr = new QLineSeries();
     const auto &idr_pnts = chart_data_->get_mfi_all_idr();
-    all_idr->replace(*ChartData::PointsVector2QList(idr_pnts));
+    all_idr->replace(*ChartData::PointsVector2PointList(idr_pnts));
     chart_all_idr->addSeries(all_idr);
     chart_all_idr->addAxis(axis_all_idr, Qt::AlignBottom);
     chart_all_idr->addAxis(axis_floor, Qt::AlignLeft);
@@ -745,7 +745,7 @@ void QRestMainWindow::UpdateEdpTabAlgorithm(std::size_t floor)
     idr->setName(tr("楼层%1的层间位移角时程").arg(floor + 1));
     idr->clear();
     const auto &idr_pnts = chart_data_->get_mfi_idr(floor);
-    idr->replace(*ChartData::PointsVector2QList(idr_pnts));
+    idr->replace(*ChartData::PointsVector2PointList(idr_pnts));
     // 更新坐标轴
     auto max_val = std::abs(*std::max_element(
         idr_pnts.second.begin(), idr_pnts.second.end(), [](double a, double b) {
@@ -765,7 +765,7 @@ void QRestMainWindow::UpdateEdpTabAlgorithm(std::size_t floor)
     disp->setName(tr("楼层%1的位移时程").arg(floor + 1));
     disp->clear();
     const auto &disp_pnts = chart_data_->get_mfi_disp(floor);
-    disp->replace(*ChartData::PointsVector2QList(disp_pnts));
+    disp->replace(*ChartData::PointsVector2PointList(disp_pnts));
     // 更新坐标轴
     max_val = std::abs(*std::max_element(
         disp_pnts.second.begin(),

@@ -30,8 +30,6 @@
 #include "nlohmann/json.hpp"
 
 // project headers
-#include "data_structure/displacement.h"
-
 #include "numerical_algorithm/basic_filtering.h"
 #include "numerical_algorithm/butterworth_filter_design.h"
 #include "numerical_algorithm/filter.h"
@@ -104,34 +102,43 @@ void FilteringIntegral::CalculateEdp()
 
     // 2.滤波积分插值计算层间位移角
     double dt = input_acceleration_.get_time_step();
+    result_->measurement_avd_.frequency = input_acceleration_.get_frequency();
+    std::vector<std::vector<double>>
+        &filtered_acc = result_->measurement_avd_.acceleration.data(),
+        &filtered_vel = result_->measurement_avd_.velocity.data(),
+        &filtered_disp = result_->measurement_avd_.displacement.data();
     // 2.1 加速度滤波
-    auto filtered_acceleration =
-        filter_function->Filtering(input_acceleration_.get_data());
+    filtered_acc = filter_function->Filtering(input_acceleration_.get_data());
     //  2.2 加速度积分到速度
-    auto velocity = numerical_algorithm::Cumtrapz(filtered_acceleration, dt);
+    auto velocity = numerical_algorithm::Cumtrapz(filtered_acc, dt);
     // 2.3 速度滤波
-    auto interp_velocity = filter_function->Filtering(velocity);
+    filtered_vel = filter_function->Filtering(velocity);
     // 2.4 速度积分到位移
-    auto displacement = numerical_algorithm::Cumtrapz(interp_velocity, dt);
+    auto displacement = numerical_algorithm::Cumtrapz(filtered_vel, dt);
     // 2.5 位移滤波
-    auto filtered_displacement = filter_function->Filtering(displacement);
+    filtered_disp = filter_function->Filtering(displacement);
     // 2.6 位移插值
-    result_.displacement_.set_frequency(input_acceleration_.get_frequency());
-    result_.displacement_.data() =
-        interp_function.Interpolation(building_.get_measuren_height(),
-                                      filtered_displacement,
-                                      building_.get_floor_height());
+    result_->avd_.displacement.data() =
+        interp_function.Interpolation(building_ptr_->get_measuren_height(),
+                                      filtered_disp,
+                                      building_ptr_->get_floor_height());
     // 2.7 计算层间位移
     auto interstory_displacement =
-        result_.displacement_.interstory_displacement();
-    auto interstory_height = building_.get_inter_height();
+        result_->get_displacement().interstory_displacement();
+    auto interstory_height = building_ptr_->get_inter_height();
+
     // 2.8 计算层间位移角
     for (std::size_t i = 0; i < interstory_displacement.data().size(); ++i)
     {
-        result_.inter_story_drift_.data().push_back(
+        result_->inter_story_drift_.data().push_back(
             numerical_algorithm::VectorOperation(
                 interstory_displacement.data()[i], interstory_height[i], '/'));
     }
+    result_->avd_.frequency = input_acceleration_.get_frequency();
+
+    // 传递部分信息用于计算非测点的数据
+    result_->interp_type_ = method_.interp_type_;
+    result_->building_ = building_ptr_;
 
     // 3.计算完成
     is_calculated_ = true;

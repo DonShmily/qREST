@@ -20,8 +20,8 @@
 
 // TODO:建筑信息类Building的设置方式
 
-#ifndef DATA_STRUCTURE_BUILDING_H_
-#define DATA_STRUCTURE_BUILDING_H_
+#ifndef DATA_STRUCTURE_BUILDING_H
+#define DATA_STRUCTURE_BUILDING_H
 
 // stdc++ headers
 #include <cstddef>
@@ -79,4 +79,4 @@ private:
 
 } // namespace data_structure
 
-#endif // DATA_STRUCTURE_BUILDING_H_
+#endif // DATA_STRUCTURE_BUILDING_H

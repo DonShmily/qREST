@@ -224,6 +224,7 @@
   </ItemGroup>
   <ItemGroup>
     <QtUic Include="..\..\src\qrest_ui\about_dialog.ui" />
+    <QtUic Include="..\..\src\qrest_ui\MainWindow.ui" />
     <QtUic Include="..\..\src\qrest_ui\main_window.ui" />
   </ItemGroup>
   <ItemGroup>

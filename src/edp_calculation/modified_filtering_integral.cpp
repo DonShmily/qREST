@@ -34,9 +34,7 @@
 
 // project headers
 #include <data_structure/displacement.h>
-#include "numerical_algorithm/basic_filtering.h"
 #include "numerical_algorithm/butterworth_filter_design.h"
-#include "numerical_algorithm/filter.h"
 #include "numerical_algorithm/filtfilt.h"
 #include "numerical_algorithm/integral.h"
 #include "numerical_algorithm/interp.h"
@@ -72,55 +70,71 @@ void ModifiedFilteringIntegral::LoadConfig(const std::string &config_file)
 void ModifiedFilteringIntegral::CalculateEdp()
 {
     // 1.确定计算参数
-    // 1.1确定滤波生成器
-    auto filter_generator = numerical_algorithm::ButterworthFilterDesign(
-        method_.filter_order_, 0, 0, method_.filter_type_);
-
-    // 1.2确定滤波函数
-    std::shared_ptr<numerical_algorithm::BasicFiltering> filter_function =
-        nullptr;
-    switch (method_.filter_function_)
-    {
-        case numerical_algorithm::FilterFunction::filtfilt:
-            filter_function = std::make_shared<numerical_algorithm::FiltFilt>(
-                filter_generator);
-            break;
-        case numerical_algorithm::FilterFunction::filter:
-            filter_function =
-                std::make_shared<numerical_algorithm::Filter>(filter_generator);
-            break;
-        default:
-            filter_function = std::make_shared<numerical_algorithm::FiltFilt>(
-                filter_generator);
-            break;
-    }
+    // 以下内容是为了从多种滤波函数中选取一种进行计算的，原算法只是使用了FiltFilt滤波
+    // 是否需要增加额外内容待定，如果加，可在CalculateSingle()中增加一个滤波基类参数
+    // // 1.1确定滤波生成器
+    // auto filter_generator = numerical_algorithm::ButterworthFilterDesign(
+    //     method_.filter_order_, 0, 0, method_.filter_type_);
+    // auto filter_coeff = filter_generator.get_filter_coefficients();
+    // // 1.2确定滤波函数
+    // std::shared_ptr<numerical_algorithm::BasicFiltering> filter_function =
+    //     nullptr;
+    // switch (method_.filter_function_)
+    // {
+    //     case numerical_algorithm::FilterFunction::filtfilt:
+    //         filter_function =
+    //         std::make_shared<numerical_algorithm::FiltFilt>(
+    //             filter_coeff.first, filter_coeff.second);
+    //         break;
+    //     case numerical_algorithm::FilterFunction::filter:
+    //         filter_function = std::make_shared<numerical_algorithm::Filter>(
+    //             filter_coeff.first, filter_coeff.second);
+    //         break;
+    //     default:
+    //         filter_function =
+    //         std::make_shared<numerical_algorithm::FiltFilt>(
+    //             filter_coeff.first, filter_coeff.second);
+    //         break;
+    // }
 
     // 1.3确定插值方法
     numerical_algorithm::Interp interp_function(method_.interp_type_);
 
     // 2.滤波积分插值计算层间位移角
     // 2.1 逐列滤波积分得到测点位移
-    std::vector<std::vector<double>> filtered_displacement(
-        input_acceleration_.get_data().size());
+    // 初始化内存分配
+    const std::size_t sz = input_acceleration_.get_data().size();
+    std::vector<std::vector<double>>
+        &filtered_disp = result_->measurement_avd_.displacement.data(),
+        &filtered_vel = result_->measurement_avd_.velocity.data(),
+        &filtered_acc = result_->measurement_avd_.acceleration.data();
+    filtered_disp.resize(sz);
+    filtered_vel.resize(sz);
+    filtered_acc.resize(sz);
+    // 传递部分信息用于计算非测点的数据
+    result_->interp_type_ = method_.interp_type_;
+    result_->building_ = building_ptr_;
+    result_->measurement_avd_.frequency = input_acceleration_.get_frequency();
+    // 依次计算各测点的数据
     for (std::size_t i = 0; i < input_acceleration_.get_data().size(); ++i)
     {
-        filtered_displacement[i] = CalculateSingle(i);
+        CalculateSingle(i);
     }
 
     // 2.2 位移插值
-    result_.displacement_.set_frequency(input_acceleration_.get_frequency());
-    result_.displacement_.data() =
-        interp_function.Interpolation(building_.get_measuren_height(),
-                                      filtered_displacement,
-                                      building_.get_floor_height());
+    result_->avd_.frequency = input_acceleration_.get_frequency();
+    result_->avd_.displacement.data() =
+        interp_function.Interpolation(building_ptr_->get_measuren_height(),
+                                      filtered_disp,
+                                      building_ptr_->get_floor_height());
     // 2.3 计算层间位移
     auto interstory_displacement =
-        result_.displacement_.interstory_displacement();
-    auto interstory_height = building_.get_inter_height();
+        result_->get_displacement().interstory_displacement();
+    auto interstory_height = building_ptr_->get_inter_height();
     // 2.4 计算层间位移角
     for (std::size_t i = 0; i < interstory_displacement.data().size(); ++i)
     {
-        result_.inter_story_drift_.data().push_back(
+        result_->inter_story_drift_.data().push_back(
             numerical_algorithm::VectorOperation(
                 interstory_displacement.data()[i], interstory_height[i], '/'));
     }
@@ -130,8 +144,7 @@ void ModifiedFilteringIntegral::CalculateEdp()
 }
 
 // 滤波积分插值法计算单列加速度
-std::vector<double>
-ModifiedFilteringIntegral::CalculateSingle(const std::size_t &col)
+void ModifiedFilteringIntegral::CalculateSingle(const std::size_t &col)
 {
     // 1.初步到速度和位移
     double dt = input_acceleration_.get_time_step();
@@ -147,7 +160,8 @@ ModifiedFilteringIntegral::CalculateSingle(const std::size_t &col)
         integral_displacement(max_k), filtered_acceleration(max_k),
         filtered_velocity(max_k), filtered_displacement(max_k);
     // 2.2设置滤波积分方法
-    auto filter_generator = numerical_algorithm::ButterworthFilterDesign(2);
+    auto filter_generator =
+        numerical_algorithm::ButterworthFilterDesign(method_.filter_order_);
     auto filter_function = numerical_algorithm::FiltFilt();
     double low, high = 20.0 / input_acceleration_.get_frequency() * 2;
     double low_scale = high / 20;
@@ -218,6 +232,10 @@ ModifiedFilteringIntegral::CalculateSingle(const std::size_t &col)
     {
         nth_fre = nth_fre_defalt;
     }
-    return filtered_displacement[nth_fre];
+    result_->measurement_avd_.displacement.data()[col] =
+        filtered_displacement[nth_fre];
+    result_->measurement_avd_.velocity.data()[col] = filtered_velocity[nth_fre];
+    result_->measurement_avd_.acceleration.data()[col] =
+        filtered_acceleration[nth_fre];
 }
 } // namespace edp_calculation

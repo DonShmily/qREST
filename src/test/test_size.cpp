@@ -23,7 +23,7 @@ void test_size()
     cout << "size of FilteringIntegralMethod: "
          << sizeof(edp_calculation::FilteringIntegralMethod) << endl;
     cout << "size of InterStoryDriftResult: "
-         << sizeof(edp_calculation::InterStoryDriftResult) << endl;
+         << sizeof(edp_calculation::EdpResult) << endl;
     cout << "size of FilteringIntegral: "
          << sizeof(edp_calculation::FilteringIntegral) << endl;
     cout << "size of ModifiedFilteringIntegral: "

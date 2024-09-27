@@ -18,8 +18,8 @@
 // Description:
 // 速度信息类，数据基类的派生，存储速度数据的基本信息。
 
-#ifndef DATA_STRUCTURE_VELOCITY_H_
-#define DATA_STRUCTURE_VELOCITY_H_
+#ifndef DATA_STRUCTURE_VELOCITY_H
+#define DATA_STRUCTURE_VELOCITY_H
 
 // stdc++ headers
 #include <iosfwd>
@@ -43,6 +43,15 @@ public:
     Velocity(const std::vector<std::vector<double>> &matrix,
              const double &frequency)
         : BasicData(matrix), frequency_(frequency)
+    {}
+
+    // 从std::shared_ptr<std::vector<std::vector<double>>>构造，每个vector<double>代表一个测点的速度数据
+    // @param matrix_ptr 速度数据矩阵指针
+    // @param frequency 采样频率
+    Velocity(
+        const std::shared_ptr<std::vector<std::vector<double>>> &matrix_ptr,
+        const double &frequency)
+        : BasicData(matrix_ptr), frequency_(frequency)
     {}
 
     // 从输入流构造，col_number为测点数量，row_number为每个测点的数据长度
@@ -94,4 +103,4 @@ private:
 };
 } // namespace data_structure
 
-#endif // DATA_STRUCTURE_VELOCITY_H_
+#endif // DATA_STRUCTURE_VELOCITY_H

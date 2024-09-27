@@ -22,6 +22,9 @@
 #ifndef SAFTY_TAGGING_BASIC_SAFTY_TAGGING_H
 #define SAFTY_TAGGING_BASIC_SAFTY_TAGGING_H
 
+// stdc++ headers
+#include <string>
+
 namespace safty_tagging
 {
 class BasicSaftyTagging
@@ -34,13 +37,19 @@ public:
     virtual ~BasicSaftyTagging() = default;
 
     // 计算安全评价
-    // 返回值：安全评价结果，数字越低越安全，0为safe
+    // @return: 安全评价结果，数字越低越安全，0为safe
     virtual int TagSafty() = 0;
 
     // 获取安全评价结果
+    // @return: 安全评价结果，数字越低越安全，0为safe
     virtual int get_tagging_result() = 0;
 
+    // 从配置文件中读取安全评价限值
+    // @param config_file 配置文件路径
+    virtual void LoadConfig(const std::string &config_file) = 0;
+
     // 是否已经完成安全评价
+    // @return: 是否已经完成安全评价
     bool is_calculated() { return is_tagged_; }
 
 protected:

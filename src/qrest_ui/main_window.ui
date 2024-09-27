@@ -790,8 +790,8 @@
    <widget class="QMenu" name="menuFile">
     <property name="geometry">
      <rect>
-      <x>236</x>
-      <y>141</y>
+      <x>269</x>
+      <y>160</y>
       <width>148</width>
       <height>149</height>
      </rect>

@@ -18,8 +18,8 @@
 // Description:
 // 数值算法：积分算法
 
-#ifndef NUMERICAL_ALGORITHM_INTEGRAL_H_
-#define NUMERICAL_ALGORITHM_INTEGRAL_H_
+#ifndef NUMERICAL_ALGORITHM_INTEGRAL_H
+#define NUMERICAL_ALGORITHM_INTEGRAL_H
 
 // stdc++ headers
 #include <vector>
@@ -62,4 +62,4 @@ Cumtrapz(const std::vector<std::vector<double>> &input, double dx)
 
 } // namespace numerical_algorithm
 
-#endif // NUMERERICAL_ALGORITHM_INTEGRAL_H_
+#endif // NUMERERICAL_ALGORITHM_INTEGRAL_H

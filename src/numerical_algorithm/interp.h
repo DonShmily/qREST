@@ -18,8 +18,8 @@
 // Description:
 // 数值算法：插值算法
 
-#ifndef NUMERICAL_ALGORITHM_INTERP_H_
-#define NUMERICAL_ALGORITHM_INTERP_H_
+#ifndef NUMERICAL_ALGORITHM_INTERP_H
+#define NUMERICAL_ALGORITHM_INTERP_H
 
 // stdc++ headers
 #include <vector>
@@ -113,4 +113,4 @@ private:
 
 } // namespace numerical_algorithm
 
-#endif // NUMERICAL_ALGORITHM_INTERP_H_
+#endif // NUMERICAL_ALGORITHM_INTERP_H

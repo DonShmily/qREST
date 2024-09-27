@@ -29,6 +29,9 @@
     <QtUic Include="..\..\src\qrest_ui\main_window.ui">
       <Filter>Form Files</Filter>
     </QtUic>
+    <QtUic Include="..\..\src\qrest_ui\MainWindow.ui">
+      <Filter>Form Files</Filter>
+    </QtUic>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\src\qrest_ui\chart_data.cpp">

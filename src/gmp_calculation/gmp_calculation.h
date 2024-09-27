@@ -29,10 +29,10 @@
 // stdc++ headers
 #include <cmath>
 #include <complex>
+#include <cstdlib>
 #include <memory>
 #include <numeric>
 #include <vector>
-
 
 // third-party headers
 #include "fftw3.h"
@@ -42,10 +42,9 @@
 #endif
 
 // project headers
-#include <cstdlib>
+#include "numerical_algorithm/filter.h"
 #include "numerical_algorithm/integral.h"
 #include "numerical_algorithm/vector_calculation.h"
-
 
 namespace gmp_calculation
 {
@@ -66,6 +65,28 @@ struct GmpCalculationParameter
     double fourier_spectrum_df_ = 0;
     // Fourier谱横轴最大频率，0表示不限制
     double fourier_spectrum_max_frequency_ = 10;
+
+    // 是否滤波
+    bool filter_ = true;
+    // 滤波器阶数
+    int filter_order_{4};
+    // 滤波器截止频率
+    double low_frequency_{0.1}, high_frequency_{20};
+    // 滤波器类型：
+    // lowpass：低通滤波；
+    // highpass：高通滤波；
+    // *bandpass：带通滤波；
+    numerical_algorithm::FilterType filter_type_ =
+        numerical_algorithm::FilterType::bandpass;
+    // 滤波函数：
+    // filter：单向滤波；
+    // *filtfilt：零相位双向滤波
+    numerical_algorithm::FilterFunction filter_function_ =
+        numerical_algorithm::FilterFunction::filter;
+    // 滤波器类型：
+    // *butter：巴特沃斯滤波器；
+    numerical_algorithm::FilterGenerator filter_generator_ =
+        numerical_algorithm::FilterGenerator::butter;
 }; // struct GmpCalculationParameter
 
 // 地震反应谱计算结果
@@ -74,7 +95,7 @@ struct ResponseSpectrumResult
     std::vector<double> Sa{};
     std::vector<double> Sv{};
     std::vector<double> Sd{};
-};
+}; // struct ResponseSpectrumResult
 
 // Ti周期下地震反应谱计算结果
 struct ResponseSpectrumTiResult
@@ -82,7 +103,7 @@ struct ResponseSpectrumTiResult
     double SaTi{};
     double SvTi{};
     double SdTi{};
-};
+}; // struct ResponseSpectrumTiResult
 
 // 地震参数计算类
 class GmpCalculation
@@ -95,18 +116,17 @@ public:
     // @param acceleration 加速度数据
     // @param frequency 频率
     // @param damping_ratio 阻尼比
-    inline explicit GmpCalculation(const std::vector<double> &acceleration,
-                                   double frequency,
-                                   double damping_ratio = 0.05);
+    GmpCalculation(const std::vector<double> &acceleration,
+                   double frequency,
+                   double damping_ratio = 0.05);
 
     // 从std::vector指针构造
     // @param acceleration_ptr 加速度数据指针
     // @param frequency 频率
     // @param damping_ratio 阻尼比
-    inline explicit GmpCalculation(
-        const std::shared_ptr<std::vector<double>> &acceleration_ptr,
-        double frequency,
-        double damping_ratio = 0.05);
+    GmpCalculation(const std::shared_ptr<std::vector<double>> &acceleration_ptr,
+                   double frequency,
+                   double damping_ratio = 0.05);
 
     // 从配置文件中读取参数构造
     // @param acceleration 加速度数据
@@ -117,12 +137,15 @@ public:
     ~GmpCalculation() = default;
 
 private:
-    // 加速度数据指针
-    std::shared_ptr<std::vector<double>> acceleration_ptr_ = nullptr;
     // GMP计算参数
     GmpCalculationParameter parameter_{};
-    // 速度和位移（根据传入的加速度计算）
-    std::vector<double> velocity_{}, displacement_{};
+    // 原始加速度信号
+    std::vector<double> ori_acceleration_{};
+    // 加速度、速度和位移（根据传入的加速度计算）
+    std::vector<double> acceleration_{}, velocity_{}, displacement_{};
+
+    // 滤波类
+    numerical_algorithm::Filter filter_function_{};
 
     /** 各种反应谱计算结果 **/
     // 反应谱计算结果
@@ -143,597 +166,165 @@ private:
 
     /** 功能函数 **/
 
+    // 初始化滤波器
+    void init_filter();
+
     // 计算速度
-    inline void calculate_velocity();
+    void calculate_velocity();
 
     // 计算位移
-    inline void calculate_displacement();
+    void calculate_displacement();
 
     // NewmakeBeta方法计算响应
     struct ResponseSpectrumTiResult NewmarkBeta(const double &Ti);
 
     // 计算Fourier变换
-    inline void fourier_transform();
+    void fourier_transform();
 
     // 清除已有计算结果
-    inline void clear_result();
+    void clear_result();
 
 public:
     /** 读取和设置参数 **/
 
     // 设置加速度数据
     // @param acceleration 加速度数据
-    inline void set_acceleration(const std::vector<double> &acceleration);
+    void set_acceleration(const std::vector<double> &acceleration);
 
     // 设置频率
     // @param frequency 频率
-    inline void set_frequency(double frequency);
+    void set_frequency(double frequency);
 
     // 设置阻尼比
     // @param damping_ratio 阻尼比
-    inline void set_damping_ratio(double damping_ratio);
+    void set_damping_ratio(double damping_ratio);
 
     // 从配置文件中读取参数
     // @param config_file 配置文件路径
     void LoadConfig(const std::string &config_file = "config/GMP_Config.json");
 
-    // 获取计算参数
-    const GmpCalculationParameter &get_parameter() const { return parameter_; }
+    // 获取计算参数，如果更新了参数，记得调用Update()更新
+    // @return 计算参数的引用
+    GmpCalculationParameter &get_parameter() { return parameter_; }
+
+    // 更改参数后更新相关参数
+    void Update();
 
     // 获取加速度数据
     // @return 加速度数据
-    inline std::vector<double> &get_acceleration();
+    std::vector<double> &get_acceleration();
 
     // 获取频率
     // @return 频率
-    inline double get_frequency() const;
+    double get_frequency() const;
 
     // 获取阻尼比
     // @return 阻尼比
-    inline double get_damping_ratio() const;
+    double get_damping_ratio() const;
 
     // 获取速度
     // @return 速度
-    inline std::vector<double> get_velocity();
+    std::vector<double> get_velocity();
 
     // 获取位移
     // @return 位移
-    inline std::vector<double> get_displacement();
+    std::vector<double> get_displacement();
 
     // 获取反应谱计算结果
     // @return 反应谱计算结果
-    inline ResponseSpectrumResult get_response_spectrum();
+    ResponseSpectrumResult get_response_spectrum();
 
     // 获取拟反应谱计算结果
     // @return 拟反应谱计算结果
-    inline ResponseSpectrumResult get_pseudo_response_spectrum();
+    ResponseSpectrumResult get_pseudo_response_spectrum();
 
     /** 峰值信息 */
 
     // 获取峰值加速度
     // @return 峰值加速度
-    inline double PeakAcceleration() const;
+    double PeakAcceleration() const;
 
     // 获取峰值速度
     // @return 峰值速度
-    inline double PeakVelocity();
+    double PeakVelocity();
 
     // 获取峰值位移
     // @return 峰值位移
-    inline double PeakDisplacement();
+    double PeakDisplacement();
 
     // 获取加速度均方根
     // @return 加速度均方根
-    inline double RmsAcceleration();
+    double RmsAcceleration();
 
     // 获取速度均方根
     // @return 速度均方根
-    inline double RmsVelocity();
+    double RmsVelocity();
 
     // 获取位移均方根
     // @return 位移均方根
-    inline double RmsDisplacement();
+    double RmsDisplacement();
 
     /** 持时信息 **/
 
     // 获取持时，定义为加速度绝对值大于峰值加速度5%的时间间隔
     // @return 持时
-    inline double Duration();
+    double Duration();
 
     /** 地震反应谱 **/
 
     // 获取Ti周期下反应谱谱值
-    inline ResponseSpectrumTiResult ResponseSpectrumTi(const double &Ti);
+    ResponseSpectrumTiResult ResponseSpectrumTi(const double &Ti);
 
     // 获取Ti周期下加速度反应谱谱值
-    inline double AccelerationSpectrumTi(const double &Ti);
+    double AccelerationSpectrumTi(const double &Ti);
 
     // 获取Ti周期下速度反应谱谱值
-    inline double VelocitySpectrumTi(const double &Ti);
+    double VelocitySpectrumTi(const double &Ti);
 
     // 获取Ti周期下位移反应谱谱值
-    inline double DisplacementSpectrumTi(const double &Ti);
+    double DisplacementSpectrumTi(const double &Ti);
 
     // 获取反应谱
-    inline ResponseSpectrumResult ResponseSpectrum();
+    ResponseSpectrumResult ResponseSpectrum();
 
     // 获取加速度反应谱
-    inline std::vector<double> AccelerationSpectrum();
+    std::vector<double> AccelerationSpectrum();
 
     // 获取速度反应谱
-    inline std::vector<double> VelocitySpectrum();
+    std::vector<double> VelocitySpectrum();
 
     // 获取位移反应谱
-    inline std::vector<double> DisplacementSpectrum();
+    std::vector<double> DisplacementSpectrum();
 
     // 获取Ti周期下拟反应谱谱值
-    inline ResponseSpectrumTiResult PseudoResponseSpectrumTi(const double &Ti);
+    ResponseSpectrumTiResult PseudoResponseSpectrumTi(const double &Ti);
 
     // 获取Ti周期下拟加速度反应谱谱值
-    inline double PseudoAccelerationSpectrumTi(const double &Ti);
+    double PseudoAccelerationSpectrumTi(const double &Ti);
 
     // 获取Ti周期下拟速度反应谱谱值
-    inline double PseudoVelocitySpectrumTi(const double &Ti);
+    double PseudoVelocitySpectrumTi(const double &Ti);
 
     // 获取拟反应谱
-    inline ResponseSpectrumResult PseudoResponseSpectrum();
+    ResponseSpectrumResult PseudoResponseSpectrum();
 
     // 获取拟加速度反应谱
-    inline std::vector<double> PseudoAccelerationSpectrum();
+    std::vector<double> PseudoAccelerationSpectrum();
 
     // 获取拟速度反应谱
-    inline std::vector<double> PseudoVelocitySpectrum();
+    std::vector<double> PseudoVelocitySpectrum();
 
     /** 频域信息 **/
 
     // 获取Fourier幅值谱
-    inline std::vector<double> FourierAmplitudeSpectrum();
+    std::vector<double> FourierAmplitudeSpectrum();
 
     // 获取Fourier相位谱
-    inline std::vector<double> FourierPhaseSpectrum();
+    std::vector<double> FourierPhaseSpectrum();
 
     // 获取功率谱
-    inline std::vector<double> PowerSpectrum();
+    std::vector<double> PowerSpectrum();
 };
-
-/** 读取和设置参数 **/
-
-// 设置加速度数据
-inline void
-GmpCalculation::set_acceleration(const std::vector<double> &acceleration)
-{
-    acceleration_ptr_ = std::make_shared<std::vector<double>>(acceleration);
-    clear_result();
-}
-
-// 设置频率
-inline void GmpCalculation::set_frequency(double frequency)
-{
-    parameter_.frequency_ = frequency;
-    parameter_.time_step_ = 1.0 / frequency;
-    clear_result();
-}
-
-// 设置阻尼比
-inline void GmpCalculation::set_damping_ratio(double damping_ratio)
-{
-    parameter_.damping_ratio_ = damping_ratio;
-    clear_result();
-}
-
-// 获取加速度数据
-inline std::vector<double> &GmpCalculation::get_acceleration()
-{
-    return *acceleration_ptr_;
-}
-
-// 获取频率
-inline double GmpCalculation::get_frequency() const
-{
-    return parameter_.frequency_;
-}
-
-// 获取阻尼比
-inline double GmpCalculation::get_damping_ratio() const
-{
-    return parameter_.damping_ratio_;
-}
-
-// 获取速度
-inline std::vector<double> GmpCalculation::get_velocity()
-{
-    if (velocity_.empty())
-    {
-        calculate_velocity();
-    }
-    return velocity_;
-}
-
-// 获取位移
-inline std::vector<double> GmpCalculation::get_displacement()
-{
-    if (displacement_.empty())
-    {
-        calculate_displacement();
-    }
-    return displacement_;
-}
-
-// 获取反应谱计算结果
-inline ResponseSpectrumResult GmpCalculation::get_response_spectrum()
-{
-    if (!response_spectrum_flag_)
-    {
-        ResponseSpectrum();
-    }
-    return response_spectrum_;
-}
-
-// 获取拟反应谱计算结果
-inline ResponseSpectrumResult GmpCalculation::get_pseudo_response_spectrum()
-{
-    if (!pesudo_response_spectrum_flag_)
-    {
-        PseudoResponseSpectrum();
-    }
-    return pesudo_response_spectrum_;
-}
-
-/** 峰值信息 */
-
-// 获取峰值加速度
-inline double GmpCalculation::PeakAcceleration() const
-{
-    return numerical_algorithm::FindMaxAbs(*acceleration_ptr_);
-}
-
-// 获取峰值速度
-inline double GmpCalculation::PeakVelocity()
-{
-    if (velocity_.empty())
-    {
-        calculate_velocity();
-    }
-    return numerical_algorithm::FindMaxAbs(velocity_);
-}
-
-// 获取峰值位移
-inline double GmpCalculation::PeakDisplacement()
-{
-    if (displacement_.empty())
-    {
-        calculate_displacement();
-    }
-    return numerical_algorithm::FindMaxAbs(displacement_);
-}
-
-// 获取加速度均方根
-inline double GmpCalculation::RmsAcceleration()
-{
-    double sum = std::accumulate(acceleration_ptr_->begin(),
-                                 acceleration_ptr_->end(),
-                                 0.0,
-                                 [](double a, double b) { return a + b * b; });
-    return std::sqrt(sum / acceleration_ptr_->size());
-}
-
-// 获取速度均方根
-inline double GmpCalculation::RmsVelocity()
-{
-    if (velocity_.empty())
-    {
-        calculate_velocity();
-    }
-    double sum = std::accumulate(velocity_.begin(),
-                                 velocity_.end(),
-                                 0.0,
-                                 [](double a, double b) { return a + b * b; });
-    return std::sqrt(sum / velocity_.size());
-}
-
-// 获取位移均方根
-inline double GmpCalculation::RmsDisplacement()
-{
-    if (displacement_.empty())
-    {
-        calculate_displacement();
-    }
-    double sum = std::accumulate(displacement_.begin(),
-                                 displacement_.end(),
-                                 0.0,
-                                 [](double a, double b) { return a + b * b; });
-    return std::sqrt(sum / displacement_.size());
-}
-
-/** 持时信息 **/
-
-// 获取持时
-inline double GmpCalculation::Duration()
-{
-    double peak_acceleration = PeakAcceleration();
-    auto it1 = std::find_if(acceleration_ptr_->begin(),
-                            acceleration_ptr_->end(),
-                            [peak_acceleration](double a) {
-                                return std::abs(a) > 0.05 * peak_acceleration;
-                            });
-    auto it2 = std::find_if(acceleration_ptr_->rbegin(),
-                            acceleration_ptr_->rend(),
-                            [peak_acceleration](double a) {
-                                return std::abs(a) > 0.05 * peak_acceleration;
-                            });
-    return std::distance(it1, it2.base()) * parameter_.time_step_;
-}
-
-/** 地震反应谱 **/
-
-// 获取Ti周期下反应谱谱值
-inline ResponseSpectrumTiResult
-GmpCalculation::ResponseSpectrumTi(const double &Ti)
-{
-    return NewmarkBeta(Ti);
-}
-
-// 获取Ti周期下加速度反应谱谱值
-inline double GmpCalculation::AccelerationSpectrumTi(const double &Ti)
-{
-    return NewmarkBeta(Ti).SaTi;
-}
-
-// 获取Ti周期下速度反应谱谱值
-inline double GmpCalculation::VelocitySpectrumTi(const double &Ti)
-{
-    return NewmarkBeta(Ti).SvTi;
-}
-
-// 获取Ti周期下位移反应谱谱值
-inline double GmpCalculation::DisplacementSpectrumTi(const double &Ti)
-{
-    return NewmarkBeta(Ti).SdTi;
-}
-
-// 获取反应谱
-inline ResponseSpectrumResult GmpCalculation::ResponseSpectrum()
-{
-    clear_result();
-    int period_length = parameter_.response_spectrum_max_period_
-                        / parameter_.response_spectrum_dt_;
-    for (int Ti = 1; Ti <= period_length; ++Ti)
-    {
-        NewmarkBeta(Ti * parameter_.response_spectrum_dt_);
-        response_spectrum_.Sa.push_back(response_spectrum_ti_.SaTi);
-        response_spectrum_.Sv.push_back(response_spectrum_ti_.SvTi);
-        response_spectrum_.Sd.push_back(response_spectrum_ti_.SdTi);
-    }
-    response_spectrum_flag_ = true;
-    return response_spectrum_;
-}
-
-// 获取加速度反应谱
-inline std::vector<double> GmpCalculation::AccelerationSpectrum()
-{
-    if (!response_spectrum_flag_)
-    {
-        ResponseSpectrum();
-    }
-    return response_spectrum_.Sa;
-}
-
-// 获取速度反应谱
-inline std::vector<double> GmpCalculation::VelocitySpectrum()
-{
-    if (!response_spectrum_flag_)
-    {
-        ResponseSpectrum();
-    }
-    return response_spectrum_.Sv;
-}
-
-// 获取位移反应谱
-inline std::vector<double> GmpCalculation::DisplacementSpectrum()
-{
-    if (!response_spectrum_flag_)
-    {
-        ResponseSpectrum();
-    }
-    return response_spectrum_.Sd;
-}
-
-// 获取Ti周期下拟反应谱谱值
-inline ResponseSpectrumTiResult
-GmpCalculation::PseudoResponseSpectrumTi(const double &Ti)
-{
-    ResponseSpectrumTi(Ti);
-
-    const double omega = 2 * M_PI / Ti;
-    pesudo_response_spectrum_ti_.SaTi =
-        response_spectrum_ti_.SaTi * omega * omega;
-    pesudo_response_spectrum_ti_.SvTi = response_spectrum_ti_.SvTi * omega;
-    pesudo_response_spectrum_ti_.SdTi = response_spectrum_ti_.SdTi;
-    return pesudo_response_spectrum_ti_;
-}
-
-// 获取Ti周期下拟加速度反应谱谱值
-inline double GmpCalculation::PseudoAccelerationSpectrumTi(const double &Ti)
-{
-    const double omega = 2 * M_PI / Ti;
-    return ResponseSpectrumTi(Ti).SaTi * omega * omega;
-}
-
-// 获取Ti周期下拟速度反应谱谱值
-inline double GmpCalculation::PseudoVelocitySpectrumTi(const double &Ti)
-{
-    const double omega = 2 * M_PI / Ti;
-    return ResponseSpectrumTi(Ti).SvTi * omega;
-}
-
-// 获取拟反应谱
-inline ResponseSpectrumResult GmpCalculation::PseudoResponseSpectrum()
-{
-    double period_length = parameter_.response_spectrum_max_period_
-                           / parameter_.response_spectrum_dt_;
-    double omega;
-    if (!response_spectrum_flag_)
-    {
-        ResponseSpectrum();
-    }
-    for (int Ti = 1; Ti <= period_length; ++Ti)
-    {
-        omega = 2 * M_PI / Ti * parameter_.response_spectrum_dt_;
-        pesudo_response_spectrum_.Sa.push_back(response_spectrum_.Sd[Ti - 1]
-                                               * omega * omega);
-        pesudo_response_spectrum_.Sv.push_back(response_spectrum_.Sd[Ti - 1]
-                                               * omega);
-        pesudo_response_spectrum_.Sd.push_back(response_spectrum_.Sd[Ti - 1]);
-    }
-    pesudo_response_spectrum_flag_ = true;
-    return pesudo_response_spectrum_;
-}
-
-// 获取拟加速度反应谱
-inline std::vector<double> GmpCalculation::PseudoAccelerationSpectrum()
-{
-    if (!pesudo_response_spectrum_flag_)
-    {
-        PseudoResponseSpectrum();
-    }
-    return pesudo_response_spectrum_.Sa;
-}
-
-// 获取拟速度反应谱
-inline std::vector<double> GmpCalculation::PseudoVelocitySpectrum()
-{
-    if (!pesudo_response_spectrum_flag_)
-    {
-        PseudoResponseSpectrum();
-    }
-    return pesudo_response_spectrum_.Sv;
-}
-
-/** 频域信息 **/
-
-// 获取Fourier幅值谱
-inline std::vector<double> GmpCalculation::FourierAmplitudeSpectrum()
-{
-    if (fourier_transform_result_.empty())
-    {
-        fourier_transform();
-    }
-    std::size_t max_index =
-        static_cast<std::size_t>(parameter_.fourier_spectrum_max_frequency_
-                                 / parameter_.fourier_spectrum_df_);
-    std::vector<double> amplitude_spectrum(max_index);
-    for (size_t i = 0; i != max_index; i++)
-    {
-        amplitude_spectrum[i] = std::abs(fourier_transform_result_[i]);
-    }
-    if (max_index == 0)
-        return amplitude_spectrum;
-    else
-    {
-        return std::vector<double>(amplitude_spectrum.begin(),
-                                   amplitude_spectrum.begin() + max_index);
-    }
-}
-
-// 获取Fourier相位谱
-inline std::vector<double> GmpCalculation::FourierPhaseSpectrum()
-{
-    if (fourier_transform_result_.empty())
-    {
-        fourier_transform();
-    }
-    std::size_t max_index =
-        static_cast<std::size_t>(parameter_.fourier_spectrum_max_frequency_
-                                 / parameter_.fourier_spectrum_df_);
-    std::vector<double> phase_spectrum(max_index);
-    for (size_t i = 0; i != max_index; i++)
-    {
-        phase_spectrum[i] = std::arg(fourier_transform_result_[i]);
-    }
-    if (max_index == 0)
-        return phase_spectrum;
-    else
-    {
-        return std::vector<double>(phase_spectrum.begin(),
-                                   phase_spectrum.begin() + max_index);
-    }
-}
-
-// 获取功率谱
-inline std::vector<double> GmpCalculation::PowerSpectrum()
-{
-    if (fourier_transform_result_.empty())
-    {
-        fourier_transform();
-    }
-    std::size_t max_index =
-        static_cast<std::size_t>(parameter_.fourier_spectrum_max_frequency_
-                                 / parameter_.fourier_spectrum_df_);
-    std::vector<double> power_spectrum(max_index);
-    for (size_t i = 0; i != max_index; i++)
-    {
-        power_spectrum[i] = std::norm(fourier_transform_result_[i]);
-    }
-    if (max_index == 0)
-        return power_spectrum;
-    else
-    {
-        return std::vector<double>(power_spectrum.begin(),
-                                   power_spectrum.begin() + max_index);
-    }
-}
-
-/** 功能函数 **/
-
-// 计算速度
-inline void GmpCalculation::calculate_velocity()
-{
-    velocity_ = numerical_algorithm::Cumtrapz(*acceleration_ptr_,
-                                              parameter_.time_step_);
-}
-
-// 计算位移
-inline void GmpCalculation::calculate_displacement()
-{
-    if (velocity_.empty())
-    {
-        calculate_velocity();
-    }
-    displacement_ =
-        numerical_algorithm::Cumtrapz(velocity_, parameter_.time_step_);
-}
-
-// 计算Fourier变换
-inline void GmpCalculation::fourier_transform()
-{
-    fourier_transform_result_.resize(acceleration_ptr_->size());
-    fftw_plan plan = fftw_plan_dft_r2c_1d(
-        acceleration_ptr_->size(),
-        acceleration_ptr_->data(),
-        reinterpret_cast<fftw_complex *>(fourier_transform_result_.data()),
-        FFTW_ESTIMATE);
-    fftw_execute(plan);
-    fftw_destroy_plan(plan);
-
-    parameter_.fourier_spectrum_df_ =
-        parameter_.frequency_ / fourier_transform_result_.size();
-}
-
-// 清除已有计算结果
-inline void GmpCalculation::clear_result()
-{
-    velocity_.clear();
-    displacement_.clear();
-    response_spectrum_.Sa.clear();
-    response_spectrum_.Sv.clear();
-    response_spectrum_.Sd.clear();
-    pesudo_response_spectrum_.Sa.clear();
-    pesudo_response_spectrum_.Sv.clear();
-    pesudo_response_spectrum_.Sd.clear();
-    response_spectrum_flag_ = false;
-    pesudo_response_spectrum_flag_ = false;
-    fourier_transform_result_.clear();
-}
 
 } // namespace gmp_calculation
 

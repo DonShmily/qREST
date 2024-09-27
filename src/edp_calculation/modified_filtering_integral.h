@@ -31,6 +31,7 @@
 // project headers
 #include "data_structure/acceleration.h"
 #include "data_structure/building.h"
+#include "data_structure/vibration.h"
 
 #include "basic_edp_calculation.h"
 #include "filtering_integral.h"
@@ -104,16 +105,20 @@ public:
 
     // 获取滤波积分插值法计算结果
     // @return 滤波积分插值法计算结果的引用
-    InterStoryDriftResult &get_filtering_interp_result() { return result_; }
+    EdpResult &get_result() { return *result_; }
+
+    // 获取滤波积分插值法计算结果的指针
+    // @return 滤波积分插值法计算结果的指针
+    std::shared_ptr<EdpResult> get_result_ptr() { return result_; }
 
 private:
     // 滤波积分插值法计算方法参数
     FilteringIntegralMethod method_{};
     // 计算结果
-    InterStoryDriftResult result_{};
+    std::shared_ptr<EdpResult> result_{};
 
     // 滤波积分插值法计算单列加速度
-    std::vector<double> CalculateSingle(const std::size_t &col);
+    void CalculateSingle(const std::size_t &col);
 };
 } // namespace edp_calculation
 

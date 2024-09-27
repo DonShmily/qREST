@@ -18,12 +18,12 @@
 // Description:
 // 数值算法：Butterworth滤波器设计类
 
-#ifndef NUMERICAL_ALGORITHM_BUTTERWORTH_FILTER_DESIGN_H_
-#define NUMERICAL_ALGORITHM_BUTTERWORTH_FILTER_DESIGN_H_
-
-#define _USE_MATH_DEFINES
+#ifndef NUMERICAL_ALGORITHM_BUTTERWORTH_FILTER_DESIGN_H
+#define NUMERICAL_ALGORITHM_BUTTERWORTH_FILTER_DESIGN_H
 
 // stdc++ headers
+#include <utility>
+#define _USE_MATH_DEFINES
 #include <cmath>
 #include <vector>
 
@@ -78,6 +78,15 @@ public:
         coefficients_b = coefficients_b_;
     }
 
+    // 获取滤波器参数
+    // @param coefficients_a 滤波器分母系数
+    // @param coefficients_b 滤波器分子系数
+    std::pair<std::vector<double>, std::vector<double>>
+    get_filter_coefficients() const
+    {
+        return {coefficients_a_, coefficients_b_};
+    }
+
     // 滤波器设计
     inline void DesignFilter() override
     {
@@ -99,4 +108,4 @@ private:
 };
 } // namespace numerical_algorithm
 
-#endif // NUMERICAL_ALGORITHM_BUTTERWORTH_FILTER_DESIGN_H_
+#endif // NUMERICAL_ALGORITHM_BUTTERWORTH_FILTER_DESIGN_H

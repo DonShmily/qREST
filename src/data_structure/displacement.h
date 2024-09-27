@@ -18,8 +18,8 @@
 // Description:
 // 位移信息类，数据基类的派生，存储位移数据的基本信息。
 
-#ifndef DATA_STRUCTURE_DISPLACEMENT_H_
-#define DATA_STRUCTURE_DISPLACEMENT_H_
+#ifndef DATA_STRUCTURE_DISPLACEMENT_H
+#define DATA_STRUCTURE_DISPLACEMENT_H
 
 // stdc++ headers
 #include <iosfwd>
@@ -104,4 +104,4 @@ private:
 
 } // namespace data_structure
 
-#endif // DATA_STRUCTURE_DISPLACEMENT_H_
+#endif // DATA_STRUCTURE_DISPLACEMENT_H

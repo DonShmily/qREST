@@ -20,8 +20,8 @@
 
 // TODO:滤波器设计类如何方便地传递给滤波器？
 
-#ifndef NUMERICAL_ALGORITHM_BASIC_FILTER_DESIGN_H_
-#define NUMERICAL_ALGORITHM_BASIC_FILTER_DESIGN_H_
+#ifndef NUMERICAL_ALGORITHM_BASIC_FILTER_DESIGN_H
+#define NUMERICAL_ALGORITHM_BASIC_FILTER_DESIGN_H
 
 namespace numerical_algorithm
 {
@@ -94,5 +94,4 @@ protected:
 };
 } // namespace numerical_algorithm
 
-
-#endif
+#endif // NUMERICAL_ALGORITHM_BASIC_FILTER_DESIGN_H
