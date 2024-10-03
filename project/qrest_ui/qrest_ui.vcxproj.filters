@@ -55,6 +55,9 @@
     <ClCompile Include="..\..\src\qrest_ui\qcustomplot.cpp">
       <Filter>QCustomPlot</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\src\qrest_ui\rectangle_widget.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\src\qrest_ui\chart_data.h">

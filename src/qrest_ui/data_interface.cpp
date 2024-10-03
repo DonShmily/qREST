@@ -70,14 +70,14 @@ void DataInterface::ReadFile(const std::string &file_path)
     }
 
     // 将数据转换为加速度数据
-    // acceleration_data_.resize(direction);
+    acc_.clear();
     for (size_t i = 0; i < config_.direction_; i++)
     {
         // 从指定列构造，这里每1/3列构造一个方向的数据
         std::vector<size_t> col_idx;
         for (size_t j = 0; j < config_.mea_number_; j++)
         {
-            col_idx.push_back(j + config_.direction_ * i);
+            col_idx.push_back(j + config_.mea_number_ * i);
         }
         acc_.emplace_back(ori_acc, col_idx, config_.frequency_, config_.scale_);
     }

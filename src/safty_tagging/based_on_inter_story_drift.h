@@ -59,7 +59,9 @@ public:
     explicit BasedOnInterStoryDrift(
         std::shared_ptr<edp_calculation::EdpResult> edp_result)
         : edp_result_(edp_result)
-    {}
+    {
+        LoadConfig();
+    }
 
     // 析构函数
     ~BasedOnInterStoryDrift() = default;
@@ -104,6 +106,13 @@ public:
     // 获取所有层的最最大层间位移角信息：出现的时间、楼层和大小
     // @return 最大层间位移角信息：楼层索引、时间、层间位移角值
     std::tuple<std::size_t, double, double> get_max_idr();
+
+    // 获取安全评价限值
+    // @return 安全评价限值
+    std::vector<double> get_safty_tagging_limit() const
+    {
+        return safty_tagging_limit_;
+    }
 
 private:
     // 工程需求参量计算结果，本类只是用层间位移角部分

@@ -21,18 +21,25 @@
 #include "main_window.h"
 
 // stdc++ headers
+#include <algorithm>
+#include <cmath>
 #include <memory>
 
 // Qt UI headers
 #include "ui_about_dialog.h"
 
 
+// 主窗口类的构造函数
 QRestMainWindow::QRestMainWindow(QWidget *parent)
     : QMainWindow(parent), ui_(new Ui::MainWindow())
 {
     ui_->setupUi(this);
+
+    // 初始化页面初始化状态
+    Initialize();
 }
 
+// 主窗口类的析构函数
 QRestMainWindow::~QRestMainWindow()
 {
     if (ui_ != nullptr)
@@ -41,6 +48,7 @@ QRestMainWindow::~QRestMainWindow()
     }
 }
 
+// open操作
 void QRestMainWindow::on_act_open_triggered()
 {
     // 打开文件对话框
@@ -52,14 +60,13 @@ void QRestMainWindow::on_act_open_triggered()
     }
     else
     {
-        data_interface_ =
-            std::make_shared<DataInterface>(file_name.toStdString());
+        // 添加加速度数据
+        data_interface_->ReadFile(file_name.toStdString());
+        chart_data_ = std::make_unique<ChartData>(data_interface_);
     }
-    chart_data_ = std::make_unique<ChartData>(data_interface_);
-    // 读取文件后根据数据初始化主页
-    InitHomePage();
 }
 
+// about操作
 void QRestMainWindow::on_act_about_triggered()
 {
     QDialog aboutDialog(this); // 创建 QDialog 对象
@@ -68,6 +75,7 @@ void QRestMainWindow::on_act_about_triggered()
     aboutDialog.exec();        // 以模态对话框的方式显示
 }
 
+// guide操作
 void QRestMainWindow::on_act_guide_triggered()
 {
     QString pdfPath = "C:/path/to/your/guide.pdf"; // 指定PDF文件的路径
@@ -75,69 +83,147 @@ void QRestMainWindow::on_act_guide_triggered()
     QDesktopServices::openUrl(pdfUrl); // 使用系统默认的PDF阅读器打开文件
 }
 
+// web操作
 void QRestMainWindow::on_act_web_triggered()
 {
     QUrl url("https://www.qu-zhe.net/qrest.htm"); // 指定要打开的网页URL
     QDesktopServices::openUrl(url);               // 打开指定的网页
 }
 
+// qt操作
 void QRestMainWindow::on_act_qt_triggered()
 {
     QString dlgTitle = "About Qt";
     QMessageBox::aboutQt(this, dlgTitle);
 }
 
+// stackWidget页面切换
 void QRestMainWindow::on_stackedWidget_currentChanged(int index)
 {
+    // 如果没有绘图数据，不执行计算
+    if (chart_data_ == nullptr)
+    {
+        return;
+    }
+    // 根据索引更新相应的页面
     switch (index)
     {
         case 0:
-            if (!page_initialized_->home_page)
-            {
-                InitHomePage();
-            }
+            UpdateHomePage();
             break;
         case 1:
-            if (!page_initialized_->gmp_page)
-            {
-                InitGmpPage();
-            }
+            UpdateGmpPage();
             break;
         case 2:
-            if (!page_initialized_->mea_page)
-            {
-                InitMeaPage();
-            }
+            UpdateMeaPage(cur_mea_point_);
             break;
         case 3:
-            if (!page_initialized_->shm_page)
-            {
-                InitShmPage();
-            }
+            UpdateShmPage();
             break;
         case 4:
-            if (!page_initialized_->edp_page)
-            {
-                InitEdpPage();
-            }
+            UpdateEdpPage(cur_floor_);
             break;
     }
 }
 
-void QRestMainWindow::on_widget_building_rectangleClicked(int index)
-{
-    //
-}
-
+// Mea的tab页面切换
 void QRestMainWindow::on_tabWidget_mea_currentChanged(int index)
 {
-    switch (index)
+    // 如果没有绘图数据，不执行计算
+    if (chart_data_ == nullptr)
     {
-        case 0:
-            InitMeaTabSingle();
-            break;
-        case 1:
-            InitMeaTabMultiple();
-            break;
+        return;
     }
+    UpdateMeaPage(cur_mea_point_);
+}
+
+// Mea页面1的模型点击事件
+void QRestMainWindow::on_widget_mea1_model_fillRectangleClicked(int index)
+{
+    if (chart_data_ == nullptr)
+    {
+        return;
+    }
+    // 点击非填充区域不执行操作
+    if (index == -1)
+    {
+        return;
+    }
+    index =
+        std::min(std::max(index, 0),
+                 static_cast<int>(data_interface_->config_.mea_number_ - 1));
+    UpdateMeaTabSingle(index);
+
+    qDebug() << "mea1测点：" << index;
+}
+
+// Edp页面的模型点击事件
+void QRestMainWindow::on_widget_edp_model_rectangleClicked(int index)
+{
+    if (chart_data_ == nullptr)
+    {
+        return;
+    }
+    index = std::min(
+        std::max(index, 0),
+        static_cast<int>(data_interface_->building_.get_floor_number() - 2));
+    UpdateEdpPage(index);
+
+    qDebug() << "edp楼层：" << index;
+}
+
+// Mea页面1的方向切换
+void QRestMainWindow::on_cbox_mea1_dir_currentIndexChanged(int index)
+{
+    if (chart_data_ == nullptr)
+    {
+        return;
+    }
+    chart_data_->set_direction(index);
+    page_status_->ResetDirection();
+    UpdateMeaTabSingle(cur_mea_point_);
+
+    qDebug() << "mea1方向：" << index;
+}
+
+// Mea页面2的方向切换
+void QRestMainWindow::on_cbox_mea2_dir_currentIndexChanged(int index)
+{
+    if (chart_data_ == nullptr)
+    {
+        return;
+    }
+    chart_data_->set_direction(index);
+    page_status_->ResetDirection();
+    UpdateMeaTabMultiple();
+
+    qDebug() << "mea2方向：" << index;
+}
+
+// Shm页面的方向切换
+void QRestMainWindow::on_cbox_shm_dir_currentIndexChanged(int index)
+{
+    if (chart_data_ == nullptr)
+    {
+        return;
+    }
+    chart_data_->set_direction(index);
+    page_status_->ResetDirection();
+    UpdateShmPage();
+
+    qDebug() << "shm方向：" << index;
+}
+
+// Edp页面的方向切换
+void QRestMainWindow::on_cbox_edp_dir_currentIndexChanged(int index)
+{
+    if (chart_data_ == nullptr)
+    {
+        return;
+    }
+    chart_data_->set_direction(index);
+    page_status_->ResetDirection();
+    UpdateEdpPage(cur_floor_);
+
+    qDebug() << "edp方向：" << index;
 }

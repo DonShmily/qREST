@@ -189,7 +189,7 @@
          <widget class="QCustomPlot" name="widget_home_time" native="true"/>
         </item>
         <item row="1" column="2">
-         <widget class="QCustomPlot" name="widget_home_reponse" native="true"/>
+         <widget class="QCustomPlot" name="widget_home_response" native="true"/>
         </item>
         <item row="1" column="3">
          <widget class="QCustomPlot" name="widget_home_shm" native="true"/>
@@ -204,6 +204,12 @@
       </widget>
       <widget class="QWidget" name="page2_gmp">
        <layout class="QGridLayout" name="gridLayout_3" rowstretch="1,1" columnstretch="1,2,4">
+        <property name="topMargin">
+         <number>0</number>
+        </property>
+        <property name="bottomMargin">
+         <number>0</number>
+        </property>
         <item row="0" column="0" rowspan="2">
          <widget class="RectangleWidget" name="widget_gmp_model" native="true"/>
         </item>
@@ -244,8 +250,11 @@
         <property name="topMargin">
          <number>0</number>
         </property>
+        <property name="bottomMargin">
+         <number>0</number>
+        </property>
         <item>
-         <widget class="QTabWidget" name="tabWidget">
+         <widget class="QTabWidget" name="tabWidget_mea">
           <property name="currentIndex">
            <number>0</number>
           </property>
@@ -254,11 +263,33 @@
             <string>Single</string>
            </attribute>
            <layout class="QGridLayout" name="gridLayout_4" columnstretch="1,4,2">
+            <property name="topMargin">
+             <number>0</number>
+            </property>
+            <property name="bottomMargin">
+             <number>0</number>
+            </property>
             <item row="0" column="0">
              <widget class="RectangleWidget" name="widget_mea1_model" native="true"/>
             </item>
             <item row="1" column="0">
-             <widget class="QComboBox" name="cbox_mea1_dir"/>
+             <widget class="QComboBox" name="cbox_mea1_dir">
+              <item>
+               <property name="text">
+                <string>X</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>Y</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>Z</string>
+               </property>
+              </item>
+             </widget>
             </item>
             <item row="0" column="1" rowspan="2">
              <widget class="QCustomPlot" name="widget_mea1_time" native="true"/>
@@ -273,6 +304,12 @@
             <string>Multiple</string>
            </attribute>
            <layout class="QGridLayout" name="gridLayout_5" columnstretch="1,4,2">
+            <property name="topMargin">
+             <number>0</number>
+            </property>
+            <property name="bottomMargin">
+             <number>0</number>
+            </property>
             <item row="0" column="0">
              <widget class="RectangleWidget" name="widget_mea2_model" native="true"/>
             </item>
@@ -283,7 +320,23 @@
              <widget class="QCustomPlot" name="widget_mea2_fourier" native="true"/>
             </item>
             <item row="1" column="0">
-             <widget class="QComboBox" name="cbox_mea2_dir"/>
+             <widget class="QComboBox" name="cbox_mea2_dir">
+              <item>
+               <property name="text">
+                <string>X</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>Y</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>Z</string>
+               </property>
+              </item>
+             </widget>
             </item>
            </layout>
           </widget>
@@ -293,6 +346,12 @@
       </widget>
       <widget class="QWidget" name="page4_shm">
        <layout class="QGridLayout" name="gridLayout_6" columnstretch="1,3,3">
+        <property name="topMargin">
+         <number>0</number>
+        </property>
+        <property name="bottomMargin">
+         <number>0</number>
+        </property>
         <item row="0" column="0" rowspan="2">
          <widget class="RectangleWidget" name="widget_shm_model" native="true"/>
         </item>
@@ -300,7 +359,18 @@
          <widget class="QCustomPlot" name="widget_shm_period" native="true"/>
         </item>
         <item row="2" column="0">
-         <widget class="QComboBox" name="cbox_shm_dir"/>
+         <widget class="QComboBox" name="cbox_shm_dir">
+          <item>
+           <property name="text">
+            <string>X</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>Y</string>
+           </property>
+          </item>
+         </widget>
         </item>
         <item row="0" column="1" rowspan="3">
          <widget class="QCustomPlot" name="widget_shm_mode" native="true"/>
@@ -312,17 +382,34 @@
       </widget>
       <widget class="QWidget" name="page5_edp">
        <layout class="QGridLayout" name="gridLayout" columnstretch="1,4,2">
-        <property name="spacing">
+        <property name="topMargin">
          <number>0</number>
         </property>
-        <item row="0" column="2">
-         <widget class="QCustomPlot" name="widget_edp_res" native="true"/>
-        </item>
-        <item row="0" column="1">
-         <widget class="QCustomPlot" name="widget_edp_time" native="true"/>
-        </item>
+        <property name="bottomMargin">
+         <number>0</number>
+        </property>
         <item row="0" column="0">
          <widget class="RectangleWidget" name="widget_edp_model" native="true"/>
+        </item>
+        <item row="0" column="1" rowspan="2">
+         <widget class="QCustomPlot" name="widget_edp_time" native="true"/>
+        </item>
+        <item row="0" column="2" rowspan="2">
+         <widget class="QCustomPlot" name="widget_edp_res" native="true"/>
+        </item>
+        <item row="1" column="0">
+         <widget class="QComboBox" name="cbox_edp_dir">
+          <item>
+           <property name="text">
+            <string>X</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>Y</string>
+           </property>
+          </item>
+         </widget>
         </item>
        </layout>
       </widget>

@@ -34,7 +34,7 @@
 struct DataInterfaceConfig
 {
     // 方向数量
-    size_t direction_ = 1;
+    size_t direction_ = 3;
     // 测点数量
     size_t mea_number_ = 9;
     // 时间点计数

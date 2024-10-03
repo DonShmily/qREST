@@ -40,6 +40,7 @@
 #include "edp_calculation/filtering_integral.h"
 #include "edp_calculation/modified_filtering_integral.h"
 #include "gmp_calculation/gmp_calculation.h"
+#include "parameters_identification/simple_parameters_identification.h"
 #include "safty_tagging/based_on_acceleration.h"
 #include "safty_tagging/based_on_inter_story_drift.h"
 
@@ -61,6 +62,7 @@ public:
     {
         set_direction(dir);
         gmp_.resize(data_interface_->config_.direction_);
+        spi_.resize(data_interface_->config_.direction_);
         fi_.resize(data_interface_->config_.direction_);
         mfi_.resize(data_interface_->config_.direction_);
         safty_idr_.resize(data_interface_->config_.direction_);
@@ -132,6 +134,18 @@ public:
     // @return 相位谱数据序列
     points_vector get_power(std::size_t idx);
 
+    // 获取参数识别的频率数据
+    // @return 频率数据序列
+    points_vector get_pi_frequency();
+
+    // 获取参数识别的周期数据
+    // @return 周期数据序列
+    points_vector get_pi_period();
+
+    // 获取参数识别的阻尼比数据
+    // @return 阻尼比数据序列
+    points_vector get_pi_damping_ratio();
+
     // 获取FilteringIntegral指定楼层层间位移角时程数据
     // @param idx 楼层索引
     // @return 层间位移角时程数据序列
@@ -157,9 +171,22 @@ public:
     // @return 楼层位移时程数据序列指针
     points_vector get_mfi_disp(std::size_t idx);
 
+    // 获取ModifiedFilteringIntegral指定楼层加速度时程数据
+    // @param idx 楼层索引
+    // @return 楼层加速度时程数据序列指针
+    points_vector get_mfi_acc(std::size_t idx);
+
     // 获取ModifiedFilteringIntegral层间位移角分布数据
     // @return 层间位移角分布数据序列指针
     points_vector get_mfi_all_idr();
+
+    // 获取层间位移角评估限值数据
+    // @return 评估限值数据序列
+    std::vector<points_vector> get_idr_safty_limit();
+
+    // 获取楼面峰值加速度评估限值数据
+    // @return 评估限值数据序列
+    std::vector<points_vector> get_acc_safty_limit();
 
     // 获取BasedOnInterStoryDrift最大楼面加速度数据
     // @return 最大楼面加速度数据序列
@@ -178,6 +205,8 @@ private:
     // 计算结果对象成员
     bool gmp_calculated_;                                // GMP是否已计算
     std::vector<gmp_calculation::GmpCalculation> gmp_{}; // GMP计算对象
+    std::vector<parameters_identification::SimpleParametersIdentification>
+        spi_{};                                            // 参数识别对象
     std::vector<edp_calculation::FilteringIntegral> fi_{}; // 滤波积分计算对象
     std::vector<edp_calculation::ModifiedFilteringIntegral>
         mfi_{}; // 改进滤波积分计算对象
@@ -188,6 +217,7 @@ private:
 
     // 计算结果的私有函数
     void CalculateGmp(std::size_t idx); // 计算指定测点的GMP
+    void CalculateSpi();                // 参数识别
     void CalculateEdpFi();              // 计算滤波积分
     void CalculateEdpMfi();             // 计算改进滤波积分
     void CalculateSafty();              // 计算安全评估

@@ -45,8 +45,8 @@ class MainWindow;
 };
 QT_END_NAMESPACE
 
-// 主窗口中所有页面是否已经初始化的结构体
-struct PageInitStatus
+// 主窗口中所有页面是否已经完成的结构体
+struct PageStatus
 {
     bool home_page = false;
     bool gmp_page = false;
@@ -55,6 +55,16 @@ struct PageInitStatus
     bool mea_tab_multiple = false;
     bool shm_page = false;
     bool edp_page = false;
+
+    // 更换方向后重置部分页面的状态
+    void ResetDirection()
+    {
+        mea_page = false;
+        mea_tab_single = false;
+        mea_tab_multiple = false;
+        shm_page = false;
+        edp_page = false;
+    }
 };
 
 // qREST主窗口
@@ -74,14 +84,14 @@ private:
     // 主窗口的UI
     Ui::MainWindow *ui_;
 
-    // 窗口是否已经被初始化
-    std::unique_ptr<PageInitStatus> page_initialized_ =
-        std::make_unique<PageInitStatus>();
+    // 窗口是否已经计算完成的结构体
+    std::unique_ptr<PageStatus> page_status_ = std::make_unique<PageStatus>();
 
     // 数据接口，储存原始数据
-    std::shared_ptr<DataInterface> data_interface_{};
+    std::shared_ptr<DataInterface> data_interface_ =
+        std::make_shared<DataInterface>();
     // 绘图数据对象
-    std::unique_ptr<ChartData> chart_data_{};
+    std::unique_ptr<ChartData> chart_data_ = nullptr;
 
     // 当前选择的方向：0-X方向，1-Y方向，2-Z方向
     int cur_direction_ = 0;
@@ -94,6 +104,9 @@ private:
 
     /** 主窗口的私有函数 */
 
+    // 页面初始化
+    void Initialize();
+
     // 初始化Home页面
     void InitHomePage();
     // 更新Home页面
@@ -105,7 +118,7 @@ private:
     // 初始化Mea页面
     void InitMeaPage();
     // 更新Mea页面
-    void UpdateMeaPage();
+    void UpdateMeaPage(std::size_t new_mea);
     // 初始化SHM页面
     void InitShmPage();
     // 更新SHM页面
@@ -113,13 +126,13 @@ private:
     // 初始化EDP页面
     void InitEdpPage();
     // 更新EDP页面
-    void UpdateEdpPage();
+    void UpdateEdpPage(std::size_t new_floor);
 
     // 初始化和更新各页面下的tab
     // 初始化Mea页面SingleTab
     void InitMeaTabSingle();
     // 更新Mea页面SingleTab
-    void UpdateMeaTabSingle();
+    void UpdateMeaTabSingle(std::size_t new_mea);
     // 初始化Mea页面MultipleTab
     void InitMeaTabMultiple();
     // 更新Mea页面MultipleTab
@@ -157,7 +170,14 @@ private slots:
     void on_tabWidget_mea_currentChanged(int index);
 
     // 点击Building模型的槽函数
-    void on_widget_building_rectangleClicked(int index);
+    void on_widget_mea1_model_fillRectangleClicked(int index);
+    void on_widget_edp_model_rectangleClicked(int index);
+
+    // 点击更换方向的comboBox的槽函数
+    void on_cbox_mea1_dir_currentIndexChanged(int index);
+    void on_cbox_mea2_dir_currentIndexChanged(int index);
+    void on_cbox_shm_dir_currentIndexChanged(int index);
+    void on_cbox_edp_dir_currentIndexChanged(int index);
 };
 
 #endif // MAIN_WINDOW_H
