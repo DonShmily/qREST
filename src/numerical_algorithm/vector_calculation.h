@@ -24,23 +24,28 @@
 // stdc++ headers
 #include <algorithm>
 #include <cmath>
+#include <complex>
 #include <cstdlib>
 #include <stdexcept>
 #include <vector>
 
+// third-party headers
+#include "fftw3.h"
 
 namespace numerical_algorithm
 {
 
 // 寻找向量中的极值点
 // @param vec 向量
+// @param threshold 阈值
 // @return 极值点的索引
-inline std::vector<std::size_t> FindPeaks(const std::vector<double> &vec)
+inline std::vector<std::size_t> FindPeaks(const std::vector<double> &vec,
+                                          double threshold = 0.0)
 {
     std::vector<std::size_t> peaks;
     for (std::size_t i = 1; i < vec.size() - 1; ++i)
     {
-        if (vec[i] > vec[i - 1] && vec[i] > vec[i + 1])
+        if (vec[i] > vec[i - 1] && vec[i] > vec[i + 1] && vec[i] > threshold)
         {
             peaks.push_back(i);
         }
@@ -258,6 +263,26 @@ inline std::vector<double> Convolution(const std::vector<double> &vector_x,
     }
     return result;
 }
+
+// 向量Fourierr变换
+// @param input_vector 输入向量
+// @return Fourier变换后的复数向量
+inline std::vector<std::complex<double>>
+FourierTransform(const std::vector<double> &input_vector)
+{
+    int n = input_vector.size();
+    std::vector<std::complex<double>> result(n, 0.0);
+    fftw_plan plan =
+        fftw_plan_dft_r2c_1d(n,
+                             const_cast<double *>(input_vector.data()),
+                             reinterpret_cast<fftw_complex *>(result.data()),
+                             FFTW_ESTIMATE);
+    fftw_execute(plan);
+    fftw_destroy_plan(plan);
+
+    return result;
+}
+
 
 } // namespace numerical_algorithm
 

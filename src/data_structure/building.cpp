@@ -51,6 +51,8 @@ void Building::LoadConfig(const std::string &config_file)
         config["Building"]["floor_height"].get<std::vector<double>>();
     measure_height_ =
         config["Building"]["measurement_height"].get<std::vector<double>>();
+    measure_index_ =
+        config["Building"]["measurement_index"].get<std::vector<int>>();
 
     calculate_inter_height();
 }

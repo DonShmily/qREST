@@ -65,6 +65,15 @@ public:
     // 获取建筑层间高度
     std::vector<double> &get_inter_height() { return inter_height_; }
 
+    // 获取有测点的楼层索引
+    std::vector<int> &get_measure_index() { return measure_index_; }
+
+    // 获取建筑测点数量
+    size_t get_measuren_number() { return measure_height_.size(); }
+
+    // 获取建筑楼层数量
+    size_t get_floor_number() { return floor_height_.size(); }
+
 private:
     // 建筑测点高度坐标
     std::vector<double> measure_height_{};
@@ -72,6 +81,8 @@ private:
     std::vector<double> floor_height_{};
     // 建筑层间高度
     std::vector<double> inter_height_{};
+    // 有测点的楼层索引
+    std::vector<int> measure_index_{};
 
     // 计算层间高度
     void calculate_inter_height();

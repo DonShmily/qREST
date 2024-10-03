@@ -4,7 +4,7 @@
 #include <QtGui/QMouseEvent>
 #include <QtGui/QPainter>
 #include <QtWidgets/QWidget>
-
+#include <vector>
 
 class RectangleWidget : public QWidget
 {
@@ -19,56 +19,61 @@ public:
     void setNumRectangles(int num)
     {
         numRectangles = num;
-        update(); // 重绘
+        // update(); // 重绘
+    }
+
+    // 设置需要填充的矩形及颜色
+    void setFillRectangles(const std::vector<int> &indices,
+                           QColor color = Qt::red)
+    {
+        fillIndices = indices;
+        fillColor = color;
+        // update();
+    }
+
+    // 设置需要修改下边界的矩形及颜色
+    void setBorders(const std::vector<int> &indices, QColor color = Qt::blue)
+    {
+        borderIndices = indices;
+        borderColor = color;
+        // update();
+    }
+
+    // 设置选中的矩形索引
+    void setSelectedRectangleIndex(int index, QColor color = Qt::green)
+    {
+        selectedRectangleIndex = index;
+        selectedColor = color;
+        update();
     }
 
 protected:
     // 绘制矩形
-    void paintEvent(QPaintEvent *) override
-    {
-        QPainter painter(this);
-
-        // 设置线宽为 5 像素
-        QPen pen;
-        pen.setWidth(2);         // 设置线宽
-        pen.setColor(Qt::black); // 设置线条颜色
-        painter.setPen(pen);
-
-        // 获取窗口的宽高
-        int widgetWidth = width();
-        int widgetHeight = height();
-
-        // 每个矩形的高度和宽度，左右预留1/4个宽度
-        rectHeight =
-            widgetHeight / (numRectangles == 0 ? 1 : numRectangles + 2);
-        rectWidth = widgetWidth * 2 / 3;
-
-        // 绘制每个矩形
-        for (int i = 0; i < numRectangles; ++i)
-        {
-            QRect rect(rectWidth / 4, i * rectHeight, rectWidth, rectHeight);
-            painter.drawRect(rect);
-        }
-    }
+    void paintEvent(QPaintEvent *) override;
 
     // 处理点击事件
-    void mousePressEvent(QMouseEvent *event) override
-    {
-        // 计算点击的矩形索引，由下往上从1开始
-        int index = numRectangles - (event->position().y() / rectHeight);
+    void mousePressEvent(QMouseEvent *event) override;
 
-        // 输出点击的矩形索引
-        emit rectangleClicked(index);
-    }
+    // 处理被填充区域点击时的事件
+    void fillRectanglePressEvent(QMouseEvent *event);
 
 signals:
     void rectangleClicked(int index);
+    void fillRectangleClicked(int index);
 
 private:
-    int numRectangles;
-    int rectHeight{};
-    int rectWidth{};
+    // 矩形数量
+    int numRectangles{};
+    // 每个矩形的尺寸
+    int rectHeight{}, rectWidth{};
+    // 整个图像区域的尺寸
+    int figureHeight{}, figureWidth{};
+    std::vector<int> fillIndices{}; // 记录需要填充颜色的矩形索引
+    std::vector<int> borderIndices{}; // 记录需要修改下边界颜色的矩形索引
+    int selectedRectangleIndex{-1};  // 选中的矩形索引
+    QColor fillColor{Qt::red};       // 填充颜色
+    QColor borderColor{Qt::blue};    // 下边界颜色
+    QColor selectedColor{Qt::green}; // 选中颜色
 };
-
 
 #endif // !RECTANGLE_WIDGET_H

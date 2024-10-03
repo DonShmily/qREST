@@ -27,6 +27,7 @@
 
 // project headers
 #include "gmp_calculation/gmp_calculation.h"
+#include "parameters_identification/simple_parameters_identification.h"
 #include "safty_tagging/based_on_inter_story_drift.h"
 
 
@@ -72,6 +73,19 @@ void ChartData::CalculateGmp(std::size_t idx)
     cur_idx_ = idx;
     gmp_[cur_dir_] = gmp_calculation::GmpCalculation(
         data_interface_->acc_[cur_dir_].col(cur_idx_));
+}
+
+// 参数识别
+void ChartData::CalculateSpi()
+{
+    // 计算对象赋值
+    if (spi_[cur_dir_].is_calculated())
+    {
+        return;
+    }
+    spi_[cur_dir_] = parameters_identification::SimpleParametersIdentification(
+        data_interface_->acc_[cur_dir_], data_interface_->building_);
+    spi_[cur_dir_].Identify();
 }
 
 // FilteringIntegral计算EDP
@@ -268,6 +282,39 @@ ChartData::points_vector ChartData::get_power(std::size_t idx)
     return {freq_, pow};
 }
 
+// 获取识别的频率数据
+ChartData::points_vector ChartData::get_pi_frequency()
+{
+    // 计算参数识别
+    CalculateSpi();
+
+    // 获取识别的频率数据
+    const auto &freq = spi_[cur_dir_].identify_parameters().get_frequency();
+    return {std::vector<double>(freq.size(), 0), freq};
+}
+
+// 获得识别的周期数据
+ChartData::points_vector ChartData::get_pi_period()
+{
+    // 计算参数识别
+    CalculateSpi();
+
+    // 获取识别的周期数据
+    const auto &period = spi_[cur_dir_].identify_parameters().get_period();
+    return {std::vector<double>(period.size(), 0), period};
+}
+
+// 获取识别的阻尼比数据
+ChartData::points_vector ChartData::get_pi_damping_ratio()
+{
+    // 计算参数识别
+    CalculateSpi();
+
+    // 获取识别的阻尼比数据
+    const auto &damp = spi_[cur_dir_].identify_parameters().get_damping_ratio();
+    return {std::vector<double>(damp.size(), 0), damp};
+}
+
 // 获取层间位移角数据
 ChartData::points_vector ChartData::get_fi_idr(std::size_t idx)
 {
@@ -356,6 +403,23 @@ ChartData::points_vector ChartData::get_mfi_disp(std::size_t idx)
     return {time_, disp.get_col(idx)};
 }
 
+// 获取ModifiedFilteringIntegral指定楼层加速度时程数据
+ChartData::points_vector ChartData::get_mfi_acc(std::size_t idx)
+{
+    // 计算改进滤波积分
+    CalculateEdpMfi();
+
+    // 生成时间横轴
+    if (time_.empty())
+    {
+        get_time();
+    }
+
+    // 获取ModifiedFilteringIntegral指定楼层加速度时程数据
+    const auto &acc = mfi_[cur_dir_].get_result().get_acceleration();
+    return {time_, acc.get_col(idx)};
+}
+
 // 获取ModifiedFilteringIntegral层间位移角分布数据
 ChartData::points_vector ChartData::get_mfi_all_idr()
 {
@@ -374,6 +438,33 @@ ChartData::points_vector ChartData::get_mfi_all_idr()
                    [](const double &val) { return std::abs(val); });
 
     return {abs_idr, data_interface_->building_.get_floor_height()};
+}
+
+// 获取层间位移角评估限值数据
+std::vector<ChartData::points_vector> ChartData::get_idr_safty_limit()
+{
+    // 计算安全评价
+    CalculateSafty();
+
+    // 获取评估限值数据
+    const auto &height = data_interface_->building_.get_floor_height();
+    std::vector<double> bottom_top{height.front(), height.back()};
+    std::vector<double> limit = safty_idr_[cur_dir_].get_safty_tagging_limit();
+
+    std::vector<ChartData::points_vector> limit_data;
+    for (std::size_t i = 0; i < limit.size(); ++i)
+    {
+        limit_data.push_back({std::vector<double>(2, limit[i]), bottom_top});
+    }
+    return limit_data;
+}
+
+// TODO:获取楼面峰值加速度评估限值数据
+std::vector<ChartData::points_vector> ChartData::get_acc_safty_limit()
+{
+    // 计算安全评价
+    // CalculateSafty();
+    return {};
 }
 
 // 获取最大楼面加速度数据

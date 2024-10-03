@@ -209,11 +209,11 @@
     <ProjectReference Include="..\gmp_caculation\gmp_caculation.vcxproj">
       <Project>{389d84b1-2c45-4edb-b816-42b9cc180870}</Project>
     </ProjectReference>
-    <ProjectReference Include="..\modal_parameters_identification\modal_parameters_identification.vcxproj">
-      <Project>{ca715db3-c65e-444c-88ab-5d37cf15ff2c}</Project>
-    </ProjectReference>
     <ProjectReference Include="..\numerical_algorithm\numerical_algorithm.vcxproj">
       <Project>{ab65f082-17af-4015-a3b4-baae8ba00c71}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\parameters_identification\parameters_identification.vcxproj">
+      <Project>{9556c7a6-3fde-48bc-b02f-e245f1cdd4f3}</Project>
     </ProjectReference>
     <ProjectReference Include="..\safty_tagging\safty_tagging.vcxproj">
       <Project>{e257c22e-15f9-4325-b7e0-165f5bf8ac2f}</Project>
@@ -234,6 +234,7 @@
     <ClCompile Include="..\..\src\qrest_ui\main_window_process.cpp" />
     <ClCompile Include="..\..\src\qrest_ui\main_window_qt.cpp" />
     <ClCompile Include="..\..\src\qrest_ui\qcustomplot.cpp" />
+    <ClCompile Include="..\..\src\qrest_ui\rectangle_widget.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\src\qrest_ui\chart_data.h" />
