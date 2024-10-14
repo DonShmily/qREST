@@ -64,6 +64,8 @@ void QRestMainWindow::on_act_open_triggered()
         data_interface_->ReadFile(file_name.toStdString());
         chart_data_ = std::make_unique<ChartData>(data_interface_);
     }
+    // 更新页面
+    UpdateHomePage();
 }
 
 // about操作

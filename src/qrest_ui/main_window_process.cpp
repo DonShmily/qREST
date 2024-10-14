@@ -267,8 +267,10 @@ void QRestMainWindow::UpdateHomePage()
             ui_->widget_home_shm->axisRects().at(0)->axis(QCPAxis::atLeft));
         data_period->setData(period_pnts_list->first, period_pnts_list->second);
         data_period->setLineStyle(QCPGraph::lsNone);
-        data_period->setScatterStyle(QCPScatterStyle(
-            QCPScatterStyle::ssCircle, QPen(colors[i]), QBrush(Qt::white), 10));
+        data_period->setScatterStyle(QCPScatterStyle(QCPScatterStyle::ssCircle,
+                                                     QPen(colors[i], 2),
+                                                     QBrush(Qt::blue),
+                                                     10));
 
         auto data_damping = ui_->widget_home_shm->addGraph(
             ui_->widget_home_shm->axisRects().at(1)->axis(QCPAxis::atBottom),
@@ -276,8 +278,10 @@ void QRestMainWindow::UpdateHomePage()
         data_damping->setData(damping_pnts_list->first,
                               damping_pnts_list->second);
         data_damping->setLineStyle(QCPGraph::lsNone);
-        data_damping->setScatterStyle(QCPScatterStyle(
-            QCPScatterStyle::ssCircle, QPen(colors[i]), QBrush(Qt::white), 10));
+        data_damping->setScatterStyle(QCPScatterStyle(QCPScatterStyle::ssCircle,
+                                                      QPen(colors[i], 2),
+                                                      QBrush(Qt::blue),
+                                                      10));
     }
     ui_->widget_home_edp->rescaleAxes();
     ui_->widget_home_shm->axisRects()
@@ -735,7 +739,7 @@ void QRestMainWindow::UpdateShmPage()
     data_period->setData(period_pnts_list->first, period_pnts_list->second);
     data_period->setLineStyle(QCPGraph::lsNone);
     data_period->setScatterStyle(QCPScatterStyle(
-        QCPScatterStyle::ssCircle, QPen(Qt::blue), QBrush(Qt::white), 10));
+        QCPScatterStyle::ssCircle, QPen(Qt::blue, 2), QBrush(Qt::red), 10));
     ui_->widget_shm_period->axisRects()
         .at(0)
         ->axis(QCPAxis::atLeft)
@@ -746,7 +750,7 @@ void QRestMainWindow::UpdateShmPage()
     data_damping->setData(damping_pnts_list->first, damping_pnts_list->second);
     data_damping->setLineStyle(QCPGraph::lsNone);
     data_damping->setScatterStyle(QCPScatterStyle(
-        QCPScatterStyle::ssCircle, QPen(Qt::blue), QBrush(Qt::white), 10));
+        QCPScatterStyle::ssCircle, QPen(Qt::blue, 2), QBrush(Qt::red), 10));
     ui_->widget_shm_damping->axisRects()
         .at(0)
         ->axis(QCPAxis::atLeft)
