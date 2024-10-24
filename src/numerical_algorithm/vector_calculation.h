@@ -212,7 +212,7 @@ inline std::vector<double> CrossCorrelation(const std::vector<double> &vector_x,
     for (int shift = -(n_b - 1); shift <= n_a - 1; ++shift)
     {
         result[shift + (n_b - 1)] =
-            CrossCorrelationAtShift(vector_x, vector_x, shift);
+            CrossCorrelationAtShift(vector_x, vector_y, shift);
     }
     return result;
 }

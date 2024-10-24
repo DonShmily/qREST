@@ -136,6 +136,8 @@ void QRestMainWindow::InitHomePage()
 // 更新Home页面
 void QRestMainWindow::UpdateHomePage()
 {
+    // for debug
+    // return;
     // 如果Home页面已经计算完成则跳过
     if (page_status_->home_page)
     {
@@ -293,6 +295,20 @@ void QRestMainWindow::UpdateHomePage()
         ->axis(QCPAxis::atLeft)
         ->setRange(0, 0.05);
 
+    auto safe_range = chart_data_->get_safty_result();
+    if (safe_range == 0)
+        ui_->btn_home_safe->setStyleSheet(
+            "background-color: green; color: white;");
+    else if (safe_range == 0)
+        ui_->btn_home_safe->setStyleSheet(
+            "background-color: yellow; color: white;");
+    else
+        ui_->btn_home_safe->setStyleSheet(
+            "background-color: red; color: white;");
+    QString msg = "地震发生于X时刻；\n地震烈度为：x级";
+    ui_->textBrowser_home->setText(msg);
+    ui_->textBrowser_home->setFont(QFont("Microsoft YaHei", 16));
+
     // 重置方向
     chart_data_->set_direction(cur_direction_);
 
@@ -357,10 +373,6 @@ void QRestMainWindow::InitGmpPage()
     ui_->widget_gmp_model->setFillRectangles(
         data_interface_->building_.get_measure_index());
     ui_->widget_gmp_model->update();
-
-    // 显示信息
-    QString msg = "";
-    ui_->textBrowser->append(msg);
 }
 
 // 更新Gmp页面
@@ -432,6 +444,22 @@ void QRestMainWindow::UpdateGmpPage()
     // 更新图表内容
     ui_->widget_gmp_time->replot();
     ui_->widget_gmp_response->replot();
+
+    // 显示信息
+    std::vector<double> pga;
+    pga.push_back(*std::max_element(acc_x_pnts_list->second.begin(),
+                                    acc_x_pnts_list->second.end()));
+    pga.push_back(*std::max_element(acc_y_pnts_list->second.begin(),
+                                    acc_y_pnts_list->second.end()));
+    pga.push_back(*std::max_element(acc_z_pnts_list->second.begin(),
+                                    acc_z_pnts_list->second.end()));
+    QString msg =
+        QString("X向PGA = %1 cm/s^2 \nY向PGA = %2 cm/s^2\nZ向PGA = %3 cm/s^2")
+            .arg(pga[0])
+            .arg(pga[1])
+            .arg(pga[2]);
+    ui_->textBrowser->setText(msg);
+    ui_->textBrowser->setFont(QFont("Microsoft YaHei", 16));
 
     // Gmp页面计算完成
     page_status_->gmp_page = true;
@@ -703,7 +731,7 @@ void QRestMainWindow::InitShmPage()
     mode2->setupFullAxesBox(true);
     mode2->axis(QCPAxis::atLeft)->setLabel("Mode 2");
     ui_->widget_shm_mode->plotLayout()->addElement(0, 0, mode1);
-    ui_->widget_shm_mode->plotLayout()->addElement(1, 0, mode2);
+    ui_->widget_shm_mode->plotLayout()->addElement(0, 1, mode2);
     ui_->widget_shm_mode->setInteractions(QCP::iRangeDrag | QCP::iRangeZoom
                                           | QCP::iSelectPlottables
                                           | QCP::iSelectAxes);
@@ -729,10 +757,12 @@ void QRestMainWindow::UpdateShmPage()
     auto period_pnts_list = ChartData::PointsVector2DoubleList(period_pnts);
     const auto &damping_pnts = chart_data_->get_pi_damping_ratio();
     auto damping_pnts_list = ChartData::PointsVector2DoubleList(damping_pnts);
+    const auto &mode_pnts = chart_data_->get_pi_mode();
 
     // 为图表添加数据
     ui_->widget_shm_period->clearGraphs();
     ui_->widget_shm_damping->clearGraphs();
+    ui_->widget_shm_mode->clearPlottables();
     auto data_period = ui_->widget_shm_period->addGraph(
         ui_->widget_shm_period->axisRects().at(0)->axis(QCPAxis::atBottom),
         ui_->widget_shm_period->axisRects().at(0)->axis(QCPAxis::atLeft));
@@ -755,10 +785,20 @@ void QRestMainWindow::UpdateShmPage()
         .at(0)
         ->axis(QCPAxis::atLeft)
         ->setRange(0, 0.05);
+    for (size_t i = 0; i != mode_pnts.size(); ++i)
+    {
+        auto data_mode = new QCPCurve(
+            ui_->widget_shm_mode->axisRects().at(i)->axis(QCPAxis::atBottom),
+            ui_->widget_shm_mode->axisRects().at(i)->axis(QCPAxis::atLeft));
+        auto mode_pnts_list = ChartData::PointsVector2DoubleList(mode_pnts[i]);
+        data_mode->setData(mode_pnts_list->first, mode_pnts_list->second);
+        data_mode->rescaleAxes();
+    }
 
     // 更新图表内容
     ui_->widget_shm_period->replot();
     ui_->widget_shm_damping->replot();
+    ui_->widget_shm_mode->replot();
 
     // 已完成SHM页面初始化
     page_status_->shm_page = true;

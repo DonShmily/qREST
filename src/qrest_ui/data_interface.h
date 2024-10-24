@@ -98,6 +98,10 @@ private:
 
     // 数据接口配置
     DataInterfaceConfig config_;
+
+    // 私有函数
+    // 修正加速度数据
+    void ModifyAcceleration();
 };
 
 #endif // DATA_INTERFACE_H

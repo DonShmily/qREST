@@ -36,8 +36,11 @@ int main()
     // 测试可视化模块
     // test_data_visualization();
 
-    test_edp_plot();
-    test_gmp_plot();
+    // test_edp_plot();
+    // test_gmp_plot();
 
+    test_modal_identification();
+
+    // test_cross_correlation();
     return 0;
 }

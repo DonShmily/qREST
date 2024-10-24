@@ -1,4 +1,4 @@
-/**
+﻿/**
 **            qREST - Quick Response Evaluation for Safety Tagging
 **     Institute of Engineering Mechanics, China Earthquake Administration
 **
@@ -28,6 +28,7 @@
 #include <vector>
 
 // third-party library
+#include "data_structure/acceleration.h"
 #include "nlohmann/json.hpp"
 
 // 读取文件的构造函数
@@ -81,6 +82,9 @@ void DataInterface::ReadFile(const std::string &file_path)
         }
         acc_.emplace_back(ori_acc, col_idx, config_.frequency_, config_.scale_);
     }
+
+    // 修正数据
+    // ModifyAcceleration();
 }
 
 // 读取串口
@@ -125,4 +129,41 @@ void DataInterface::LoadConfig(const std::string &config_file)
 void DataInterface::LoadBuilding(const std::string &building_file)
 {
     building_.LoadConfig(building_file);
+}
+
+// 修正加速度数据
+void DataInterface::ModifyAcceleration()
+{
+    // 阈值触发，按照最底层触发阈值判断地震动事件
+    // 任一方向的底部测点超过0.1gal则视为触发
+    size_t t = 0;
+    while (true)
+    {
+        bool trigger = false;
+        if (trigger || t == config_.time_count_)
+        {
+            break;
+        }
+        for (size_t i = 0; i < config_.direction_; i++)
+        {
+            if (acc_[i].data()[0][t] > 1e-3)
+            {
+                trigger = true;
+                break;
+            }
+        }
+        ++t;
+    }
+
+    // 修正数据
+    auto new_acc = std::vector<data_structure::Acceleration>(3);
+    for (size_t i = 0; i < config_.direction_; i++)
+    {
+        for (size_t j = 0; j < config_.mea_number_; j++)
+        {
+            new_acc[i].data()[j] = std::vector<double>(
+                acc_[i].data()[j].begin() + t, acc_[i].data()[j].end());
+        }
+    }
+    acc_ = new_acc;
 }

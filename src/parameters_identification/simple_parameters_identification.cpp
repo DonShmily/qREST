@@ -1,4 +1,4 @@
-/**
+﻿/**
 **            qREST - Quick Response Evaluation for Safety Tagging
 **     Institute of Engineering Mechanics, China Earthquake Administration
 **
@@ -45,24 +45,24 @@ void SimpleParametersIdentification::Identify()
         fft_result_abs[i] = std::abs(fft_result[i]);
     }
 
-    // 计算前两阶频率
-    std::size_t peak_index;
+    // 计算前两阶频率和阻尼比
     auto beg_iter = fft_result_abs.begin();
+    std::vector<std::size_t> peak_indexs(2, 0);
     // 寻找两个个峰值，具体做法为找最大、去除临近后再查找最大
     for (int i = 0; i < 2; ++i)
     {
         auto max_iter = std::max_element(beg_iter, fft_result_abs.end());
-        peak_index = std::distance(fft_result_abs.begin(), max_iter);
+        peak_indexs[i] = std::distance(fft_result_abs.begin(), max_iter);
         // 去除最大值附近1/100长度的区域
         beg_iter = max_iter + static_cast<int>(lenth / 100);
         // 计算索引相应的频率值
-        pi_result_.frequency.push_back(peak_index * freq / lenth);
+        pi_result_.frequency.push_back(peak_indexs[i] * freq / lenth);
 
         // 计算阻尼比
         // 计算半功率带宽
-        double half_power = fft_result_abs[peak_index] / std::sqrt(2);
+        double half_power = fft_result_abs[peak_indexs[i]] / std::sqrt(2);
         // 寻找左右两个半功率带宽的边界
-        std::size_t left = peak_index, right = peak_index;
+        std::size_t left = peak_indexs[i], right = peak_indexs[i];
         while (fft_result_abs[left] > half_power)
         {
             --left;
@@ -76,6 +76,44 @@ void SimpleParametersIdentification::Identify()
         // 计算阻尼比
         pi_result_.damping_ratio.push_back(half_power_bandwidth
                                            / pi_result_.frequency[i]);
+    }
+
+    // 计算前两阶模态向量
+    pi_result_.mode_shape.resize(2);
+    // 以底层信号为参考点，计算互相关谱的虚部
+    const std::vector<double> &bottom_acc = input_acceleration_.get_col(0);
+    for (std::size_t i = 0; i < input_acceleration_.get_col_number() - 1; ++i)
+    {
+        const auto &vec = input_acceleration_.get_col(i + 1);
+        auto cross_correlation =
+            numerical_algorithm::CrossCorrelation(bottom_acc, vec);
+        auto fft_cross_correlation =
+            numerical_algorithm::FourierTransform(cross_correlation);
+        // 计算虚部
+        std::vector<double> imag_part(fft_cross_correlation.size(), 0);
+        for (std::size_t j = 0; j < fft_cross_correlation.size(); ++j)
+        {
+            imag_part[j] = std::imag(fft_cross_correlation[j]);
+        }
+        for (int j = 0; j < 2; ++j)
+        {
+            pi_result_.mode_shape[j].push_back(imag_part[peak_indexs[j]]);
+        }
+    }
+
+    // 模态向量归一化
+    for (std::size_t i = 0; i < 2; ++i)
+    {
+        /*double norm = *std::max_element(pi_result_.mode_shape[i].begin(),
+                                        pi_result_.mode_shape[i].end(),
+                                        [](const double &a, const double &b) {
+                                            return std::abs(a) < std::abs(b);
+                                        });*/
+        double norm = pi_result_.mode_shape[i].front();
+        std::transform(pi_result_.mode_shape[i].begin(),
+                       pi_result_.mode_shape[i].end(),
+                       pi_result_.mode_shape[i].begin(),
+                       [norm](const double &val) { return val / norm; });
     }
 
     // 已完成参数识别

@@ -315,6 +315,25 @@ ChartData::points_vector ChartData::get_pi_damping_ratio()
     return {std::vector<double>(damp.size(), 0), damp};
 }
 
+// 获取识别的模态数据
+std::vector<ChartData::points_vector> ChartData::get_pi_mode()
+{
+    // 计算参数识别
+    CalculateSpi();
+
+    // 获取识别的模态数据
+    const auto &modal = spi_[cur_dir_].identify_parameters().get_mode_shape();
+    std::vector<ChartData::points_vector> modes;
+    const auto &mea_height = data_interface_->building_.get_measuren_height();
+    for (std::size_t i = 0; i < modal.size(); ++i)
+    {
+        modes.push_back(
+            {modal[i],
+             std::vector<double>(mea_height.begin() + 1, mea_height.end())});
+    }
+    return modes;
+}
+
 // 获取层间位移角数据
 ChartData::points_vector ChartData::get_fi_idr(std::size_t idx)
 {
@@ -437,7 +456,24 @@ ChartData::points_vector ChartData::get_mfi_all_idr()
                    abs_idr.begin(),
                    [](const double &val) { return std::abs(val); });
 
-    return {abs_idr, data_interface_->building_.get_floor_height()};
+    // 以现有值生成阶梯图数据
+    std::vector<double> new_abs_idr;
+    std::vector<double> floor;
+    for (std::size_t i = 0; i != 2 * abs_idr.size(); ++i)
+    {
+        new_abs_idr.push_back(abs_idr[i / 2]);
+        if (i)
+        {
+            floor.push_back(
+                data_interface_->building_.get_floor_height()[(i + 1) / 2]);
+        }
+        else
+        {
+            floor.push_back(data_interface_->building_.get_floor_height()[0]);
+        }
+    }
+
+    return {new_abs_idr, floor};
 }
 
 // 获取层间位移角评估限值数据
@@ -467,7 +503,7 @@ std::vector<ChartData::points_vector> ChartData::get_acc_safty_limit()
     return {};
 }
 
-// 获取最大楼面加速度数据
+// 获取最大楼面加速度分布数据
 ChartData::points_vector ChartData::get_max_acc()
 {
     // 计算安全评价
@@ -484,7 +520,35 @@ ChartData::points_vector ChartData::get_max_acc()
                    abs_acc.begin(),
                    [](const double &val) { return std::abs(val); });
 
-    return {abs_acc, data_interface_->building_.get_floor_height()};
+    // 以现有值生成阶梯图数据
+    std::vector<double> new_abs_acc;
+    std::vector<double> floor;
+    for (std::size_t i = 0; i != 2 * abs_acc.size(); ++i)
+    {
+        new_abs_acc.push_back(abs_acc[i / 2]);
+        if (i)
+        {
+            floor.push_back(
+                data_interface_->building_.get_floor_height()[(i + 1) / 2]);
+        }
+        else
+        {
+            floor.push_back(data_interface_->building_.get_floor_height()[0]);
+        }
+    }
+    new_abs_acc.pop_back();
+    floor.pop_back();
+
+    return {new_abs_acc, floor};
+}
+
+// 获取安全评价结果
+int ChartData::get_safty_result()
+{
+    // 计算安全评价
+    CalculateSafty();
+
+    return safty_idr_[cur_dir_].get_tagging_result();
 }
 
 // 生成横轴时间的函数

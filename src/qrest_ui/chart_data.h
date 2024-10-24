@@ -146,6 +146,10 @@ public:
     // @return 阻尼比数据序列
     points_vector get_pi_damping_ratio();
 
+    // 获取参数识别的模态数据
+    // @return 模态数据序列
+    std::vector<points_vector> get_pi_mode();
+
     // 获取FilteringIntegral指定楼层层间位移角时程数据
     // @param idx 楼层索引
     // @return 层间位移角时程数据序列
@@ -191,6 +195,10 @@ public:
     // 获取BasedOnInterStoryDrift最大楼面加速度数据
     // @return 最大楼面加速度数据序列
     points_vector get_max_acc();
+
+    // 获取安全评价结果
+    // @return 安全评价等级
+    int get_safty_result();
 
 private:
     /** 计算对象的数据成员 **/
