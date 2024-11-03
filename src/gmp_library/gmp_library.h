@@ -11,7 +11,7 @@
 ** File Created: Monday, 5th August 2024 17:40:31
 ** Author: Dong Feiyue (donfeiyue@outlook.com)
 ** -----
-** Last Modified: Monday, 12th August 2024 12:17:26
+** Last Modified: Friday, 1st November 2024 16:25:26
 ** Modified By: Dong Feiyue (donfeiyue@outlook.com)
 */
 
@@ -26,6 +26,24 @@ extern "C"
 {
 #endif
 
+    // 反应谱参数计算参数
+    typedef struct
+    {
+        // 反应谱横轴最大周期（s），默认5s
+        double max_period = 5;
+        // 反应谱横轴周期步长（s），默认0.02s
+        double period_step = 0.02;
+        // 阻尼比，默认0.05
+        double damping_ratio = 0.05;
+    } ResponseSpectrumConfig;
+
+    // FFT计算参数
+    typedef struct
+    {
+        // FFT窗口大小，0表示默认和原始信号长度相同
+        int fft_size = 0;
+    } FourierSpectrumConfig;
+
     // 反应谱计算结果
     typedef struct
     {
@@ -33,15 +51,28 @@ extern "C"
         double *Sa;
         double *Sv;
         double *Sd;
+        double *period;
 
-        // 以下两个参数是希望能从设置中读取，作为参数提供给计算反应谱的函数
-        // 不过目前还没有设置这个功能，故暂时在程序内使用了比较通用的值
-
-        // 计算结果长度
+        // 计算结果长度，Sa、Sv、Sd、period的长度
         int result_size;
-        // 反应谱横轴间隔
-        double dt;
+
+        // 计算参数
+        ResponseSpectrumConfig *config;
     } ResponseSpectrum;
+
+    // FFT计算结果
+    typedef struct
+    {
+        // FFT计算结果
+        double *fft_spectrum;
+        double *fft_frequency;
+
+        // FFT计算结果长度
+        int result_size;
+
+        // 计算参数
+        FourierSpectrumConfig *config;
+    } FourierSpectrum;
 
     // 计算反应谱
     // @param acceleration: 加速度数据
@@ -75,12 +106,34 @@ extern "C"
     // @param acceleration: 加速度数据
     // @param size: 加速度数据长度
     // @return double*: Fourier幅值谱
-    __declspec(dllexport) double *FourierSpectrum(const double *acceleration,
-                                                  int size);
+    __declspec(dllexport) FourierSpectrum *
+    GetFourierSpectrum(const double *acceleration, int size, double frequency);
 
-    // 释放double数组内存
-    // @param memory: double数组
-    __declspec(dllexport) void FreeArray(double *memory);
+    // 释放Fourier幅值谱内存
+    // @param memory: Fourier幅值谱
+    __declspec(dllexport) void FreeFourierSpectrum(double *memory);
+
+    // 获取反应谱计算参数
+    // @param config_file: 计算参数文件
+    // @return ResponseSpectrumConfig: 计算参数
+    __declspec(dllexport) ResponseSpectrumConfig *
+    GetResponseSpectrumConfig(const char *config_file);
+
+    // 释放计算参数内存
+    // @param memory: 计算参数
+    __declspec(dllexport) void
+    FreeResponseSpectrumConfig(ResponseSpectrumConfig *memory);
+
+    // 获取FFT计算参数
+    // @param config_file: 计算参数文件
+    // @return FourierSpectrumConfig: 计算参数
+    __declspec(dllexport) FourierSpectrumConfig *
+    GetFourierSpectrumConfig(const char *config_file);
+
+    // 释放FFT计算参数内存
+    // @param memory: 计算参数
+    __declspec(dllexport) void
+    FreeFourierSpectrumConfig(FourierSpectrumConfig *memory);
 
 #ifdef __cplusplus
 }

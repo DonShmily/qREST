@@ -35,6 +35,9 @@
     <QtUic Include="..\..\src\qrest_ui\MainWindow.ui">
       <Filter>Form Files</Filter>
     </QtUic>
+    <QtUic Include="..\..\src\qrest_ui\algorithm_dialog.ui">
+      <Filter>Form Files</Filter>
+    </QtUic>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\src\qrest_ui\chart_data.cpp">
@@ -71,6 +74,9 @@
     </ClInclude>
     <ClInclude Include="x64\Debug-Static\uic\ui_mainwindow.h">
       <Filter>Form Files</Filter>
+    </ClInclude>
+    <ClInclude Include="x64\Debug-Static\uic\ui_algorithm_dialog.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

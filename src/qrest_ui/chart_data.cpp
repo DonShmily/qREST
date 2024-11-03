@@ -499,8 +499,19 @@ std::vector<ChartData::points_vector> ChartData::get_idr_safty_limit()
 std::vector<ChartData::points_vector> ChartData::get_acc_safty_limit()
 {
     // 计算安全评价
-    // CalculateSafty();
-    return {};
+    CalculateSafty();
+
+    // 获取评估限值数据
+    const auto &height = data_interface_->building_.get_floor_height();
+    std::vector<double> bottom_top{height.front(), height.back()};
+    std::vector<double> limit = safty_acc_[cur_dir_].get_safty_tagging_limit();
+
+    std::vector<ChartData::points_vector> limit_data;
+    for (std::size_t i = 0; i < limit.size(); ++i)
+    {
+        limit_data.push_back({std::vector<double>(2, limit[i]), bottom_top});
+    }
+    return limit_data;
 }
 
 // 获取最大楼面加速度分布数据
@@ -523,7 +534,7 @@ ChartData::points_vector ChartData::get_max_acc()
     // 以现有值生成阶梯图数据
     std::vector<double> new_abs_acc;
     std::vector<double> floor;
-    for (std::size_t i = 0; i != 2 * abs_acc.size(); ++i)
+    for (std::size_t i = 0; i != 2 * abs_acc.size() - 1; ++i)
     {
         new_abs_acc.push_back(abs_acc[i / 2]);
         if (i)

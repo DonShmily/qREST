@@ -1,4 +1,4 @@
-/**
+﻿/**
 **            qREST - Quick Response Evaluation for Safety Tagging
 **     Institute of Engineering Mechanics, China Earthquake Administration
 **
@@ -79,6 +79,12 @@ public:
     // 获取所有层的最最大加速度信息：出现的时间、楼层和大小
     // @return 最大加速度信息：楼层索引、时间、层间位移角值
     std::tuple<std::size_t, double, double> get_max_acc();
+
+    // 获取安全评价限值
+    std::vector<double> get_safty_tagging_limit() const
+    {
+        return safty_tagging_limit_;
+    }
 
 private:
     // 工程需求参量计算结果，本类只是用加速度部分

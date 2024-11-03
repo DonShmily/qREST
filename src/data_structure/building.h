@@ -50,8 +50,7 @@ public:
     ~Building() = default;
 
     // 从配置文件读取建筑信息
-    void
-    LoadConfig(const std::string &config_file = "config/Building_Info.json");
+    void LoadConfig(const std::string &config_file = "config/Config.json");
 
     // 设置建筑信息
     void set_building_message() {}

@@ -23,10 +23,15 @@
 // stdc++ headers
 #include <algorithm>
 #include <cmath>
+#include <fstream>
 #include <memory>
 
 // Qt UI headers
 #include "ui_about_dialog.h"
+#include "ui_algorithm_dialog.h"
+
+// third-party headers
+#include "nlohmann/json.hpp"
 
 
 // 主窗口类的构造函数
@@ -68,8 +73,34 @@ void QRestMainWindow::on_act_open_triggered()
     // 在新的线程中计算
     // std::thread([this]() {
     // 更新页面
-    UpdateHomePage();
+    // UpdateHomePage();
     //}).detach();
+}
+
+// 计算操作
+void QRestMainWindow::on_act_calc_triggered()
+{
+    if (chart_data_ == nullptr)
+    {
+        return;
+    }
+    UpdateHomePage();
+}
+
+// algorithm操作
+void QRestMainWindow::on_act_algorithm_triggered()
+{
+    // 打开算法设置对话框
+    QDialog algorithmDialog(this);              // 创建 QDialog 对象
+    algorithm_ui_ = new Ui::algorithm_dialog(); // 创建 UI 对象
+    algorithm_ui_->setupUi(&algorithmDialog);   // 设置 UI 到 QDialog
+    algorithmDialog.exec(); // 以模态对话框的方式显示
+    InitAlgorithmDialog();
+    // 信号槽连接
+    connect(algorithm_ui_->saveButton,
+            &QPushButton::clicked,
+            this,
+            &QRestMainWindow::on_saveButton_clicked);
 }
 
 // about操作
@@ -232,4 +263,92 @@ void QRestMainWindow::on_cbox_edp_dir_currentIndexChanged(int index)
     UpdateEdpPage(cur_floor_);
 
     qDebug() << "edp方向：" << index;
+}
+
+// 初始化算法对话框
+void QRestMainWindow::InitAlgorithmDialog()
+{
+    // 读取配置文件用于显示
+    std::ifstream ifs("config/Config.json");
+    nlohmann::json config;
+    ifs >> config;
+    ifs.close();
+
+    // 设置算法对话框的内容
+    // 滤波器设置
+    algorithm_ui_->gbox_gmp_filter->setChecked(
+        config["GMPFilterConfig"]["filter_flag"]);
+    algorithm_ui_->sbox_gmp_filter_order->setValue(
+        config["GMPFilterConfig"]["filter_order"].get<double>());
+    algorithm_ui_->dsbox_gmp_filter_low_freq->setValue(
+        config["GMPFilterConfig"]["low_frequency"].get<double>());
+    algorithm_ui_->dsbox_gmp_filter_high_freq->setValue(
+        config["GMPFilterConfig"]["high_frequency"].get<double>());
+    algorithm_ui_->cbox_gmp_filter_type->setCurrentIndex(
+        config["GMPFilterConfig"]["filter_type"].get<int>() - 1);
+    algorithm_ui_->cbox_gmp_filter_func->setCurrentIndex(
+        config["GMPFilterConfig"]["filter_function"].get<int>() - 1);
+    algorithm_ui_->cbox_gmp_filter_gen->setCurrentIndex(
+        config["GMPFilterConfig"]["filter_generator"].get<int>() - 1);
+
+    // 反应谱设置
+    algorithm_ui_->dsbox_gmp_damp->setValue(
+        config["ResponseSpectrumConfig"]["damping_ratio"].get<double>());
+    algorithm_ui_->dsbox_gmp_period_step->setValue(
+        config["ResponseSpectrumConfig"]["period_step"].get<double>());
+    algorithm_ui_->dsbox_gmp_max_period->setValue(
+        config["ResponseSpectrumConfig"]["max_period"].get<double>());
+
+    // 傅里叶谱设置
+    algorithm_ui_->dsbox_gmp_fft_max_period->setValue(
+        config["FourierConfig"]["max_frequency"].get<double>());
+
+    // on_saveButton_clicked();
+    qDebug() << "Save Button is "
+             << (algorithm_ui_->saveButton ? "initialized" : "not initialized");
+}
+
+void QRestMainWindow::on_saveButton_clicked()
+{
+    std::ifstream ifs("config/Config.json");
+    nlohmann::json config;
+    ifs >> config;
+    ifs.close();
+    // 调试信息
+    qDebug() << "SaveConfig";
+    // 保存配置文件
+    // 滤波器设置
+    config["GMPFilterConfig"]["filter_flag"] =
+        algorithm_ui_->gbox_gmp_filter->isChecked();
+    config["GMPFilterConfig"]["filter_order"] =
+        algorithm_ui_->sbox_gmp_filter_order->value();
+    config["GMPFilterConfig"]["low_frequency"] =
+        algorithm_ui_->dsbox_gmp_filter_low_freq->value();
+    config["GMPFilterConfig"]["high_frequency"] =
+        algorithm_ui_->dsbox_gmp_filter_high_freq->value();
+    config["GMPFilterConfig"]["filter_type"] =
+        algorithm_ui_->cbox_gmp_filter_type->currentIndex() + 1;
+    config["GMPFilterConfig"]["filter_function"] =
+        algorithm_ui_->cbox_gmp_filter_func->currentIndex() + 1;
+    config["GMPFilterConfig"]["filter_generator"] =
+        algorithm_ui_->cbox_gmp_filter_gen->currentIndex() + 1;
+    qDebug() << config["GMPFilterConfig"]["filter_order"].get<int>();
+
+
+    // 反应谱设置
+    config["ResponseSpectrumConfig"]["damping_ratio"] =
+        algorithm_ui_->dsbox_gmp_damp->value();
+    config["ResponseSpectrumConfig"]["period_step"] =
+        algorithm_ui_->dsbox_gmp_period_step->value();
+    config["ResponseSpectrumConfig"]["max_period"] =
+        algorithm_ui_->dsbox_gmp_max_period->value();
+
+    // 傅里叶谱设置
+    config["FourierConfig"]["max_frequency"] =
+        algorithm_ui_->dsbox_gmp_fft_max_period->value();
+
+    // 写入配置文件
+    std::ofstream ofs("config/Config.json");
+    ofs << config.dump(4);
+    ofs.close();
 }

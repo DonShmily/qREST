@@ -28,7 +28,7 @@ extern "C"
 {
 #endif
 
-    //
+    // 层间位移角时程
     typedef struct
     {
         // 层间位移角：story_count*time_step_count

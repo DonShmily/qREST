@@ -182,13 +182,14 @@ void GmpCalculation::LoadConfig(const std::string &config_file)
         config["FourierConfig"]["max_frequency"];
 
     // 滤波相关参数
-    parameter_.filter_ = config["FilterConfig"]["filter_flag"];
-    parameter_.filter_order_ = config["FilterConfig"]["filter_order"];
-    parameter_.low_frequency_ = config["FilterConfig"]["low_frequency"];
-    parameter_.high_frequency_ = config["FilterConfig"]["high_frequency"];
-    parameter_.filter_type_ = config["FilterConfig"]["filter_type"];
-    parameter_.filter_function_ = config["FilterConfig"]["filter_function"];
-    parameter_.filter_generator_ = config["FilterConfig"]["filter_generator"];
+    parameter_.filter_ = config["GMPFilterConfig"]["filter_flag"];
+    parameter_.filter_order_ = config["GMPFilterConfig"]["filter_order"];
+    parameter_.low_frequency_ = config["GMPFilterConfig"]["low_frequency"];
+    parameter_.high_frequency_ = config["GMPFilterConfig"]["high_frequency"];
+    parameter_.filter_type_ = config["GMPFilterConfig"]["filter_type"];
+    parameter_.filter_function_ = config["GMPFilterConfig"]["filter_function"];
+    parameter_.filter_generator_ =
+        config["GMPFilterConfig"]["filter_generator"];
 }
 
 // 更新参数

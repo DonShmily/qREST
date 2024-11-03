@@ -47,7 +47,7 @@ void BasedOnAcceleration::LoadConfig(const std::string &config_file)
 
     // 读取层间位移角安全评价限值
     safty_tagging_limit_ =
-        config["SaftyTagging"]["idr_limits"].get<std::vector<double>>();
+        config["SaftyTagging"]["acc_limits"].get<std::vector<double>>();
     all_max_acc_.need_time_ = config["SaftyTagging"]["need_time"];
 }
 

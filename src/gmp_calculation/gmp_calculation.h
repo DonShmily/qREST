@@ -201,7 +201,7 @@ public:
 
     // 从配置文件中读取参数
     // @param config_file 配置文件路径
-    void LoadConfig(const std::string &config_file = "config/GMP_Config.json");
+    void LoadConfig(const std::string &config_file = "config/Config.json");
 
     // 获取计算参数，如果更新了参数，记得调用Update()更新
     // @return 计算参数的引用

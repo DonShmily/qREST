@@ -23,6 +23,7 @@
 
 // stdc++ headers
 #include <algorithm>
+#include <cstdlib>
 #include <vector>
 
 // projects headers
@@ -34,6 +35,7 @@ ResponseSpectrum *GetResponseSpectrum(const double *acceleration,
                                       double frequency,
                                       double damping_ratio)
 {
+    std::free();
     // 创建计算对象
     std::vector<double> acc(acceleration, acceleration + size);
     gmp_calculation::GmpCalculation gmp(acc, frequency, damping_ratio);

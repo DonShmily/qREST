@@ -30,6 +30,7 @@
 #include "qcustomplot.h"
 
 // Qt UI headers
+#include "ui_algorithm_dialog.h"
 #include "ui_main_window.h"
 // #include "ui_mainwindow.h"
 
@@ -83,6 +84,9 @@ private:
 
     // 主窗口的UI
     Ui::MainWindow *ui_;
+
+    // 设置页面UI
+    Ui::algorithm_dialog *algorithm_ui_;
 
     // 窗口是否已经计算完成的结构体
     std::unique_ptr<PageStatus> page_status_ = std::make_unique<PageStatus>();
@@ -138,17 +142,21 @@ private:
     // 更新Mea页面MultipleTab
     void UpdateMeaTabMultiple();
 
+    // 初始化和更新各对话框
+    // 初始化算法对话框
+    void InitAlgorithmDialog();
+
 private slots:
     /** 菜单栏action的槽函数*/
 
     // 文件菜单下的action
     void on_act_open_triggered();
     // void on_act_signal_triggered();
+    void on_act_calc_triggered();
 
     //// 设置菜单下的action
     // void on_act_building_triggered();
-    // void on_act_algorithm_triggered();
-    // void on_act_draw_triggered();
+    void on_act_algorithm_triggered();
 
     //// 帮助菜单下的action
     void on_act_about_triggered();
@@ -178,6 +186,8 @@ private slots:
     void on_cbox_mea2_dir_currentIndexChanged(int index);
     void on_cbox_shm_dir_currentIndexChanged(int index);
     void on_cbox_edp_dir_currentIndexChanged(int index);
+
+    void on_saveButton_clicked();
 };
 
 #endif // MAIN_WINDOW_H

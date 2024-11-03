@@ -82,12 +82,11 @@ public:
 
     // 加载配置
     // @param config_file 配置文件路径
-    void LoadConfig(const std::string &config_file = "config/Data_Config.json");
+    void LoadConfig(const std::string &config_file = "config/Config.json");
 
     // 获取建筑信息
     // @param config_file 建筑信息文件路径
-    void LoadBuilding(
-        const std::string &building_file = "config/Building_Info.json");
+    void LoadBuilding(const std::string &building_file = "config/Config.json");
 
 private:
     // 读取得到的加速度数据

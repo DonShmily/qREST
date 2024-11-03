@@ -54,7 +54,6 @@ void DataInterface::ReadFile(const std::string &file_path)
         throw std::runtime_error("File not found");
     }
 
-
     // 读取数据
     std::vector<std::vector<double>> ori_acc;
     ori_acc.resize(config_.direction_ * config_.mea_number_);

@@ -143,7 +143,7 @@ void QRestMainWindow::UpdateHomePage()
     {
         return;
     }
-    std::vector<QColor> colors = {Qt::red, Qt::green, Qt::blue};
+    std::vector<QColor> colors = {Qt::yellow, Qt::red};
     // 获取Gmp数据并转换
     chart_data_->set_direction(0);
     const auto &acc_x_pnts = chart_data_->get_acceleration(0);
@@ -212,8 +212,12 @@ void QRestMainWindow::UpdateHomePage()
     ui_->widget_home_edp->clearPlottables();
     ui_->widget_home_shm->clearGraphs();
     const auto &idr_limits = chart_data_->get_idr_safty_limit();
-    for (const auto &idr_limit : idr_limits)
+    const auto &acc_limits = chart_data_->get_acc_safty_limit();
+    // for (const auto &idr_limit : idr_limits)
+    // std::vector<QColor> colors = {Qt::yellow, Qt::red};
+    for (int i = 0; i != 2; ++i)
     {
+        auto idr_limit = idr_limits[i];
         auto data_idr_limit = new QCPCurve(
             ui_->widget_home_edp->axisRects().at(0)->axis(QCPAxis::atBottom),
             ui_->widget_home_edp->axisRects().at(0)->axis(QCPAxis::atLeft));
@@ -221,7 +225,18 @@ void QRestMainWindow::UpdateHomePage()
             ChartData::PointsVector2DoubleList(idr_limit);
         data_idr_limit->setData(idr_limit_pnts_list->first,
                                 idr_limit_pnts_list->second);
+        data_idr_limit->setPen(QPen(colors[i]));
+
+        auto acc_limit = acc_limits[i];
+        auto data_acc_limit = new QCPCurve(
+            ui_->widget_home_edp->axisRects().at(1)->axis(QCPAxis::atBottom),
+            ui_->widget_home_edp->axisRects().at(1)->axis(QCPAxis::atLeft));
+        auto acc_limit_pnt_list = ChartData::PointsVector2DoubleList(acc_limit);
+        data_acc_limit->setData(acc_limit_pnt_list->first,
+                                acc_limit_pnt_list->second);
+        data_acc_limit->setPen(QPen(colors[i]));
     }
+
 
     // 获取Edp数据并转换
     // ui_->widget_home_edp->axisRects()

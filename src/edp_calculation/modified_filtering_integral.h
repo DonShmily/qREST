@@ -93,8 +93,8 @@ public:
     }
 
     // 从配置文件中读取参数
-    void LoadConfig(
-        const std::string &config_file = "config/EDP_Config.json") override;
+    void
+    LoadConfig(const std::string &config_file = "config/Config.json") override;
 
     // 获取滤波积分插值法计算方法参数
     // @return 滤波积分插值法计算方法参数的引用

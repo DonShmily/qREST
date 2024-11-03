@@ -226,6 +226,7 @@
     <QtUic Include="..\..\src\qrest_ui\about_dialog.ui" />
     <QtUic Include="..\..\src\qrest_ui\MainWindow.ui" />
     <QtUic Include="..\..\src\qrest_ui\main_window.ui" />
+    <QtUic Include="..\..\src\qrest_ui\algorithm_dialog.ui" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\src\qrest_ui\chart_data.cpp" />
@@ -241,6 +242,7 @@
     <ClInclude Include="..\..\src\qrest_ui\data_interface.h" />
     <QtMoc Include="..\..\src\qrest_ui\rectangle_widget.h" />
     <QtMoc Include="..\..\src\qrest_ui\qcustomplot.h" />
+    <ClInclude Include="x64\Debug-Static\uic\ui_algorithm_dialog.h" />
     <ClInclude Include="x64\Debug-Static\uic\ui_mainwindow.h" />
     <ClInclude Include="x64\Debug-Static\uic\ui_main_window.h" />
     <QtMoc Include="..\..\src\qrest_ui\main_window.h" />

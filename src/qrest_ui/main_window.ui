@@ -520,9 +520,9 @@ li.checked::marker { content: &quot;\2612&quot;; }
     <property name="geometry">
      <rect>
       <x>269</x>
-      <y>160</y>
+      <y>134</y>
       <width>148</width>
-      <height>149</height>
+      <height>177</height>
      </rect>
     </property>
     <property name="font">
@@ -536,6 +536,7 @@ li.checked::marker { content: &quot;\2612&quot;; }
     <addaction name="act_open"/>
     <addaction name="act_signal"/>
     <addaction name="separator"/>
+    <addaction name="act_calc"/>
     <addaction name="act_exit"/>
    </widget>
    <widget class="QMenu" name="menuOption">
@@ -548,8 +549,7 @@ li.checked::marker { content: &quot;\2612&quot;; }
      <string>设置(S)</string>
     </property>
     <addaction name="act_building"/>
-    <addaction name="act_algotithm"/>
-    <addaction name="act_draw"/>
+    <addaction name="act_algorithm"/>
    </widget>
    <widget class="QMenu" name="menuHelp">
     <property name="font">
@@ -586,12 +586,12 @@ li.checked::marker { content: &quot;\2612&quot;; }
     <bool>false</bool>
    </attribute>
    <addaction name="act_open"/>
+   <addaction name="act_calc"/>
    <addaction name="separator"/>
    <addaction name="act_home"/>
    <addaction name="separator"/>
    <addaction name="act_building"/>
-   <addaction name="act_algotithm"/>
-   <addaction name="act_draw"/>
+   <addaction name="act_algorithm"/>
    <addaction name="separator"/>
    <addaction name="act_guide"/>
    <addaction name="act_web"/>
@@ -661,7 +661,7 @@ li.checked::marker { content: &quot;\2612&quot;; }
     <string>建筑信息</string>
    </property>
   </action>
-  <action name="act_algotithm">
+  <action name="act_algorithm">
    <property name="icon">
     <iconset resource="resource.qrc">
      <normaloff>:/image/icon/suanfamoxing.png</normaloff>:/image/icon/suanfamoxing.png</iconset>
@@ -735,18 +735,6 @@ li.checked::marker { content: &quot;\2612&quot;; }
     <font>
      <pointsize>12</pointsize>
     </font>
-   </property>
-  </action>
-  <action name="act_draw">
-   <property name="icon">
-    <iconset resource="resource.qrc">
-     <normaloff>:/image/icon/setting_1.png</normaloff>:/image/icon/setting_1.png</iconset>
-   </property>
-   <property name="text">
-    <string>绘图</string>
-   </property>
-   <property name="statusTip">
-    <string>绘图设置</string>
    </property>
   </action>
   <action name="act_signal">
@@ -830,6 +818,15 @@ li.checked::marker { content: &quot;\2612&quot;; }
    </property>
    <property name="menuRole">
     <enum>QAction::NoRole</enum>
+   </property>
+  </action>
+  <action name="act_calc">
+   <property name="icon">
+    <iconset resource="resource.qrc">
+     <normaloff>:/image/icon/video.png</normaloff>:/image/icon/video.png</iconset>
+   </property>
+   <property name="text">
+    <string>计算</string>
    </property>
   </action>
  </widget>
