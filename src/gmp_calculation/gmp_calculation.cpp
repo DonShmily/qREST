@@ -16,18 +16,14 @@
 */
 
 // Description:
-// 计算地震参数类的实现。
+// 地震动参数计算基类的实现。
 
 // associated header
 #include "gmp_calculation.h"
 
 // stdc++ headers
 #include <cmath>
-#include <fstream>
 #include <vector>
-
-// third-party library headers
-#include "nlohmann/json.hpp"
 
 // project headers
 #include "numerical_algorithm/filter.h"
@@ -37,15 +33,11 @@ namespace gmp_calculation
 {
 // 从std::vector构造
 GmpCalculation::GmpCalculation(const std::vector<double> &acceleration,
-                               double frequency,
-                               double damping_ratio)
+                               std::shared_ptr<settings::Config> config)
     : ori_acceleration_(acceleration)
 {
     // 加载和更新配置
-    LoadConfig();
-    parameter_.frequency_ = frequency;
-    parameter_.time_step_ = 1.0 / frequency;
-    parameter_.damping_ratio_ = damping_ratio;
+    LoadConfig(config);
 
     // 是否初滤波
     if (parameter_.filter_)
@@ -65,15 +57,11 @@ GmpCalculation::GmpCalculation(const std::vector<double> &acceleration,
 // 从std::vector指针构造
 GmpCalculation::GmpCalculation(
     const std::shared_ptr<std::vector<double>> &acceleration_ptr,
-    double frequency,
-    double damping_ratio)
+    std::shared_ptr<settings::Config> config)
     : ori_acceleration_(*acceleration_ptr)
 {
     // 加载和更新配置
-    LoadConfig();
-    parameter_.frequency_ = frequency;
-    parameter_.time_step_ = 1.0 / frequency;
-    parameter_.damping_ratio_ = damping_ratio;
+    LoadConfig(config);
 
     // 是否初滤波
     if (parameter_.filter_)
@@ -86,27 +74,6 @@ GmpCalculation::GmpCalculation(
     else
     {
         acceleration_ = *acceleration_ptr;
-    }
-}
-
-// 从配置文件中读取参数构造
-GmpCalculation::GmpCalculation(const std::vector<double> &acceleration)
-    : ori_acceleration_(acceleration)
-{
-    // 加载配置
-    LoadConfig();
-
-    // 是否初滤波
-    if (parameter_.filter_)
-    {
-        // 始化滤波器
-        init_filter();
-        // 加速度信号滤波
-        acceleration_ = filter_function_.Filtering(acceleration);
-    }
-    else
-    {
-        acceleration_ = acceleration;
     }
 }
 
@@ -150,46 +117,29 @@ ResponseSpectrumTiResult GmpCalculation::NewmarkBeta(const double &Ti)
 }
 
 // 从配置文件中读取参数
-void GmpCalculation::LoadConfig(const std::string &config_file)
+void GmpCalculation::LoadConfig(std::shared_ptr<settings::Config> config)
 {
-    // 导入新配置需要清除已有结果
-    clear_result();
-
-    // JSON配置文件
-    nlohmann::json config;
-    std::ifstream ifs(config_file);
-    if (ifs.is_open())
-    {
-        ifs >> config;
-        ifs.close();
-    }
-    else
-    {
-        throw std::runtime_error("Cannot open the configuration file.");
-    }
-
-    // 读取参数
-    // 计算与绘图参数
-    parameter_.frequency_ = config["AccConfig"]["frequency"];
-    parameter_.time_step_ = 1.0 / parameter_.frequency_;
-    parameter_.damping_ratio_ =
-        config["ResponseSpectrumConfig"]["damping_ratio"];
-    parameter_.response_spectrum_dt_ =
-        config["ResponseSpectrumConfig"]["period_step"];
-    parameter_.response_spectrum_max_period_ =
-        config["ResponseSpectrumConfig"]["max_period"];
-    parameter_.fourier_spectrum_max_frequency_ =
-        config["FourierConfig"]["max_frequency"];
-
-    // 滤波相关参数
-    parameter_.filter_ = config["GMPFilterConfig"]["filter_flag"];
-    parameter_.filter_order_ = config["GMPFilterConfig"]["filter_order"];
-    parameter_.low_frequency_ = config["GMPFilterConfig"]["low_frequency"];
-    parameter_.high_frequency_ = config["GMPFilterConfig"]["high_frequency"];
-    parameter_.filter_type_ = config["GMPFilterConfig"]["filter_type"];
-    parameter_.filter_function_ = config["GMPFilterConfig"]["filter_function"];
+    // 读取配置
+    parameter_.filter_ = config->gmp_filter_flag;
+    parameter_.frequency_ = config->data_sampling_frequency;
+    parameter_.time_step_ = config->data_time_step;
+    parameter_.damping_ratio_ = config->gmp_damping_ratio;
+    parameter_.response_spectrum_max_period_ = config->gmp_max_period;
+    parameter_.response_spectrum_dt_ = config->gmp_period_step;
+    parameter_.fourier_spectrum_max_frequency_ = config->gmp_max_frequency;
+    parameter_.filter_order_ = config->gmp_filter_order;
+    parameter_.low_frequency_ = config->gmp_low_frequency;
+    parameter_.high_frequency_ = config->gmp_high_frequency;
+    parameter_.filter_type_ =
+        static_cast<numerical_algorithm::FilterType>(config->gmp_filter_type);
+    parameter_.filter_function_ =
+        static_cast<numerical_algorithm::FilterFunction>(
+            config->gmp_filter_function);
     parameter_.filter_generator_ =
-        config["GMPFilterConfig"]["filter_generator"];
+        static_cast<numerical_algorithm::FilterGenerator>(
+            config->gmp_filter_generator);
+    // 更新参数
+    Update();
 }
 
 // 更新参数

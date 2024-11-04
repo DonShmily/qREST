@@ -23,7 +23,12 @@
 #define SAFTY_TAGGING_BASIC_SAFTY_TAGGING_H
 
 // stdc++ headers
+#include <memory>
 #include <string>
+
+// project headers
+#include "edp_calculation/basic_edp_calculation.h"
+#include "settings/config.h"
 
 namespace safty_tagging
 {
@@ -32,6 +37,14 @@ class BasicSaftyTagging
 public:
     // 默认构造函数
     BasicSaftyTagging() = default;
+
+    // 从工程需求参量计算结果构造
+    // @param edp_result 工程需求参量计算结果
+    // @param config 配置信息
+    explicit BasicSaftyTagging(
+        std::shared_ptr<edp_calculation::EdpResult> edp_result)
+        : edp_result_(edp_result)
+    {}
 
     // 析构函数
     virtual ~BasicSaftyTagging() = default;
@@ -46,7 +59,7 @@ public:
 
     // 从配置文件中读取安全评价限值
     // @param config_file 配置文件路径
-    virtual void LoadConfig(const std::string &config_file) = 0;
+    virtual void LoadConfig(std::shared_ptr<settings::Config> config) = 0;
 
     // 是否已经完成安全评价
     // @return: 是否已经完成安全评价
@@ -57,6 +70,8 @@ protected:
     bool is_tagged_{false};
     // 安全评价结果，数字越低越安全，0为safe
     int safty_tagging_result_{};
+    // 工程需求参量计算结果，本类只是用层间位移角部分
+    std::shared_ptr<edp_calculation::EdpResult> edp_result_;
 };
 
 } // namespace safty_tagging

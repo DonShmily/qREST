@@ -51,14 +51,16 @@ public:
     // 从工程需求参量计算结果构造
     // @param edp_result 工程需求参量计算结果
     explicit BasedOnAcceleration(
-        std::shared_ptr<edp_calculation::EdpResult> edp_result)
-        : edp_result_(edp_result)
-    {}
+        std::shared_ptr<edp_calculation::EdpResult> edp_result,
+        std::shared_ptr<settings::Config> config)
+        : BasicSaftyTagging(edp_result)
+    {
+        LoadConfig(config);
+    }
 
     // 从配置文件中读取安全评价限值
     // @param config_file 配置文件路径
-    void LoadConfig(
-        const std::string &config_file = "config/EDP_Config.json") override;
+    void LoadConfig(std::shared_ptr<settings::Config> config) override;
 
     // 计算安全评价，返回安全评价结果
     // @return: 安全评价结果，数字越低越安全，0为safe
@@ -87,9 +89,6 @@ public:
     }
 
 private:
-    // 工程需求参量计算结果，本类只是用加速度部分
-    std::shared_ptr<edp_calculation::EdpResult> edp_result_;
-
     // 各层最大加速度结果
     AllMaxAcc all_max_acc_;
 

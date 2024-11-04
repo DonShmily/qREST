@@ -4,6 +4,7 @@
 #include <QtGui/QMouseEvent>
 #include <QtGui/QPainter>
 #include <QtWidgets/QWidget>
+
 #include <vector>
 
 class RectangleWidget : public QWidget

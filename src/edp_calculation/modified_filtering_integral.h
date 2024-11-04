@@ -11,7 +11,7 @@
 ** File Created: Monday, 15th July 2024 14:32:17
 ** Author: Dong Feiyue (donfeiyue@outlook.com)
 ** -----
-** Last Modified: Saturday, 10th August 2024 22:27:00
+** Last Modified: Monday, 4th November 2024 00:35:12
 ** Modified By: Dong Feiyue (donfeiyue@outlook.com)
 */
 
@@ -25,8 +25,6 @@
 // stdc++ headers
 #include <memory>
 #include <vector>
-
-// third-party library headers
 
 // project headers
 #include "data_structure/acceleration.h"
@@ -47,40 +45,27 @@ public:
     // 默认构造函数
     ModifiedFilteringIntegral() = default;
 
-    // 从配置文件中读取参数构造
+    // 从加速度数据和建筑信息构造对象
     // @param acceleration 加速度数据
-    // @param building 建筑结构信息
-    ModifiedFilteringIntegral(const data_structure::Acceleration &acceleration,
-                              data_structure::Building &building)
-        : BasicEdpCalculation(acceleration, building)
-    {
-        LoadConfig();
-    }
-
-    // 从加速度数据中构造，默认使用巴特沃斯滤波器，零相位双向滤波，带通滤波
-    // @param acceleration 加速度数据
-    // @param building 建筑结构信息
-    // @param filter_order 滤波器阶数
-    ModifiedFilteringIntegral(const data_structure::Acceleration &acceleration,
-                              data_structure::Building &building,
-                              int filter_order)
-        : BasicEdpCalculation(acceleration, building)
-    {
-        method_.filter_order_ = filter_order;
-    }
-
-    // 从加速度数据指针中构造，默认使用巴特沃斯滤波器，零相位双向滤波，带通滤波
-    // @param acceleration_ptr 加速度数据指针
-    // @param building_ptr 建筑结构信息指针
-    // @param filter_order 滤波器阶数
+    // @param building_ptr 建筑信息
+    // @param config_ptr 配置信息
     ModifiedFilteringIntegral(
-        std::shared_ptr<const data_structure::Acceleration> acceleration_ptr,
-        std::shared_ptr<data_structure::Building> building_ptr,
-        int filter_order)
-        : BasicEdpCalculation(acceleration_ptr, building_ptr)
-    {
-        method_.filter_order_ = filter_order;
-    }
+        const data_structure::Acceleration &acceleration,
+        const std::shared_ptr<data_structure::Building> &building_ptr,
+        const std::shared_ptr<settings::Config> &config_ptr)
+        : BasicEdpCalculation(acceleration, building_ptr, config_ptr)
+    {}
+
+    // 从加速度数据指针和建筑信息构造对象
+    // @param acceleration_ptr 加速度数据指针
+    // @param building_ptr 建筑信息
+    // @param config_ptr 配置信息
+    ModifiedFilteringIntegral(
+        const std::shared_ptr<data_structure::Acceleration> &acceleration_ptr,
+        const std::shared_ptr<data_structure::Building> &building_ptr,
+        const std::shared_ptr<settings::Config> &config_ptr)
+        : BasicEdpCalculation(acceleration_ptr, building_ptr, config_ptr)
+    {}
 
     // 析构函数
     ~ModifiedFilteringIntegral() = default;
@@ -89,34 +74,13 @@ public:
     // @param filter_order 滤波器阶数
     void set_filter_order(int filter_order)
     {
-        method_.filter_order_ = filter_order;
+        parameter_.filter_order_ = filter_order;
     }
-
-    // 从配置文件中读取参数
-    void
-    LoadConfig(const std::string &config_file = "config/Config.json") override;
-
-    // 获取滤波积分插值法计算方法参数
-    // @return 滤波积分插值法计算方法参数的引用
-    FilteringIntegralMethod &get_filtering_interp_method() { return method_; }
 
     // 滤波积分插值法计算的入口
     void CalculateEdp() override;
 
-    // 获取滤波积分插值法计算结果
-    // @return 滤波积分插值法计算结果的引用
-    EdpResult &get_result() { return *result_; }
-
-    // 获取滤波积分插值法计算结果的指针
-    // @return 滤波积分插值法计算结果的指针
-    std::shared_ptr<EdpResult> get_result_ptr() { return result_; }
-
 private:
-    // 滤波积分插值法计算方法参数
-    FilteringIntegralMethod method_{};
-    // 计算结果
-    std::shared_ptr<EdpResult> result_ = std::make_shared<EdpResult>();
-
     // 滤波积分插值法计算单列加速度
     void CalculateSingle(const std::size_t &col);
 };

@@ -25,8 +25,13 @@
 
 // stdc++ headers
 #include <cstddef>
+#include <memory>
+#include <stdexcept>
 #include <string>
 #include <vector>
+
+// project headers
+#include "settings/config.h"
 
 namespace data_structure
 {
@@ -46,14 +51,25 @@ public:
         calculate_inter_height();
     }
 
+    // 从配置文件构造
+    Building(std::shared_ptr<settings::Config> config) { LoadConfig(config); }
+
+    // 从配置获取建筑信息
+    void LoadConfig(std::shared_ptr<settings::Config> config)
+    {
+        if (config == nullptr)
+        {
+            throw std::invalid_argument("config is nullptr");
+        }
+
+        measure_height_ = config->building_measurement_height;
+        floor_height_ = config->building_floor_height;
+        measure_index_ = config->building_measurement_index;
+        calculate_inter_height();
+    }
+
     // 析构函数
     ~Building() = default;
-
-    // 从配置文件读取建筑信息
-    void LoadConfig(const std::string &config_file = "config/Config.json");
-
-    // 设置建筑信息
-    void set_building_message() {}
 
     // 获取建筑测点高度
     std::vector<double> &get_measuren_height() { return measure_height_; }

@@ -21,36 +21,18 @@
 // associated header
 #include "based_on_inter_story_drift.h"
 
-// third-party library headers
-#include "nlohmann/json.hpp"
-
 // stdc++ headers
-#include <fstream>
 #include <utility>
 
 
 namespace safty_tagging
 {
 // 从配置文件中读取安全评价限值
-void BasedOnInterStoryDrift::LoadConfig(const std::string &config_file)
+void BasedOnInterStoryDrift::LoadConfig(
+    std::shared_ptr<settings::Config> config)
 {
-    // JSON配置文件
-    nlohmann::json config;
-    std::ifstream ifs(config_file);
-    if (ifs.is_open())
-    {
-        ifs >> config;
-        ifs.close();
-    }
-    else
-    {
-        throw std::runtime_error("Cannot open the configuration file.");
-    }
-
-    // 读取层间位移角安全评价限值
-    safty_tagging_limit_ =
-        config["SaftyTagging"]["idr_limits"].get<std::vector<double>>();
-    all_max_idr_.need_time_ = config["SaftyTagging"]["need_time"];
+    // 读取配置文件
+    safty_tagging_limit_ = config->safty_idr_threshold;
 }
 
 // 获取安全评价结果

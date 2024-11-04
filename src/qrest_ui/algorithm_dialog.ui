@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>502</width>
-    <height>501</height>
+    <width>500</width>
+    <height>500</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -208,7 +208,7 @@
              <double>0.500000000000000</double>
             </property>
             <property name="value">
-             <double>5.000000000000000</double>
+             <double>8.000000000000000</double>
             </property>
            </widget>
           </item>
@@ -247,8 +247,8 @@
       <attribute name="title">
        <string>需求参量</string>
       </attribute>
-      <layout class="QVBoxLayout" name="verticalLayout_3">
-       <item>
+      <layout class="QGridLayout" name="gridLayout_6">
+       <item row="1" column="0" colspan="2">
         <widget class="QGroupBox" name="gbox_edp_mfilter">
          <property name="title">
           <string>改进的滤波积分方法</string>
@@ -324,23 +324,6 @@
             </item>
            </widget>
           </item>
-          <item row="1" column="2">
-           <widget class="QLabel" name="label_14">
-            <property name="text">
-             <string>高通截止频率</string>
-            </property>
-           </widget>
-          </item>
-          <item row="1" column="3">
-           <widget class="QDoubleSpinBox" name="dsbox_edp_filter_low_freq">
-            <property name="singleStep">
-             <double>0.010000000000000</double>
-            </property>
-            <property name="value">
-             <double>0.010000000000000</double>
-            </property>
-           </widget>
-          </item>
           <item row="2" column="0">
            <widget class="QLabel" name="label_15">
             <property name="text">
@@ -374,7 +357,46 @@
          </layout>
         </widget>
        </item>
-       <item>
+       <item row="3" column="1">
+        <widget class="QComboBox" name="cbox_edp_interp_method">
+         <property name="currentIndex">
+          <number>1</number>
+         </property>
+         <item>
+          <property name="text">
+           <string>Linear</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>CubicSpline</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>Akima</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>Steffen</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>Polynomial</string>
+          </property>
+         </item>
+        </widget>
+       </item>
+       <item row="3" column="0">
+        <widget class="QLabel" name="label_14">
+         <property name="text">
+          <string>插值方法</string>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="0" colspan="2">
         <widget class="QGroupBox" name="gbox_edp_filter">
          <property name="title">
           <string>一般滤波积分方法</string>
@@ -498,6 +520,27 @@
            </widget>
           </item>
          </layout>
+        </widget>
+       </item>
+       <item row="0" column="1">
+        <widget class="QComboBox" name="cbox_edp_method">
+         <item>
+          <property name="text">
+           <string>滤波积分</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>改进滤波积分</string>
+          </property>
+         </item>
+        </widget>
+       </item>
+       <item row="0" column="0">
+        <widget class="QLabel" name="label_23">
+         <property name="text">
+          <string>计算方法</string>
+         </property>
         </widget>
        </item>
       </layout>

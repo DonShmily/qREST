@@ -215,6 +215,9 @@
     <ProjectReference Include="..\parameters_identification\parameters_identification.vcxproj">
       <Project>{9556c7a6-3fde-48bc-b02f-e245f1cdd4f3}</Project>
     </ProjectReference>
+    <ProjectReference Include="..\qrest_calculation\qrest_calculation.vcxproj">
+      <Project>{2ce33e24-0c2b-437d-b5b6-c88dda3a289f}</Project>
+    </ProjectReference>
     <ProjectReference Include="..\safty_tagging\safty_tagging.vcxproj">
       <Project>{e257c22e-15f9-4325-b7e0-165f5bf8ac2f}</Project>
     </ProjectReference>
@@ -224,13 +227,12 @@
   </ItemGroup>
   <ItemGroup>
     <QtUic Include="..\..\src\qrest_ui\about_dialog.ui" />
+    <QtUic Include="..\..\src\qrest_ui\building_dialog.ui" />
     <QtUic Include="..\..\src\qrest_ui\MainWindow.ui" />
     <QtUic Include="..\..\src\qrest_ui\main_window.ui" />
     <QtUic Include="..\..\src\qrest_ui\algorithm_dialog.ui" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\src\qrest_ui\chart_data.cpp" />
-    <ClCompile Include="..\..\src\qrest_ui\data_interface.cpp" />
     <ClCompile Include="..\..\src\qrest_ui\main.cpp" />
     <ClCompile Include="..\..\src\qrest_ui\main_window_process.cpp" />
     <ClCompile Include="..\..\src\qrest_ui\main_window_qt.cpp" />
@@ -238,8 +240,6 @@
     <ClCompile Include="..\..\src\qrest_ui\rectangle_widget.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\src\qrest_ui\chart_data.h" />
-    <ClInclude Include="..\..\src\qrest_ui\data_interface.h" />
     <QtMoc Include="..\..\src\qrest_ui\rectangle_widget.h" />
     <QtMoc Include="..\..\src\qrest_ui\qcustomplot.h" />
     <ClInclude Include="x64\Debug-Static\uic\ui_algorithm_dialog.h" />

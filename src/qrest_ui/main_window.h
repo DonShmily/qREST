@@ -31,12 +31,13 @@
 
 // Qt UI headers
 #include "ui_algorithm_dialog.h"
+#include "ui_building_dialog.h"
 #include "ui_main_window.h"
 // #include "ui_mainwindow.h"
 
 // project headers
-#include "chart_data.h"
-#include "data_interface.h"
+#include "qrest_calculation/chart_data.h"
+#include "qrest_calculation/data_interface.h"
 
 // Qt UIC namespace
 QT_BEGIN_NAMESPACE
@@ -58,7 +59,7 @@ struct PageStatus
     bool edp_page = false;
 
     // 更换方向后重置部分页面的状态
-    void ResetDirection()
+    void Reset()
     {
         mea_page = false;
         mea_tab_single = false;
@@ -86,7 +87,7 @@ private:
     Ui::MainWindow *ui_;
 
     // 设置页面UI
-    Ui::algorithm_dialog *algorithm_ui_;
+    // Ui::algorithm_dialog *algorithm_ui_;
 
     // 窗口是否已经计算完成的结构体
     std::unique_ptr<PageStatus> page_status_ = std::make_unique<PageStatus>();
@@ -142,20 +143,25 @@ private:
     // 更新Mea页面MultipleTab
     void UpdateMeaTabMultiple();
 
+    // 数据/配置更新，刷新所有页面
+    void UpdateAllPages();
+
     // 初始化和更新各对话框
     // 初始化算法对话框
-    void InitAlgorithmDialog();
+    void InitAlgorithmDialog(Ui::algorithm_dialog *algorithm_ui);
+    // 初始化建筑对话框
+    void InitBuildingDialog(Ui::building_dialog *building_ui);
 
 private slots:
     /** 菜单栏action的槽函数*/
 
     // 文件菜单下的action
     void on_act_open_triggered();
-    // void on_act_signal_triggered();
+    void on_act_signal_triggered();
     void on_act_calc_triggered();
 
     //// 设置菜单下的action
-    // void on_act_building_triggered();
+    void on_act_building_triggered();
     void on_act_algorithm_triggered();
 
     //// 帮助菜单下的action
@@ -187,7 +193,7 @@ private slots:
     void on_cbox_shm_dir_currentIndexChanged(int index);
     void on_cbox_edp_dir_currentIndexChanged(int index);
 
-    void on_saveButton_clicked();
+    // void on_saveButton_clicked();
 };
 
 #endif // MAIN_WINDOW_H

@@ -11,7 +11,7 @@
 ** File Created: Thursday, 11th July 2024 23:53:41
 ** Author: Dong Feiyue (donfeiyue@outlook.com)
 ** -----
-** Last Modified: Saturday, 10th August 2024 22:26:30
+** Last Modified: Monday, 4th November 2024 01:18:11
 ** Modified By: Dong Feiyue (donfeiyue@outlook.com)
 */
 
@@ -33,11 +33,43 @@
 #include "data_structure/inter_story_drift.h"
 #include "data_structure/velocity.h"
 #include "data_structure/vibration.h"
+#include "numerical_algorithm/basic_filter_design.h"
+#include "numerical_algorithm/basic_filtering.h"
 #include "numerical_algorithm/interp.h"
-
 
 namespace edp_calculation
 {
+// 滤波积分插值法计算工程需求参量的方法参数结构体，默认(*)
+struct FilteringIntegralMethod
+{
+    // 滤波器阶数
+    int filter_order_{2};
+    // 滤波器截止频率
+    double low_frequency_{0.1}, high_frequency_{20};
+    // 滤波器类型：
+    // lowpass：低通滤波；
+    // highpass：高通滤波；
+    // *bandpass：带通滤波；
+    numerical_algorithm::FilterType filter_type_ =
+        numerical_algorithm::FilterType::bandpass;
+    // 滤波函数：
+    // filter：单向滤波；
+    // *filtfilt：零相位双向滤波
+    numerical_algorithm::FilterFunction filter_function_ =
+        numerical_algorithm::FilterFunction::filtfilt;
+    // 滤波器类型：
+    // *butter：巴特沃斯滤波器；
+    numerical_algorithm::FilterGenerator filter_generator_ =
+        numerical_algorithm::FilterGenerator::butter;
+    // 插值方法：
+    // Linear：线性插值；
+    // *CubicSpline：三次样条插值；
+    // Akima：Akima插值；
+    // Steffen：Steffen插值；
+    // Polynomial：多项式插值
+    numerical_algorithm::InterpType interp_type_ =
+        numerical_algorithm::InterpType::CubicSpline;
+}; // struct FilteringIntegralMethod
 
 // 层间位移角计算结果，包含测点和楼层的主要计算数据
 class EdpResult
@@ -154,33 +186,69 @@ public:
     // 从加速度数据中构造
     // @param acceleration 加速度数据
     // @param building 建筑信息
-    explicit BasicEdpCalculation(
-        const data_structure::Acceleration &acceleration,
-        const data_structure::Building &building)
-        : input_acceleration_(acceleration),
-          building_ptr_(std::make_shared<data_structure::Building>(building))
-    {}
+    // @param config 配置信息
+    BasicEdpCalculation(const data_structure::Acceleration &acceleration,
+                        std::shared_ptr<data_structure::Building> building_ptr,
+                        std::shared_ptr<settings::Config> config_ptr)
+        : input_acceleration_(acceleration), building_ptr_(building_ptr)
+    {
+        LoadConfig(config_ptr);
+    }
 
     // 从加速度数据指针中构造
     // @param acceleration_ptr 加速度数据指针
     // @param building_ptr 建筑信息指针
+    // @param config_ptr 配置信息指针
     explicit BasicEdpCalculation(
         std::shared_ptr<const data_structure::Acceleration> acceleration_ptr,
-        std::shared_ptr<data_structure::Building> building_ptr)
+        std::shared_ptr<data_structure::Building> building_ptr,
+        std::shared_ptr<settings::Config> config_ptr)
         : input_acceleration_(*acceleration_ptr), building_ptr_(building_ptr)
-    {}
+    {
+        LoadConfig(config_ptr);
+    }
 
     // 析构函数
     virtual ~BasicEdpCalculation() = default;
 
     // 从配置文件中读取参数
-    virtual void LoadConfig(const std::string &config_file = "") = 0;
+    void LoadConfig(std::shared_ptr<settings::Config> config)
+    {
+        parameter_.filter_order_ = config->edp_filter_order;
+        parameter_.low_frequency_ = config->edp_low_frequency;
+        parameter_.high_frequency_ = config->edp_high_frequency;
+        parameter_.filter_type_ = static_cast<numerical_algorithm::FilterType>(
+            config->edp_filter_type);
+        parameter_.filter_function_ =
+            static_cast<numerical_algorithm::FilterFunction>(
+                config->edp_filter_function);
+        parameter_.filter_generator_ =
+            static_cast<numerical_algorithm::FilterGenerator>(
+                config->edp_filter_generator);
+        parameter_.interp_type_ = static_cast<numerical_algorithm::InterpType>(
+            config->edp_interp_method);
+    }
 
     // 计算工程需求参量函数入口
     virtual void CalculateEdp() = 0;
 
     // 当前输入是否已经完成计算
     bool is_calculated() const { return is_calculated_; }
+
+    // 获取计算方法参数
+    // @return 计算方法参数的引用
+    FilteringIntegralMethod &get_filtering_interp_method()
+    {
+        return parameter_;
+    }
+
+    // 获取计算结果
+    // @return 计算结果的引用
+    EdpResult &get_result() { return *result_; }
+
+    // 获取计算结果的指针
+    // @return 滤计算结果的指针
+    std::shared_ptr<EdpResult> get_result_ptr() { return result_; }
 
 protected:
     // 完成计算的标志
@@ -189,6 +257,10 @@ protected:
     data_structure::Acceleration input_acceleration_{};
     // 建筑信息
     std::shared_ptr<data_structure::Building> building_ptr_{};
+    // 计算参数
+    FilteringIntegralMethod parameter_{};
+    // 计算结果
+    std::shared_ptr<EdpResult> result_ = std::make_shared<EdpResult>();
 };
 
 } // namespace edp_calculation

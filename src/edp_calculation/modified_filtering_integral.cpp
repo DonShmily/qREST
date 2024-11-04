@@ -11,7 +11,7 @@
 ** File Created: Monday, 15th July 2024 15:04:27
 ** Author: Dong Feiyue (donfeiyue@outlook.com)
 ** -----
-** Last Modified: Saturday, 10th August 2024 22:26:56
+** Last Modified: Monday, 4th November 2024 00:35:06
 ** Modified By: Dong Feiyue (donfeiyue@outlook.com)
 */
 
@@ -24,13 +24,9 @@
 #include "modified_filtering_integral.h"
 
 // stdc++ headers
-#include <fstream>
 #include <memory>
 #include <numeric>
 #include <vector>
-
-// third-party library headers
-#include "nlohmann/json.hpp"
 
 // project headers
 #include <data_structure/displacement.h>
@@ -43,29 +39,6 @@
 
 namespace edp_calculation
 {
-// 从配置文件中读取参数
-void ModifiedFilteringIntegral::LoadConfig(const std::string &config_file)
-{
-    // JSON配置文件
-    nlohmann::json config;
-    std::ifstream ifs(config_file);
-    if (ifs.is_open())
-    {
-        ifs >> config;
-        ifs.close();
-    }
-    else
-    {
-        throw std::runtime_error("Cannot open the configuration file.");
-    }
-
-    method_.filter_order_ = config["FilterConfig"]["filter_order"];
-    method_.filter_type_ = config["FilterConfig"]["filter_type"];
-    method_.filter_function_ = config["FilterConfig"]["filter_function"];
-    method_.filter_generator_ = config["FilterConfig"]["filter_generator"];
-    method_.interp_type_ = config["InterpConfig"]["interp_type"];
-}
-
 // 滤波积分插值法计算的入口
 void ModifiedFilteringIntegral::CalculateEdp()
 {
@@ -98,7 +71,7 @@ void ModifiedFilteringIntegral::CalculateEdp()
     // }
 
     // 1.3确定插值方法
-    numerical_algorithm::Interp interp_function(method_.interp_type_);
+    numerical_algorithm::Interp interp_function(parameter_.interp_type_);
 
     // 2.滤波积分插值计算层间位移角
     // 2.1 逐列滤波积分得到测点位移
@@ -112,7 +85,7 @@ void ModifiedFilteringIntegral::CalculateEdp()
     filtered_vel.resize(sz);
     filtered_acc.resize(sz);
     // 传递部分信息用于计算非测点的数据
-    result_->interp_type_ = method_.interp_type_;
+    result_->interp_type_ = parameter_.interp_type_;
     result_->building_ = building_ptr_;
     result_->measurement_avd_.frequency = input_acceleration_.get_frequency();
     // 依次计算各测点的数据
@@ -161,7 +134,7 @@ void ModifiedFilteringIntegral::CalculateSingle(const std::size_t &col)
         filtered_velocity(max_k), filtered_displacement(max_k);
     // 2.2设置滤波积分方法
     auto filter_generator =
-        numerical_algorithm::ButterworthFilterDesign(method_.filter_order_);
+        numerical_algorithm::ButterworthFilterDesign(parameter_.filter_order_);
     auto filter_function = numerical_algorithm::FiltFilt();
     double low, high = 20.0 / input_acceleration_.get_frequency() * 2;
     double low_scale = high / 20;

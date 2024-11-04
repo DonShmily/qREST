@@ -522,7 +522,7 @@ li.checked::marker { content: &quot;\2612&quot;; }
       <x>269</x>
       <y>134</y>
       <width>148</width>
-      <height>177</height>
+      <height>179</height>
      </rect>
     </property>
     <property name="font">
@@ -586,6 +586,7 @@ li.checked::marker { content: &quot;\2612&quot;; }
     <bool>false</bool>
    </attribute>
    <addaction name="act_open"/>
+   <addaction name="act_signal"/>
    <addaction name="act_calc"/>
    <addaction name="separator"/>
    <addaction name="act_home"/>
@@ -738,8 +739,12 @@ li.checked::marker { content: &quot;\2612&quot;; }
    </property>
   </action>
   <action name="act_signal">
+   <property name="icon">
+    <iconset resource="resource.qrc">
+     <normaloff>:/image/icon/tongyongyiqi.png</normaloff>:/image/icon/tongyongyiqi.png</iconset>
+   </property>
    <property name="text">
-    <string>信号</string>
+    <string>动态</string>
    </property>
    <property name="statusTip">
     <string>信号</string>

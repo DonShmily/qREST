@@ -38,14 +38,11 @@
     <QtUic Include="..\..\src\qrest_ui\algorithm_dialog.ui">
       <Filter>Form Files</Filter>
     </QtUic>
+    <QtUic Include="..\..\src\qrest_ui\building_dialog.ui">
+      <Filter>Form Files</Filter>
+    </QtUic>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\src\qrest_ui\chart_data.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\qrest_ui\data_interface.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\src\qrest_ui\main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -63,12 +60,6 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\src\qrest_ui\chart_data.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\qrest_ui\data_interface.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="x64\Debug-Static\uic\ui_main_window.h">
       <Filter>Form Files</Filter>
     </ClInclude>

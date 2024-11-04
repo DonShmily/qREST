@@ -15,9 +15,7 @@
 ** Modified By: Dong Feiyue (donfeiyue@outlook.com)
 */
 
-// Description:
-// 计算地震参数的类。
-// 已经完成了各种反应谱、持时（95%）、峰值信息、Fourier变换等计算。
+// Description: 地震动参数计算基类。
 // TODO: Arias强度、Housner强度、能量密度谱等计算有待加入。
 // TODO: 反应谱的横轴最大值、步长的设置有待加入。
 
@@ -45,9 +43,27 @@
 #include "numerical_algorithm/filter.h"
 #include "numerical_algorithm/integral.h"
 #include "numerical_algorithm/vector_calculation.h"
+#include "settings/config.h"
 
 namespace gmp_calculation
 {
+// 地震（拟）反应谱计算结果
+struct ResponseSpectrumResult
+{
+    std::vector<double> Sa{};
+    std::vector<double> Sv{};
+    std::vector<double> Sd{};
+}; // struct ResponseSpectrumResult
+
+// Ti周期下地震（拟）反应谱计算结果
+struct ResponseSpectrumTiResult
+{
+    double SaTi{};
+    double SvTi{};
+    double SdTi{};
+}; // struct ResponseSpectrumTiResult
+
+
 // 计算地震动参数需要参数的结构体
 struct GmpCalculationParameter
 {
@@ -69,9 +85,9 @@ struct GmpCalculationParameter
     // 是否滤波
     bool filter_ = true;
     // 滤波器阶数
-    int filter_order_{4};
+    int filter_order_ = 4;
     // 滤波器截止频率
-    double low_frequency_{0.1}, high_frequency_{20};
+    double low_frequency_ = 0.1, high_frequency_ = 20;
     // 滤波器类型：
     // lowpass：低通滤波；
     // highpass：高通滤波；
@@ -89,22 +105,6 @@ struct GmpCalculationParameter
         numerical_algorithm::FilterGenerator::butter;
 }; // struct GmpCalculationParameter
 
-// 地震反应谱计算结果
-struct ResponseSpectrumResult
-{
-    std::vector<double> Sa{};
-    std::vector<double> Sv{};
-    std::vector<double> Sd{};
-}; // struct ResponseSpectrumResult
-
-// Ti周期下地震反应谱计算结果
-struct ResponseSpectrumTiResult
-{
-    double SaTi{};
-    double SvTi{};
-    double SdTi{};
-}; // struct ResponseSpectrumTiResult
-
 // 地震参数计算类
 class GmpCalculation
 {
@@ -114,27 +114,22 @@ public:
 
     // 从std::vector构造
     // @param acceleration 加速度数据
-    // @param frequency 频率
-    // @param damping_ratio 阻尼比
+    // @param config 配置信息
     GmpCalculation(const std::vector<double> &acceleration,
-                   double frequency,
-                   double damping_ratio = 0.05);
+                   std::shared_ptr<settings::Config> config);
 
     // 从std::vector指针构造
     // @param acceleration_ptr 加速度数据指针
-    // @param frequency 频率
-    // @param damping_ratio 阻尼比
+    // @param config 配置信息
     GmpCalculation(const std::shared_ptr<std::vector<double>> &acceleration_ptr,
-                   double frequency,
-                   double damping_ratio = 0.05);
-
-    // 从配置文件中读取参数构造
-    // @param acceleration 加速度数据
-    // @param config_file 配置文件路径
-    explicit GmpCalculation(const std::vector<double> &acceleration);
+                   std::shared_ptr<settings::Config> config);
 
     // 析构函数
     ~GmpCalculation() = default;
+
+    // 从配置文件中读取参数
+    // @param config 配置信息
+    void LoadConfig(std::shared_ptr<settings::Config> config);
 
 private:
     // GMP计算参数
@@ -198,10 +193,6 @@ public:
     // 设置阻尼比
     // @param damping_ratio 阻尼比
     void set_damping_ratio(double damping_ratio);
-
-    // 从配置文件中读取参数
-    // @param config_file 配置文件路径
-    void LoadConfig(const std::string &config_file = "config/Config.json");
 
     // 获取计算参数，如果更新了参数，记得调用Update()更新
     // @return 计算参数的引用

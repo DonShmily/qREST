@@ -21,17 +21,16 @@
 #include "main_window.h"
 
 // stdc++ headers
+#include <winsock.h>
 #include <algorithm>
 #include <cmath>
-#include <fstream>
 #include <memory>
+
 
 // Qt UI headers
 #include "ui_about_dialog.h"
 #include "ui_algorithm_dialog.h"
-
-// third-party headers
-#include "nlohmann/json.hpp"
+#include "ui_building_dialog.h"
 
 
 // 主窗口类的构造函数
@@ -69,12 +68,41 @@ void QRestMainWindow::on_act_open_triggered()
         data_interface_->ReadFile(file_name.toStdString());
         chart_data_ = std::make_unique<ChartData>(data_interface_);
     }
+}
 
-    // 在新的线程中计算
-    // std::thread([this]() {
-    // 更新页面
-    // UpdateHomePage();
-    //}).detach();
+void QRestMainWindow::on_act_signal_triggered()
+{
+    // 读取串口数据，暂时不实现
+    // 目前读取确定的文件，按照时间窗口展示数据
+    // 打开文件对话框
+    QString file_name = QFileDialog::getOpenFileName(
+        this, tr("Open File"), "", tr("All Files(*.*);;Text Files(*.txt)"));
+    if (file_name.isEmpty())
+    {
+        QMessageBox::warning(this, tr("Warning"), tr("No file selected!"));
+        return;
+    }
+    // 添加加速度数据
+
+    while (data_interface_->time_idx_
+           < data_interface_->data_config_.time_count_
+                 - data_interface_->data_config_.time_window_)
+    {
+        data_interface_->ReadFileTimeWindow(file_name.toStdString());
+        chart_data_ = std::make_unique<ChartData>(data_interface_);
+        UpdateAllPages();
+
+        // 等待一段时间
+        QTime dieTime = QTime::currentTime().addMSecs(1000);
+        while (QTime::currentTime() < dieTime)
+        {
+            QCoreApplication::processEvents(QEventLoop::AllEvents, 100);
+        }
+        // Sleep(1000);
+    }
+
+    // data_interface_->ReadFileTimeWindow(file_name.toStdString());
+    // chart_data_ = std::make_unique<ChartData>(data_interface_);
 }
 
 // 计算操作
@@ -91,16 +119,22 @@ void QRestMainWindow::on_act_calc_triggered()
 void QRestMainWindow::on_act_algorithm_triggered()
 {
     // 打开算法设置对话框
-    QDialog algorithmDialog(this);              // 创建 QDialog 对象
-    algorithm_ui_ = new Ui::algorithm_dialog(); // 创建 UI 对象
-    algorithm_ui_->setupUi(&algorithmDialog);   // 设置 UI 到 QDialog
+    QDialog algorithmDialog(this);                   // 创建 QDialog 对象
+    auto algorithm_ui_ = new Ui::algorithm_dialog(); // 创建 UI 对象
+    algorithm_ui_->setupUi(&algorithmDialog);        // 设置 UI 到 QDialog
+    InitAlgorithmDialog(algorithm_ui_);
     algorithmDialog.exec(); // 以模态对话框的方式显示
-    InitAlgorithmDialog();
-    // 信号槽连接
-    connect(algorithm_ui_->saveButton,
-            &QPushButton::clicked,
-            this,
-            &QRestMainWindow::on_saveButton_clicked);
+}
+
+// building操作
+void QRestMainWindow::on_act_building_triggered()
+{
+    // 打开建筑信息对话框
+    QDialog buildingDialog(this);         // 创建 QDialog 对象
+    Ui::building_dialog building_ui;      // 创建 UI 对象
+    building_ui.setupUi(&buildingDialog); // 设置 UI 到 QDialog
+    InitBuildingDialog(&building_ui);     // 初始化建筑信息对话框
+    buildingDialog.exec();                // 以模态对话框的方式显示
 }
 
 // about操作
@@ -188,7 +222,8 @@ void QRestMainWindow::on_widget_mea1_model_fillRectangleClicked(int index)
     }
     index =
         std::min(std::max(index, 0),
-                 static_cast<int>(data_interface_->config_.mea_number_ - 1));
+                 static_cast<int>(
+                     data_interface_->config_->data_measurement_number - 1));
     UpdateMeaTabSingle(index);
 
     qDebug() << "mea1测点：" << index;
@@ -203,7 +238,7 @@ void QRestMainWindow::on_widget_edp_model_rectangleClicked(int index)
     }
     index = std::min(
         std::max(index, 0),
-        static_cast<int>(data_interface_->building_.get_floor_number() - 2));
+        static_cast<int>(data_interface_->building_->get_floor_number() - 2));
     UpdateEdpPage(index);
 
     qDebug() << "edp楼层：" << index;
@@ -217,7 +252,7 @@ void QRestMainWindow::on_cbox_mea1_dir_currentIndexChanged(int index)
         return;
     }
     chart_data_->set_direction(index);
-    page_status_->ResetDirection();
+    page_status_->Reset();
     UpdateMeaTabSingle(cur_mea_point_);
 
     qDebug() << "mea1方向：" << index;
@@ -231,7 +266,7 @@ void QRestMainWindow::on_cbox_mea2_dir_currentIndexChanged(int index)
         return;
     }
     chart_data_->set_direction(index);
-    page_status_->ResetDirection();
+    page_status_->Reset();
     UpdateMeaTabMultiple();
 
     qDebug() << "mea2方向：" << index;
@@ -245,7 +280,7 @@ void QRestMainWindow::on_cbox_shm_dir_currentIndexChanged(int index)
         return;
     }
     chart_data_->set_direction(index);
-    page_status_->ResetDirection();
+    page_status_->Reset();
     UpdateShmPage();
 
     qDebug() << "shm方向：" << index;
@@ -259,96 +294,143 @@ void QRestMainWindow::on_cbox_edp_dir_currentIndexChanged(int index)
         return;
     }
     chart_data_->set_direction(index);
-    page_status_->ResetDirection();
+    page_status_->Reset();
     UpdateEdpPage(cur_floor_);
 
     qDebug() << "edp方向：" << index;
 }
 
-// 初始化算法对话框
-void QRestMainWindow::InitAlgorithmDialog()
+// 初始化算法设置页面
+void QRestMainWindow::InitAlgorithmDialog(Ui::algorithm_dialog *algorithm_ui)
 {
-    // 读取配置文件用于显示
-    std::ifstream ifs("config/Config.json");
-    nlohmann::json config;
-    ifs >> config;
-    ifs.close();
+    // GMP滤波参数
+    algorithm_ui->cbox_gmp_filter_type->setCurrentIndex(
+        data_interface_->config_->gmp_filter_type);
+    algorithm_ui->cbox_gmp_filter_func->setCurrentIndex(
+        data_interface_->config_->gmp_filter_function);
+    algorithm_ui->cbox_gmp_filter_gen->setCurrentIndex(
+        data_interface_->config_->gmp_filter_generator);
+    algorithm_ui->dsbox_gmp_filter_low_freq->setValue(
+        data_interface_->config_->gmp_low_frequency);
+    algorithm_ui->dsbox_gmp_filter_high_freq->setValue(
+        data_interface_->config_->gmp_high_frequency);
+    algorithm_ui->sbox_gmp_filter_order->setValue(
+        data_interface_->config_->gmp_filter_order);
 
-    // 设置算法对话框的内容
-    // 滤波器设置
-    algorithm_ui_->gbox_gmp_filter->setChecked(
-        config["GMPFilterConfig"]["filter_flag"]);
-    algorithm_ui_->sbox_gmp_filter_order->setValue(
-        config["GMPFilterConfig"]["filter_order"].get<double>());
-    algorithm_ui_->dsbox_gmp_filter_low_freq->setValue(
-        config["GMPFilterConfig"]["low_frequency"].get<double>());
-    algorithm_ui_->dsbox_gmp_filter_high_freq->setValue(
-        config["GMPFilterConfig"]["high_frequency"].get<double>());
-    algorithm_ui_->cbox_gmp_filter_type->setCurrentIndex(
-        config["GMPFilterConfig"]["filter_type"].get<int>() - 1);
-    algorithm_ui_->cbox_gmp_filter_func->setCurrentIndex(
-        config["GMPFilterConfig"]["filter_function"].get<int>() - 1);
-    algorithm_ui_->cbox_gmp_filter_gen->setCurrentIndex(
-        config["GMPFilterConfig"]["filter_generator"].get<int>() - 1);
+    // GMP反应谱参数
+    algorithm_ui->dsbox_gmp_damp->setValue(
+        data_interface_->config_->gmp_damping_ratio);
+    algorithm_ui->dsbox_gmp_max_period->setValue(
+        data_interface_->config_->gmp_max_period);
+    algorithm_ui->dsbox_gmp_period_step->setValue(
+        data_interface_->config_->gmp_period_step);
+    algorithm_ui->dsbox_gmp_fft_max_period->setValue(
+        data_interface_->config_->gmp_max_frequency);
 
-    // 反应谱设置
-    algorithm_ui_->dsbox_gmp_damp->setValue(
-        config["ResponseSpectrumConfig"]["damping_ratio"].get<double>());
-    algorithm_ui_->dsbox_gmp_period_step->setValue(
-        config["ResponseSpectrumConfig"]["period_step"].get<double>());
-    algorithm_ui_->dsbox_gmp_max_period->setValue(
-        config["ResponseSpectrumConfig"]["max_period"].get<double>());
+    // EDP滤波参数
+    algorithm_ui->cbox_edp_method->setCurrentIndex(
+        data_interface_->config_->edp_method);
+    algorithm_ui->cbox_edp_filter_type->setCurrentIndex(
+        data_interface_->config_->edp_filter_type);
+    algorithm_ui->cbox_edp_filter_func->setCurrentIndex(
+        data_interface_->config_->edp_filter_function);
+    algorithm_ui->cbox_edp_filter_gen->setCurrentIndex(
+        data_interface_->config_->edp_filter_generator);
+    algorithm_ui->dsbox_edp_filter_high_freq->setValue(
+        data_interface_->config_->edp_high_frequency);
+    algorithm_ui->sbox_edp_filter_order->setValue(
+        data_interface_->config_->edp_filter_order);
+    algorithm_ui->cbox_edp_filter_type_2->setCurrentIndex(
+        data_interface_->config_->edp_filter_type);
+    algorithm_ui->cbox_edp_filter_func_2->setCurrentIndex(
+        data_interface_->config_->edp_filter_function);
+    algorithm_ui->cbox_edp_filter_gen_2->setCurrentIndex(
+        data_interface_->config_->edp_filter_generator);
+    algorithm_ui->dsbox_edp_filter_high_freq_2->setValue(
+        data_interface_->config_->edp_high_frequency);
+    algorithm_ui->sbox_edp_filter_order_2->setValue(
+        data_interface_->config_->edp_filter_order);
+    algorithm_ui->cbox_edp_interp_method->setCurrentIndex(
+        data_interface_->config_->edp_interp_method);
 
-    // 傅里叶谱设置
-    algorithm_ui_->dsbox_gmp_fft_max_period->setValue(
-        config["FourierConfig"]["max_frequency"].get<double>());
 
-    // on_saveButton_clicked();
-    qDebug() << "Save Button is "
-             << (algorithm_ui_->saveButton ? "initialized" : "not initialized");
+    // 点击保存按钮后更新配置并保存至文件
+    connect(algorithm_ui->saveButton, &QPushButton::clicked, [=]() {
+        // GMP滤波参数
+        data_interface_->config_->gmp_filter_type =
+            algorithm_ui->cbox_gmp_filter_type->currentIndex();
+        data_interface_->config_->gmp_filter_function =
+            algorithm_ui->cbox_gmp_filter_func->currentIndex();
+        data_interface_->config_->gmp_filter_generator =
+            algorithm_ui->cbox_gmp_filter_gen->currentIndex();
+        data_interface_->config_->gmp_low_frequency =
+            algorithm_ui->dsbox_gmp_filter_low_freq->value();
+        data_interface_->config_->gmp_high_frequency =
+            algorithm_ui->dsbox_gmp_filter_high_freq->value();
+        data_interface_->config_->gmp_filter_order =
+            algorithm_ui->sbox_gmp_filter_order->value();
+
+        // GMP反应谱参数
+        data_interface_->config_->gmp_damping_ratio =
+            algorithm_ui->dsbox_gmp_damp->value();
+        data_interface_->config_->gmp_max_period =
+            algorithm_ui->dsbox_gmp_max_period->value();
+        data_interface_->config_->gmp_period_step =
+            algorithm_ui->dsbox_gmp_period_step->value();
+        data_interface_->config_->gmp_max_frequency =
+            algorithm_ui->dsbox_gmp_fft_max_period->value();
+
+        // EDP滤波参数
+        data_interface_->config_->edp_method =
+            algorithm_ui->cbox_edp_method->currentIndex();
+        data_interface_->config_->edp_filter_type =
+            algorithm_ui->cbox_edp_filter_type->currentIndex();
+        data_interface_->config_->edp_filter_function =
+            algorithm_ui->cbox_edp_filter_func->currentIndex();
+        data_interface_->config_->edp_filter_generator =
+            algorithm_ui->cbox_edp_filter_gen->currentIndex();
+        data_interface_->config_->edp_high_frequency =
+            algorithm_ui->dsbox_edp_filter_high_freq->value();
+        data_interface_->config_->edp_filter_order =
+            algorithm_ui->sbox_edp_filter_order->value();
+        data_interface_->config_->edp_interp_method =
+            algorithm_ui->cbox_edp_interp_method->currentIndex();
+
+        // 保存配置
+        data_interface_->config_->save_config("config/Config.json");
+
+        // 重置计算状态
+        UpdateAllPages();
+    });
 }
 
-void QRestMainWindow::on_saveButton_clicked()
+// 初始化建筑信息对话框
+void QRestMainWindow::InitBuildingDialog(Ui::building_dialog *building_ui)
 {
-    std::ifstream ifs("config/Config.json");
-    nlohmann::json config;
-    ifs >> config;
-    ifs.close();
-    // 调试信息
-    qDebug() << "SaveConfig";
-    // 保存配置文件
-    // 滤波器设置
-    config["GMPFilterConfig"]["filter_flag"] =
-        algorithm_ui_->gbox_gmp_filter->isChecked();
-    config["GMPFilterConfig"]["filter_order"] =
-        algorithm_ui_->sbox_gmp_filter_order->value();
-    config["GMPFilterConfig"]["low_frequency"] =
-        algorithm_ui_->dsbox_gmp_filter_low_freq->value();
-    config["GMPFilterConfig"]["high_frequency"] =
-        algorithm_ui_->dsbox_gmp_filter_high_freq->value();
-    config["GMPFilterConfig"]["filter_type"] =
-        algorithm_ui_->cbox_gmp_filter_type->currentIndex() + 1;
-    config["GMPFilterConfig"]["filter_function"] =
-        algorithm_ui_->cbox_gmp_filter_func->currentIndex() + 1;
-    config["GMPFilterConfig"]["filter_generator"] =
-        algorithm_ui_->cbox_gmp_filter_gen->currentIndex() + 1;
-    qDebug() << config["GMPFilterConfig"]["filter_order"].get<int>();
+    // 初始化楼层数量
+    building_ui->sbox_floor_count->setValue(
+        data_interface_->building_->get_floor_number());
+    for (const auto &floor : data_interface_->building_->get_floor_height())
+    {
+        building_ui->text_floor_height->append(QString::number(floor));
+    }
+    for (const auto &mea : data_interface_->building_->get_measuren_height())
+    {
+        building_ui->text_mea_height->append(QString::number(mea));
+    }
+    for (const auto mea : data_interface_->building_->get_measure_index())
+    {
+        building_ui->text_mea_idx->append(QString::number(mea));
+    }
+    building_ui->widget_model->setNumRectangles(
+        data_interface_->building_->get_floor_number());
+    building_ui->widget_model->setFillRectangles(
+        data_interface_->building_->get_measure_index());
+    building_ui->widget_model->update();
 
-
-    // 反应谱设置
-    config["ResponseSpectrumConfig"]["damping_ratio"] =
-        algorithm_ui_->dsbox_gmp_damp->value();
-    config["ResponseSpectrumConfig"]["period_step"] =
-        algorithm_ui_->dsbox_gmp_period_step->value();
-    config["ResponseSpectrumConfig"]["max_period"] =
-        algorithm_ui_->dsbox_gmp_max_period->value();
-
-    // 傅里叶谱设置
-    config["FourierConfig"]["max_frequency"] =
-        algorithm_ui_->dsbox_gmp_fft_max_period->value();
-
-    // 写入配置文件
-    std::ofstream ofs("config/Config.json");
-    ofs << config.dump(4);
-    ofs.close();
+    // 点击保存按钮后更新配置并保存至文件
+    connect(building_ui->saveButton, &QPushButton::clicked, [=]() {
+        // 重置计算状态
+        UpdateAllPages();
+    });
 }

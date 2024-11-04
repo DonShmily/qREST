@@ -372,6 +372,7 @@ resource/
 .vscode/
 include/
 lib/
+.old/
 
 # vcpkg package manager
 vcpkg_installed/

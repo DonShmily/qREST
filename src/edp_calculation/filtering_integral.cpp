@@ -11,7 +11,7 @@
 ** File Created: Sunday, 14th July 2024 21:20:23
 ** Author: Dong Feiyue (donfeiyue@outlook.com)
 ** -----
-** Last Modified: Wednesday, 21st August 2024 15:42:16
+** Last Modified: Monday, 4th November 2024 00:34:51
 ** Modified By: Dong Feiyue (donfeiyue@outlook.com)
 */
 
@@ -22,12 +22,8 @@
 #include "filtering_integral.h"
 
 // stdc++ headers
-#include <fstream>
 #include <memory>
 #include <vector>
-
-// third-party library headers
-#include "nlohmann/json.hpp"
 
 // project headers
 #include "numerical_algorithm/basic_filtering.h"
@@ -41,47 +37,21 @@
 
 namespace edp_calculation
 {
-
-// 读取配置文件
-void FilteringIntegral::LoadConfig(const std::string &config_file)
-{
-    // JSON配置文件
-    nlohmann::json config;
-    std::ifstream ifs(config_file);
-    if (ifs.is_open())
-    {
-        ifs >> config;
-        ifs.close();
-    }
-    else
-    {
-        throw std::runtime_error("Cannot open the configuration file.");
-    }
-
-    method_.filter_order_ = config["FilterConfig"]["filter_order"];
-    method_.low_frequency_ = config["FilterConfig"]["low_frequency"];
-    method_.high_frequency_ = config["FilterConfig"]["high_frequency"];
-    method_.filter_type_ = config["FilterConfig"]["filter_type"];
-    method_.filter_function_ = config["FilterConfig"]["filter_function"];
-    method_.filter_generator_ = config["FilterConfig"]["filter_generator"];
-    method_.interp_type_ = config["InterpConfig"]["interp_type"];
-}
-
 // 滤波积分插值法计算的入口
 void FilteringIntegral::CalculateEdp()
 {
     // 1.确定计算参数
     // 1.1确定滤波生成器
-    double low =
-               method_.low_frequency_ / input_acceleration_.get_frequency() * 2,
-           high = method_.high_frequency_ / method_.low_frequency_ * low;
+    double low = parameter_.low_frequency_ / input_acceleration_.get_frequency()
+                 * 2,
+           high = parameter_.high_frequency_ / parameter_.low_frequency_ * low;
     auto filter_generator = numerical_algorithm::ButterworthFilterDesign(
-        method_.filter_order_, low, high, method_.filter_type_);
+        parameter_.filter_order_, low, high, parameter_.filter_type_);
 
     // 1.2确定滤波函数
     std::shared_ptr<numerical_algorithm::BasicFiltering> filter_function =
         nullptr;
-    switch (method_.filter_function_)
+    switch (parameter_.filter_function_)
     {
         case numerical_algorithm::FilterFunction::filtfilt:
             filter_function = std::make_shared<numerical_algorithm::FiltFilt>(
@@ -98,7 +68,7 @@ void FilteringIntegral::CalculateEdp()
     }
 
     // 1.3确定插值方法
-    numerical_algorithm::Interp interp_function(method_.interp_type_);
+    numerical_algorithm::Interp interp_function(parameter_.interp_type_);
 
     // 2.滤波积分插值计算层间位移角
     double dt = input_acceleration_.get_time_step();
@@ -137,7 +107,7 @@ void FilteringIntegral::CalculateEdp()
     result_->avd_.frequency = input_acceleration_.get_frequency();
 
     // 传递部分信息用于计算非测点的数据
-    result_->interp_type_ = method_.interp_type_;
+    result_->interp_type_ = parameter_.interp_type_;
     result_->building_ = building_ptr_;
 
     // 3.计算完成

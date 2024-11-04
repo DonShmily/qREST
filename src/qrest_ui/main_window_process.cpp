@@ -33,14 +33,13 @@
 #include "qcustomplot.h"
 
 // project headers
-#include "chart_data.h"
+#include "qrest_calculation/chart_data.h"
 #include "rectangle_widget.h"
 
 // 页面初始化
 void QRestMainWindow::Initialize()
 {
     // 初始化数据接口
-    data_interface_->LoadBuilding();
     data_interface_->LoadConfig();
 
     // 初始化主页
@@ -123,9 +122,9 @@ void QRestMainWindow::InitHomePage()
 
     // 添加模型绘图区域
     ui_->widget_home_model->setNumRectangles(
-        data_interface_->building_.get_floor_number());
+        data_interface_->building_->get_floor_number());
     ui_->widget_home_model->setFillRectangles(
-        data_interface_->building_.get_measure_index());
+        data_interface_->building_->get_measure_index());
     ui_->widget_home_model->update();
 
     // 显示信息
@@ -143,7 +142,7 @@ void QRestMainWindow::UpdateHomePage()
     {
         return;
     }
-    std::vector<QColor> colors = {Qt::yellow, Qt::red};
+    std::vector<QColor> colors = {Qt::red, Qt::blue, Qt::green};
     // 获取Gmp数据并转换
     chart_data_->set_direction(0);
     const auto &acc_x_pnts = chart_data_->get_acceleration(0);
@@ -209,6 +208,7 @@ void QRestMainWindow::UpdateHomePage()
     data_sa_z->rescaleAxes(true);
 
     // 为EDP图表添加数据
+    colors = {Qt::yellow, Qt::red};
     ui_->widget_home_edp->clearPlottables();
     ui_->widget_home_shm->clearGraphs();
     const auto &idr_limits = chart_data_->get_idr_safty_limit();
@@ -247,10 +247,11 @@ void QRestMainWindow::UpdateHomePage()
     //     .at(1)
     //     ->axis(QCPAxis::atBottom)
     //     ->setRange(0, 0);
+    colors = {Qt::blue, Qt::red};
     for (int i = 0; i != 2; ++i)
     {
         chart_data_->set_direction(i);
-        const auto &idr_pnts = chart_data_->get_mfi_all_idr();
+        const auto &idr_pnts = chart_data_->get_all_idr();
         auto idr_pnts_list = ChartData::PointsVector2DoubleList(idr_pnts);
         const auto &acc_pnts = chart_data_->get_max_acc();
         auto acc_pnts_list = ChartData::PointsVector2DoubleList(acc_pnts);
@@ -384,9 +385,9 @@ void QRestMainWindow::InitGmpPage()
 
     // 添加模型绘图区域
     ui_->widget_gmp_model->setNumRectangles(
-        data_interface_->building_.get_floor_number());
+        data_interface_->building_->get_floor_number());
     ui_->widget_gmp_model->setFillRectangles(
-        data_interface_->building_.get_measure_index());
+        data_interface_->building_->get_measure_index());
     ui_->widget_gmp_model->update();
 }
 
@@ -550,9 +551,9 @@ void QRestMainWindow::InitMeaTabSingle()
 
     // 添加模型绘图区域
     ui_->widget_mea1_model->setNumRectangles(
-        data_interface_->building_.get_floor_number());
+        data_interface_->building_->get_floor_number());
     ui_->widget_mea1_model->setFillRectangles(
-        data_interface_->building_.get_measure_index());
+        data_interface_->building_->get_measure_index());
     ui_->widget_mea1_model->update();
 }
 
@@ -630,7 +631,8 @@ void QRestMainWindow::InitMeaTabMultiple()
 {
     // 添加所有时程绘图区域
     ui_->widget_mea2_time->plotLayout()->clear();
-    for (size_t i = 0; i != data_interface_->config_.mea_number_; ++i)
+    for (size_t i = 0; i != data_interface_->config_->data_measurement_number;
+         ++i)
     {
         // 添加时程绘图区域
         QCPAxisRect *time_acc = new QCPAxisRect(ui_->widget_mea2_time);
@@ -654,9 +656,9 @@ void QRestMainWindow::InitMeaTabMultiple()
                                               | QCP::iSelectAxes);
     // 添加模型绘图区域
     ui_->widget_mea2_model->setNumRectangles(
-        data_interface_->building_.get_floor_number());
+        data_interface_->building_->get_floor_number());
     ui_->widget_mea2_model->setFillRectangles(
-        data_interface_->building_.get_measure_index());
+        data_interface_->building_->get_measure_index());
     ui_->widget_mea2_model->update();
 }
 
@@ -668,14 +670,14 @@ void QRestMainWindow::UpdateMeaTabMultiple()
     {
         return;
     }
-    std::size_t mea_num = data_interface_->config_.mea_number_;
+    std::size_t mea_num = data_interface_->config_->data_measurement_number;
     ui_->widget_mea2_time->clearGraphs();
     ui_->widget_mea2_fourier->clearGraphs();
     for (size_t i = 0; i != mea_num; ++i)
     {
         // 获取数据并转换
         const auto &acc_pnts = chart_data_->get_acceleration(
-            data_interface_->config_.mea_number_ - i - 1);
+            data_interface_->config_->data_measurement_number - i - 1);
         auto acc_pnts_list = ChartData::PointsVector2DoubleList(acc_pnts);
 
         // 为图表添加数据
@@ -687,7 +689,7 @@ void QRestMainWindow::UpdateMeaTabMultiple()
 
         // 获取数据并转换
         const auto &amp_pnts = chart_data_->get_amplitude(
-            data_interface_->config_.mea_number_ - i - 1);
+            data_interface_->config_->data_measurement_number - i - 1);
         auto amp_pnts_list = ChartData::PointsVector2DoubleList(amp_pnts);
 
         // 为图表添加数据
@@ -753,9 +755,9 @@ void QRestMainWindow::InitShmPage()
 
     // 添加模型绘图区域
     ui_->widget_shm_model->setNumRectangles(
-        data_interface_->building_.get_floor_number());
+        data_interface_->building_->get_floor_number());
     ui_->widget_shm_model->setFillRectangles(
-        data_interface_->building_.get_measure_index());
+        data_interface_->building_->get_measure_index());
     ui_->widget_shm_model->update();
 }
 
@@ -861,9 +863,9 @@ void QRestMainWindow::InitEdpPage()
 
     // 添加模型绘图区域
     ui_->widget_edp_model->setNumRectangles(
-        data_interface_->building_.get_floor_number());
+        data_interface_->building_->get_floor_number());
     ui_->widget_edp_model->setFillRectangles(
-        data_interface_->building_.get_measure_index());
+        data_interface_->building_->get_measure_index());
     ui_->widget_edp_model->update();
 }
 
@@ -877,11 +879,11 @@ void QRestMainWindow::UpdateEdpPage(std::size_t new_floor)
     }
     cur_floor_ = new_floor;
     // 获取数据并转换
-    const auto &acc_pnts = chart_data_->get_mfi_acc(cur_floor_);
+    const auto &acc_pnts = chart_data_->get_acc(cur_floor_);
     auto acc_pnts_list = ChartData::PointsVector2DoubleList(acc_pnts);
-    const auto &disp_pnts = chart_data_->get_mfi_disp(cur_floor_);
+    const auto &disp_pnts = chart_data_->get_disp(cur_floor_);
     auto disp_pnts_list = ChartData::PointsVector2DoubleList(disp_pnts);
-    const auto &idr_pnts = chart_data_->get_mfi_idr(cur_floor_);
+    const auto &idr_pnts = chart_data_->get_idr(cur_floor_);
     auto idr_pnts_list = ChartData::PointsVector2DoubleList(idr_pnts);
 
     // 为图表添加数据
@@ -904,7 +906,7 @@ void QRestMainWindow::UpdateEdpPage(std::size_t new_floor)
 
     // TODO:以下内容实际只需要更新一次，后面考虑优化
     // 获取数据并转换
-    const auto &idr_pnts_all = chart_data_->get_mfi_all_idr();
+    const auto &idr_pnts_all = chart_data_->get_all_idr();
     auto idr_pnts_all_list = ChartData::PointsVector2DoubleList(idr_pnts_all);
     const auto &acc_pnts_all = chart_data_->get_max_acc();
     auto acc_pnts_all_list = ChartData::PointsVector2DoubleList(acc_pnts_all);
@@ -929,4 +931,23 @@ void QRestMainWindow::UpdateEdpPage(std::size_t new_floor)
 
     // 已完成EDP页面计算
     page_status_->edp_page = true;
+}
+
+void QRestMainWindow::UpdateAllPages()
+{
+    // 充值所有页面状态
+    page_status_->Reset();
+    page_status_->gmp_page = false;
+    page_status_->home_page = false;
+
+    // 更新Home页面
+    UpdateHomePage();
+    // 更新Gmp页面
+    UpdateGmpPage();
+    // 更新Mea页面
+    UpdateMeaPage(cur_mea_point_);
+    // 更新SHM页面
+    UpdateShmPage();
+    // 更新EDP页面
+    UpdateEdpPage(cur_floor_);
 }

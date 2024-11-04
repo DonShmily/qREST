@@ -80,41 +80,43 @@ void SimpleParametersIdentification::Identify()
 
     // 计算前两阶模态向量
     pi_result_.mode_shape.resize(2);
-    // 以底层信号为参考点，计算互相关谱的虚部
-    const std::vector<double> &bottom_acc = input_acceleration_.get_col(0);
-    for (std::size_t i = 0; i < input_acceleration_.get_col_number() - 1; ++i)
-    {
-        const auto &vec = input_acceleration_.get_col(i + 1);
-        auto cross_correlation =
-            numerical_algorithm::CrossCorrelation(bottom_acc, vec);
-        auto fft_cross_correlation =
-            numerical_algorithm::FourierTransform(cross_correlation);
-        // 计算虚部
-        std::vector<double> imag_part(fft_cross_correlation.size(), 0);
-        for (std::size_t j = 0; j < fft_cross_correlation.size(); ++j)
-        {
-            imag_part[j] = std::imag(fft_cross_correlation[j]);
-        }
-        for (int j = 0; j < 2; ++j)
-        {
-            pi_result_.mode_shape[j].push_back(imag_part[peak_indexs[j]]);
-        }
-    }
+    // // 以底层信号为参考点，计算互相关谱的虚部
+    // const std::vector<double> &bottom_acc = input_acceleration_.get_col(0);
+    // for (std::size_t i = 0; i < input_acceleration_.get_col_number() - 1;
+    // ++i)
+    // {
+    //     const auto &vec = input_acceleration_.get_col(i + 1);
+    //     auto cross_correlation =
+    //         numerical_algorithm::CrossCorrelation(bottom_acc, vec);
+    //     auto fft_cross_correlation =
+    //         numerical_algorithm::FourierTransform(cross_correlation);
+    //     // 计算虚部
+    //     std::vector<double> imag_part(fft_cross_correlation.size(), 0);
+    //     for (std::size_t j = 0; j < fft_cross_correlation.size(); ++j)
+    //     {
+    //         imag_part[j] = std::imag(fft_cross_correlation[j]);
+    //     }
+    //     for (int j = 0; j < 2; ++j)
+    //     {
+    //         pi_result_.mode_shape[j].push_back(imag_part[peak_indexs[j]]);
+    //     }
+    // }
 
     // 模态向量归一化
-    for (std::size_t i = 0; i < 2; ++i)
-    {
-        /*double norm = *std::max_element(pi_result_.mode_shape[i].begin(),
-                                        pi_result_.mode_shape[i].end(),
-                                        [](const double &a, const double &b) {
-                                            return std::abs(a) < std::abs(b);
-                                        });*/
-        double norm = pi_result_.mode_shape[i].front();
-        std::transform(pi_result_.mode_shape[i].begin(),
-                       pi_result_.mode_shape[i].end(),
-                       pi_result_.mode_shape[i].begin(),
-                       [norm](const double &val) { return val / norm; });
-    }
+    // for (std::size_t i = 0; i < 2; ++i)
+    // {
+    //     /*double norm = *std::max_element(pi_result_.mode_shape[i].begin(),
+    //                                     pi_result_.mode_shape[i].end(),
+    //                                     [](const double &a, const double &b)
+    //                                     {
+    //                                         return std::abs(a) < std::abs(b);
+    //                                     });*/
+    //     double norm = pi_result_.mode_shape[i].front();
+    //     std::transform(pi_result_.mode_shape[i].begin(),
+    //                    pi_result_.mode_shape[i].end(),
+    //                    pi_result_.mode_shape[i].begin(),
+    //                    [norm](const double &val) { return val / norm; });
+    // }
 
     // 已完成参数识别
     is_calculated_ = true;

@@ -22,41 +22,10 @@
 #include "building.h"
 
 // stdc++ headers
-#include <fstream>
 #include <vector>
-
-// third-party library headers
-#include "nlohmann/json.hpp"
 
 namespace data_structure
 {
-// 从配置文件读取
-void Building::LoadConfig(const std::string &config_file)
-{
-    // JSON配置文件
-    nlohmann::json config;
-    std::ifstream ifs(config_file);
-    if (ifs.is_open())
-    {
-        ifs >> config;
-        ifs.close();
-    }
-    else
-    {
-        throw std::runtime_error("Cannot open the configuration file.");
-    }
-
-    // 读取配置
-    floor_height_ =
-        config["Building"]["floor_height"].get<std::vector<double>>();
-    measure_height_ =
-        config["Building"]["measurement_height"].get<std::vector<double>>();
-    measure_index_ =
-        config["Building"]["measurement_index"].get<std::vector<int>>();
-
-    calculate_inter_height();
-}
-
 // 计算建筑层间高度
 void Building::calculate_inter_height()
 {
